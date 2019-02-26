@@ -4,7 +4,7 @@
 
 SmartJdbc一个简单易用的ORM框架，它支持sql构建、sql执行、命名参数绑定、查询结果自动映射和通用DAO。
 
-SmartJdbc可以让你不用写DAO,不用写SQL。
+SmartJdbc可以让你不用写DAO,不用写SQL,不用写XML。
 
 # 2 入门
 
