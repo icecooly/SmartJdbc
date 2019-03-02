@@ -4,6 +4,7 @@ import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.QueryDefine;
 import io.itit.smartjdbc.annotations.QueryField;
+import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 import test.domain.ArticleUserLike;
 import test.domain.User;
 import test.domain.info.ArticleInfo;
@@ -41,4 +42,10 @@ public class ArticleInfoQuery extends Query{
 	@InnerJoin(table2=ArticleUserLike.class,table2Field="articleId")
 	@QueryField(field="userId")
 	public Integer likeUserId;
+	
+	@QueryField(orGroup=@OrGroup(group="123"),field="status")
+	public int[] orStatusList;
+
+	@QueryField(orGroup=@OrGroup(group="123"),field="createUserId")
+	public int orCreateUserId;
 }

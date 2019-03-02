@@ -270,4 +270,12 @@ public class DAOTestCase extends BaseTestCase{
 		List<UserInfo> users=dao.getList(query);
 		System.out.println(DumpUtil.dump(users));
 	}
+	
+	public void testOr() {
+		ArticleInfoQuery query=new ArticleInfoQuery();
+		query.orCreateUserId= 1;
+		query.orStatusList=new int[] {2,3};
+		List<ArticleInfo> users=dao.getList(query);
+		System.out.println(DumpUtil.dump(users));
+	}
 }
