@@ -21,7 +21,7 @@ public class DeleteProvider extends SqlProvider{
 	
 	@Override
 	public SqlBean build() {
-		StringBuffer sql=new StringBuffer();
+		StringBuilder sql=new StringBuilder();
 		String tableName=getTableName(domainClass);
 		sql.append("delete from ").append(tableName).append(" ");
 		sql.append("where 1=1 ");
