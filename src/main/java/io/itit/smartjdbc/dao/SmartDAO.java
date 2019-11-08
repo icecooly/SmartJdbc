@@ -556,26 +556,32 @@ public class SmartDAO extends BaseDAO{
 			Object value = null;
 			if (fieldType.equals(String.class)) {
 				value = rs.getString(fieldName);
-			} else if (fieldType.equals(Integer.class)
-					|| fieldType.equals(int.class)) {
+			} else if (fieldType.equals(int.class)) {
 				value = rs.getInt(fieldName);
-			} else if (fieldType.equals(Short.class)
-					|| fieldType.equals(short.class)) {
+			} else if (fieldType.equals(Integer.class)) {
+				value = (Integer) rs.getObject(fieldName);
+			} else if (fieldType.equals(short.class)) {
 				value = rs.getShort(fieldName);
-			} else if (fieldType.equals(Long.class)
-					|| fieldType.equals(long.class)) {
+			} else if (fieldType.equals(Short.class)) {
+				value = (Short)rs.getObject(fieldName);
+			} else if (fieldType.equals(long.class)) {
 				value = rs.getLong(fieldName);
-			} else if (fieldType.equals(Double.class)
-					|| fieldType.equals(double.class)) {
+			} else if (fieldType.equals(Long.class)) {
+				value = (Long)rs.getObject(fieldName);
+			} else if (fieldType.equals(double.class)) {
 				value = rs.getDouble(fieldName);
-			} else if (fieldType.equals(Float.class)
-					|| fieldType.equals(float.class)) {
+			} else if (fieldType.equals(Double.class)) {
+				value = (Double)rs.getObject(fieldName);
+			} else if (fieldType.equals(float.class)) {
 				value = rs.getFloat(fieldName);
+			} else if (fieldType.equals(Float.class)) {
+				value = (Float)rs.getObject(fieldName);
 			} else if (fieldType.equals(Date.class)) {
 				value = rs.getTimestamp(fieldName);
-			} else if (fieldType.equals(Boolean.class)
-					|| fieldType.equals(boolean.class)) {
+			} else if (fieldType.equals(boolean.class)) {
 				value = rs.getBoolean(fieldName);
+			} else if (fieldType.equals(Boolean.class)) {
+				value = (Boolean)rs.getObject(fieldName);
 			} else if (fieldType.equals(BigDecimal.class)) {
 				value = rs.getBigDecimal(fieldName);
 			}  else if (fieldType.equals(byte[].class)) {
