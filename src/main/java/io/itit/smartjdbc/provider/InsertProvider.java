@@ -52,8 +52,12 @@ public class InsertProvider extends SqlProvider{
 			}
 			String fieldName = convertFieldName(f.getName());
 			try {
+				f.setAccessible(true);
 				Object fieldValue=f.get(bean);
-				if(fieldValue!=null&&!WRAP_TYPES.contains(fieldValue.getClass())){
+				if(fieldValue==null) {
+					continue;
+				}
+				if(!WRAP_TYPES.contains(fieldValue.getClass())){
 					fieldList.add(JSONUtil.toJson(fieldValue));
 				}else{
 					fieldList.add(fieldValue);
