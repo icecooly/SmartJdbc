@@ -66,7 +66,7 @@ public abstract class DAOInterceptor {
 	 * 
 	 * @param query
 	 */
-	public void beforeQuery(Query query) {
+	public void beforeQuery(Query<?> query) {
 		
 	}
 }

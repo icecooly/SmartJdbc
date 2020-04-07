@@ -50,7 +50,7 @@ public class Config {
 	/**
 	 * defaultOrderBy
 	 */
-	private static BiConsumer<SelectProvider,Query> defaultOrderBy;
+	private static BiConsumer<SelectProvider,Query<?>> defaultOrderBy;
 	//
 	public static String getTableName(Class<?> domainClass) {
 		return tableNameFunc.apply(domainClass);
@@ -165,14 +165,14 @@ public class Config {
 	 * 
 	 * @return
 	 */
-	public static BiConsumer<SelectProvider,Query> getDefaultOrderBy() {
+	public static BiConsumer<SelectProvider,Query<?>> getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
 	/**
 	 * 
 	 * @param defaultOrderBy
 	 */
-	public static void setDefaultOrderBy(BiConsumer<SelectProvider,Query> defaultOrderBy) {
+	public static void setDefaultOrderBy(BiConsumer<SelectProvider,Query<?>> defaultOrderBy) {
 		Config.defaultOrderBy = defaultOrderBy;
 	}
 }

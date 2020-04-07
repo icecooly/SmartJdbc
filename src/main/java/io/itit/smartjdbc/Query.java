@@ -7,7 +7,7 @@ import io.itit.smartjdbc.annotations.QueryField;
  * @author icecooly
  *
  */
-public class Query {
+public class Query<T> {
 	//
 	public static final int SORT_TYPE_ASC=1;
 	public static final int SORT_TYPE_DESC=2;

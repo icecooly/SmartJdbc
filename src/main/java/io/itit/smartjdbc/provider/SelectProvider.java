@@ -31,7 +31,6 @@ import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.LeftJoin;
 import io.itit.smartjdbc.annotations.OrderBys;
 import io.itit.smartjdbc.annotations.OrderBys.OrderBy;
-import io.itit.smartjdbc.annotations.QueryDefine;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 import io.itit.smartjdbc.util.ArrayUtils;
@@ -85,7 +84,7 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected Class<?> domainClass;
-	protected Query query;
+	protected Query<?> query;
 	protected boolean isSelectCount;
 	protected boolean needPaging;
 	protected boolean needOrderBy;
@@ -143,7 +142,7 @@ public class SelectProvider extends SqlProvider{
 		return this;
 	}
 	//
-	public SelectProvider query(Query query) {
+	public SelectProvider query(Query<?> query) {
 		this.query=query;
 		return this;
 	}
@@ -286,13 +285,9 @@ public class SelectProvider extends SqlProvider{
 		return this;
 	}
 	//
-	protected List<Field> getQueryFields(Query query){
+	protected List<Field> getQueryFields(Query<?> query){
 		List<Field> fieldList=new ArrayList<>();
 		List<Field> fields = ClassUtils.getFieldList(query.getClass());
-		QueryDefine queryDefine = query.getClass().getAnnotation(QueryDefine.class);
-		if (queryDefine == null) {
-			throw new IllegalArgumentException("queryDefine not found in " + query.getClass().getName());
-		}
 		for (Field field : fields) {
 			try {
 				if (Modifier.isStatic(field.getModifiers()) || 
@@ -337,15 +332,10 @@ public class SelectProvider extends SqlProvider{
 		return true;
 	}
 	//
-	protected Map<String, Join> getInnerJoins(Query query) {
+	protected Map<String, Join> getInnerJoins(Query<?> query) {
 		Map<String, Join> map = new LinkedHashMap<>();
 		if(query==null) {
 			return map;
-		}
-		Class<?> queryClass=query.getClass();
-		QueryDefine qd=queryClass.getAnnotation(QueryDefine.class);
-		if(qd==null||qd.domainClass().equals(void.class)) {
-			throw new IllegalArgumentException("domainClass not found /"+query.getClass().getSimpleName());
 		}
 		List<Field> fields=getQueryFields(query);
 		int index = 1;
@@ -461,12 +451,8 @@ public class SelectProvider extends SqlProvider{
 		return join;
 	}
 	//
-	protected QueryInfo createQueryInfo(Query query){
+	protected QueryInfo createQueryInfo(Query<?> query){
 		List<Field> fields = ClassUtils.getFieldList(query.getClass());
-		QueryDefine queryDefine = query.getClass().getAnnotation(QueryDefine.class);
-		if (queryDefine == null) {
-			throw new IllegalArgumentException("queryDefine not found in " + query.getClass().getName());
-		}
 		QueryInfo info=new QueryInfo();
 		for (Field field : fields) {
 			try {
@@ -509,7 +495,7 @@ public class SelectProvider extends SqlProvider{
 	 * 
 	 * @param q
 	 */
-	protected void addWheres(Query q) {
+	protected void addWheres(Query<?> q) {
 		if(q==null) {
 			return;
 		}
@@ -663,14 +649,14 @@ public class SelectProvider extends SqlProvider{
 		return 0;
 	}
 	//
-	protected void addOrderBy(Query query) {
+	protected void addOrderBy(Query<?> query) {
 		List<String> orderByList=addOrderByList(query);
 		for (String e : orderByList) {
 			orderBy(e);
 		}
 	}
 	//
-	public List<String> addOrderByList(Query query) {
+	public List<String> addOrderByList(Query<?> query) {
 		List<String> orderByList=new ArrayList<>();
 		if(query==null) {
 			return orderByList;
@@ -733,7 +719,7 @@ public class SelectProvider extends SqlProvider{
 		return orderByList;
 	}
 	//
-	protected void addPaging(Query query) {
+	protected void addPaging(Query<?> query) {
 		if(query==null) {
 			return;
 		}

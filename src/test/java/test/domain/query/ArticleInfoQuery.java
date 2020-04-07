@@ -2,7 +2,6 @@ package test.domain.query;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
-import io.itit.smartjdbc.annotations.QueryDefine;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 import test.domain.ArticleUserLike;
@@ -14,8 +13,7 @@ import test.domain.info.ArticleInfo;
  * @author skydu
  *
  */
-@QueryDefine(domainClass=ArticleInfo.class)
-public class ArticleInfoQuery extends Query{
+public class ArticleInfoQuery extends Query<ArticleInfo>{
 
 	public String title;
 	

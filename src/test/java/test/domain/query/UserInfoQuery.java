@@ -1,7 +1,6 @@
 package test.domain.query;
 
 import io.itit.smartjdbc.Query;
-import io.itit.smartjdbc.annotations.QueryDefine;
 import io.itit.smartjdbc.annotations.QueryField;
 import test.domain.info.UserInfo;
 
@@ -10,9 +9,7 @@ import test.domain.info.UserInfo;
  * @author skydu
  *
  */
-
-@QueryDefine(domainClass = UserInfo.class)
-public class UserInfoQuery extends Query {
+public class UserInfoQuery extends Query<UserInfo> {
 	//
 	public String userName;
 
