@@ -24,7 +24,7 @@ import io.itit.smartjdbc.provider.UpdateProvider;
  * 
  * @author skydu
  */
-public abstract class SmartEntityDAO<T> extends BaseEntityDAO{
+public class SmartEntityDAO<T> extends BaseEntityDAO{
 	//
 	private String tableName;
 	private Class<T> entityClass;
