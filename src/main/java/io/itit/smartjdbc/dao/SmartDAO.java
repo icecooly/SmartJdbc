@@ -105,6 +105,15 @@ public class SmartDAO extends BaseDAO{
 	/**
 	 * 
 	 * @param bean
+	 * @return
+	 */
+	public int updateExcludeNull(Object bean){
+		return update(bean,true,null);
+	}
+	
+	/**
+	 * 
+	 * @param bean
 	 * @param excludeFields
 	 * @return
 	 */
