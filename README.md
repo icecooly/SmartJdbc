@@ -63,7 +63,7 @@ dao.deleteById(User.class, 1);
 
 ```java
 User user=dao.getById(User.class, 1);
-User user=dao.getDomain(User.class,QueryWhere.create().where("userName", "test"));
+User user=dao.getEntity(User.class,QueryWhere.create().where("userName", "test"));
 ```
 
 ## 3.3 列表查询
@@ -80,8 +80,7 @@ List<User> list=dao.getList(query);
 
 ```java
 //查询角色名称是总监是用户列表
-@DomainDefine(domainClass=User.class)
-public class User extends BaseDomain{
+public class User extends BaseEntity{
 	public String name;
 	
 	public String userName;
@@ -92,19 +91,19 @@ public class User extends BaseDomain{
 	
 	public Date lastLoginTime;
 	
-	@ForeignKey(domainClass=Department.class)
+	@ForeignKey(entityClass=Department.class)
 	public int departmentId;
 	
-	@ForeignKey(domainClass=Role.class)
+	@ForeignKey(entityClass=Role.class)
 	public int roleId;
 	
 	public String description;
 }
 public class UserInfo extends User{
-	@DomainField(foreignKeyFields="departmentId",field="name")
+	@EntityField(foreignKeyFields="departmentId",field="name")
 	public String departmentName;
 	
-	@DomainField(foreignKeyFields="roleId",field="name")
+	@EntityField(foreignKeyFields="roleId",field="name")
 	public String roleName;
 }
 UserInfoQuery query=new UserInfoQuery();

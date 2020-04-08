@@ -17,9 +17,8 @@ import org.slf4j.LoggerFactory;
 import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.annotations.DomainDefine;
-import io.itit.smartjdbc.annotations.DomainField;
-import io.itit.smartjdbc.annotations.NonPersistent;
+import io.itit.smartjdbc.annotations.Entity;
+import io.itit.smartjdbc.annotations.EntinyField;
 import io.itit.smartjdbc.annotations.PrimaryKey;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.DumpUtil;
@@ -75,18 +74,18 @@ public abstract class SqlProvider {
 	
 	/**
 	 * 
-	 * @param domainClass
+	 * @param entityClass
 	 * @return
 	 */
-	public static String getTableName(Class<?> domainClass) {
-		Class<?> tableClass=domainClass;
-		DomainDefine domainDefine=domainClass.getAnnotation(DomainDefine.class);
-		if (domainDefine != null) {
-			if(!StringUtil.isEmpty(domainDefine.tableName())) {//tableName first
-				return domainDefine.tableName();
+	public static String getTableName(Class<?> entityClass) {
+		Class<?> tableClass=entityClass;
+		Entity entity=entityClass.getAnnotation(Entity.class);
+		if (entity != null) {
+			if(!StringUtil.isEmpty(entity.tableName())) {//tableName first
+				return entity.tableName();
 			}
-			if(!domainDefine.domainClass().equals(void.class)){
-				tableClass=domainDefine.domainClass();
+			if(!entity.entityClass().equals(void.class)){
+				tableClass=entity.entityClass();
 			}
 		}
 		return Config.getTableName(tableClass);
@@ -154,23 +153,20 @@ public abstract class SqlProvider {
 		if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
 			return false;
 		}
-		if(field.getAnnotation(NonPersistent.class)!=null) {
-			return false;
-		}
-		DomainField domainField=field.getAnnotation(DomainField.class);
-		if(domainField!=null) {
-			return domainField.persistent();
+		EntinyField entityField=field.getAnnotation(EntinyField.class);
+		if(entityField!=null) {
+			return entityField.persistent();
 		}
 		return true;
 	}
 	/**
 	 * 
-	 * @param domainClass
+	 * @param entityClass
 	 * @return
 	 */
-	public static List<Field> getPersistentFields(Class<?> domainClass){
+	public static List<Field> getPersistentFields(Class<?> entityClass){
 		List<Field> fields=new ArrayList<>();
-		List<Field> fieldList=ClassUtils.getFieldList(domainClass);
+		List<Field> fieldList=ClassUtils.getFieldList(entityClass);
 		for (Field field : fieldList) {
 			if(isPersistentField(field)) {
 				fields.add(field);

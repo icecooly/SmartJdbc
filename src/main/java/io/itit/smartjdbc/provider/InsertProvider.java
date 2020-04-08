@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.annotations.DomainField;
+import io.itit.smartjdbc.annotations.EntinyField;
 import io.itit.smartjdbc.util.JSONUtil;
 
 /**
@@ -46,8 +46,8 @@ public class InsertProvider extends SqlProvider{
 			if(!isPersistentField(f)) {
 				continue;
 			}
-			DomainField domainField=f.getAnnotation(DomainField.class);
-			if(domainField!=null&&domainField.autoIncrement()) {
+			EntinyField entityField=f.getAnnotation(EntinyField.class);
+			if(entityField!=null&&entityField.autoIncrement()) {
 				continue;
 			}
 			String fieldName = convertFieldName(f.getName());

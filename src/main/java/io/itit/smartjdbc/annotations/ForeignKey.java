@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ForeignKey {
 	
-	Class<?> domainClass();
+	Class<?> entityClass();
 	
 	String field() default "id"; 
 }

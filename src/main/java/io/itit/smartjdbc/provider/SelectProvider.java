@@ -24,7 +24,7 @@ import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.QueryWhere.Where;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.annotations.DomainField;
+import io.itit.smartjdbc.annotations.EntinyField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
@@ -83,14 +83,14 @@ public class SelectProvider extends SqlProvider{
 		public int order;
 	}
 	//
-	protected Class<?> domainClass;
+	protected Class<?> entityClass;
 	protected Query<?> query;
 	protected boolean isSelectCount;
 	protected boolean needPaging;
 	protected boolean needOrderBy;
 	protected boolean isForUpdate;
 	protected List<SelectField> selectFields;
-	protected boolean ingoreSelectDomainFiled;
+	protected boolean ingoreSelectFileds;
 	protected Set<String> includeFields;
 	protected Set<String> excludeFields;//userName not user_name
 	protected Map<String,Join> innerJoinMap;
@@ -100,8 +100,8 @@ public class SelectProvider extends SqlProvider{
 	protected QueryWhere qw;
 	protected List<GroupByField> groupBys;
 	//
-	public SelectProvider(Class<?> domainClass) {
-		this.domainClass=domainClass;
+	public SelectProvider(Class<?> entityClass) {
+		this.entityClass=entityClass;
 		this.selectFields=new ArrayList<>();
 		this.includeFields=new LinkedHashSet<>();
 		this.excludeFields=new LinkedHashSet<>();
@@ -127,8 +127,8 @@ public class SelectProvider extends SqlProvider{
 		return this;
 	}
 	//
-	public SelectProvider ingoreSelectDomainFiled() {
-		this.ingoreSelectDomainFiled=true;
+	public SelectProvider ingoreSelectFileds() {
+		this.ingoreSelectFileds=true;
 		return this;
 	}
 	//
@@ -364,7 +364,7 @@ public class SelectProvider extends SqlProvider{
 			}
 			if(innerJoinsList.size()>0) {//use annotation
 				Join join=null;
-				Class<?> table1=domainClass;
+				Class<?> table1=entityClass;
 				String table1Alias=MAIN_TABLE_ALIAS;
 				for (InnerJoin j: innerJoinsList) {
 					String key=j.table1Field()+"-"+j.table2().getName()+"-"+j.table2Field();
@@ -390,7 +390,7 @@ public class SelectProvider extends SqlProvider{
 				innerJoinFieldAliasMap.put(field.getName(), table1Alias);
 			}else if(!StringUtil.isEmpty(foreignKeyFields)) {
 				String[] foreignKeyIds=foreignKeyFields.split(",");
-				Class<?> table1=domainClass;
+				Class<?> table1=entityClass;
 				String table1Alias=MAIN_TABLE_ALIAS;
 				Join join=null;
 				for (String id : foreignKeyIds) {
@@ -404,9 +404,9 @@ public class SelectProvider extends SqlProvider{
 					ForeignKey foreignKey=foreignKeyField.getAnnotation(ForeignKey.class);
 					if(foreignKey==null) {
 						throw new IllegalArgumentException("@ForeignKey not found in "+
-									domainClass.getSimpleName()+"."+foreignKeyField.getName());
+									entityClass.getSimpleName()+"."+foreignKeyField.getName());
 					}
-					Class<?> table2=foreignKey.domainClass();
+					Class<?> table2=foreignKey.entityClass();
 					String table2Field=foreignKey.field();
 					String key=id+"-"+table2.getName()+"-"+table2Field;
 					if(join==null) {
@@ -726,10 +726,10 @@ public class SelectProvider extends SqlProvider{
 		this.limit(query.getStartPageIndex(),query.pageSize);
 	}
 	//
-	protected void buildSelectDomainFields(){
+	protected void buildSelectFields(){
 		int index=1;
 		Map<String, Join> map = new LinkedHashMap<>();
-		List<Field> fields=ClassUtils.getFieldList(domainClass);
+		List<Field> fields=ClassUtils.getFieldList(entityClass);
 		for (Field field : fields) {
 			if (Modifier.isStatic(field.getModifiers())|| Modifier.isFinal(field.getModifiers())) {
 				continue;
@@ -740,30 +740,30 @@ public class SelectProvider extends SqlProvider{
 			if(excludeFields.contains(field.getName())){
 				continue;
 			}	
-			DomainField domainField = field.getAnnotation(DomainField.class);
-			if(domainField!=null&&domainField.ignoreWhenSelect()) {
+			EntinyField entityField = field.getAnnotation(EntinyField.class);
+			if(entityField!=null&&entityField.ignoreWhenSelect()) {
 				continue;
 			}
-			if(domainField==null) {
+			if(entityField==null) {
 				select(MAIN_TABLE_ALIAS, field.getName());
 				continue;
 			}
-			boolean distinct=domainField.distinct();
-			String statFunc=domainField.statFunc();
+			boolean distinct=entityField.distinct();
+			String statFunc=entityField.statFunc();
 			String reallyName=field.getName();
-			if(!StringUtil.isEmpty(domainField.field())) {
-				reallyName=domainField.field();
+			if(!StringUtil.isEmpty(entityField.field())) {
+				reallyName=entityField.field();
 			}
 			//
 			LeftJoin leftJoin=field.getAnnotation(LeftJoin.class);
 			if(leftJoin!=null) {
 				Join join=createLeftJoin(field.getName(),MAIN_TABLE_ALIAS,"l"+(index++),
-						domainClass,leftJoin.table2(),leftJoin.table1Field(),leftJoin.table2Field());
+						entityClass,leftJoin.table2(),leftJoin.table1Field(),leftJoin.table2Field());
 				select(join.table2Alias,reallyName,null,field.getName(),distinct,statFunc);
-			}else if(!StringUtil.isEmpty(domainField.foreignKeyFields())) {
-				String foreignKeyId = domainField.foreignKeyFields();
+			}else if(!StringUtil.isEmpty(entityField.foreignKeyFields())) {
+				String foreignKeyId = entityField.foreignKeyFields();
 				String[] foreignKeyIds=foreignKeyId.split(",");
-				Class<?> table1=domainClass;
+				Class<?> table1=entityClass;
 				String table1Alias=MAIN_TABLE_ALIAS;
 				Join join=null;
 				for (String id : foreignKeyIds) {
@@ -777,9 +777,9 @@ public class SelectProvider extends SqlProvider{
 					ForeignKey foreignKey=foreignKeyField.getAnnotation(ForeignKey.class);
 					if(foreignKey==null) {
 						throw new IllegalArgumentException("@ForeignKey not found in "+
-									domainClass.getSimpleName()+"."+foreignKeyField.getName());
+									entityClass.getSimpleName()+"."+foreignKeyField.getName());
 					}
-					Class<?> table2=foreignKey.domainClass();
+					Class<?> table2=foreignKey.entityClass();
 					String key=id;
 					if(join==null) {
 						join = map.get(key);
@@ -799,9 +799,9 @@ public class SelectProvider extends SqlProvider{
 					table1Alias=join.table2Alias;
 				}
 				if(WRAP_TYPES.contains(field.getType())){
-					addSelect(join.table2Alias, field, domainField);
+					addSelect(join.table2Alias, field, entityField);
 				}else if(field.getGenericType() instanceof ParameterizedType){
-					addSelect(join.table2Alias, field, domainField);
+					addSelect(join.table2Alias, field, entityField);
 				}else {
 					List<Field> subClassFields=getPersistentFields((Class<?>)field.getGenericType());
 					for (Field subClassField : subClassFields) {
@@ -810,23 +810,23 @@ public class SelectProvider extends SqlProvider{
 					}
 				}
 			}else {
-				addSelect(MAIN_TABLE_ALIAS, field, domainField);
+				addSelect(MAIN_TABLE_ALIAS, field, entityField);
 				continue;
 			}
 		}
 	}
 	//
-	protected void addSelect(String tableAlias,Field field,DomainField domainField) {
+	protected void addSelect(String tableAlias,Field field,EntinyField entityField) {
 		String selectField=field.getName();
 		String asField=null;
-		if(!StringUtil.isEmpty(domainField.field())) {
+		if(!StringUtil.isEmpty(entityField.field())) {
 			asField=field.getName();
-			selectField=domainField.field();
+			selectField=entityField.field();
 		}
-		if(!StringUtil.isEmpty(domainField.statFunc())) {
+		if(!StringUtil.isEmpty(entityField.statFunc())) {
 			asField=field.getName();
 		}
-		select(tableAlias,selectField,null,asField,domainField.distinct(),domainField.statFunc());
+		select(tableAlias,selectField,null,asField,entityField.distinct(),entityField.statFunc());
 	}
 	//
 	protected String getSinglePrimaryKey(Class<?> clazz) {
@@ -882,12 +882,12 @@ public class SelectProvider extends SqlProvider{
 	 */
 	protected SqlBean query() {
 		StringBuilder sql = new StringBuilder();
-		if(!ingoreSelectDomainFiled) {
-			buildSelectDomainFields();
+		if(!ingoreSelectFileds) {
+			buildSelectFields();
 		}
 		sql.append("\nselect ");
 		if(selectFields.size()==0) {
-			throw new IllegalArgumentException("no select field found in "+domainClass.getName());
+			throw new IllegalArgumentException("no select field found in "+entityClass.getName());
 		}
 		addSelectFields(sql);
 		return build(sql);
@@ -924,7 +924,7 @@ public class SelectProvider extends SqlProvider{
 	//
 	protected String getFromSql() {
 		StringBuilder sql=new StringBuilder();
-		sql.append("from ").append(getTableName(domainClass)).append(" ").append(MAIN_TABLE_ALIAS).append(" \n");
+		sql.append("from ").append(getTableName(entityClass)).append(" ").append(MAIN_TABLE_ALIAS).append(" \n");
 		//inner join
 		this.innerJoinMap=getInnerJoins(query);
 		for (Join join : innerJoins) {
@@ -1034,8 +1034,8 @@ public class SelectProvider extends SqlProvider{
 		return bean;
 	}
 		
-	public Class<?> getDomainClass() {
-		return domainClass;
+	public Class<?> getEntityClass() {
+		return entityClass;
 	}
 
 	@Override

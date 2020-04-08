@@ -11,18 +11,18 @@ import io.itit.smartjdbc.SqlBean;
  */
 public class DeleteProvider extends SqlProvider{
 	//
-	protected Class<?> domainClass;
+	protected Class<?> entityClass;
 	protected QueryWhere qw;
 	//
-	public DeleteProvider(Class<?> domainClass,QueryWhere qw) {
-		this.domainClass=domainClass;
+	public DeleteProvider(Class<?> entityClass,QueryWhere qw) {
+		this.entityClass=entityClass;
 		this.qw=qw;
 	}
 	
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
-		String tableName=getTableName(domainClass);
+		String tableName=getTableName(entityClass);
 		sql.append("delete from ").append(tableName).append(" ");
 		sql.append("where 1=1 ");
 		WhereStatment ws=qw.whereStatement();

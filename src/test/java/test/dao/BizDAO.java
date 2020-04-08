@@ -1,5 +1,6 @@
 package test.dao;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 
 import org.slf4j.Logger;
@@ -39,8 +40,8 @@ public class BizDAO extends SmartDAO{
 	 * 
 	 * @param id
 	 */
-	public void deleteById(Class<?> domainClass,int id){
-		delete(domainClass,QueryWhere.create().where("id", id));
+	public void deleteById(Class<?> entityClass,Serializable id){
+		delete(entityClass,QueryWhere.create().where("id", id));
 	}
 	
 	/**
@@ -48,8 +49,8 @@ public class BizDAO extends SmartDAO{
 	 * @param id
 	 * @return
 	 */
-	public <T> T getById(Class<T> domainClass,int id){
-		return getDomain(domainClass,QueryWhere.create().where("id",id));
+	public <T> T getById(Class<T> entityClass,Serializable id){
+		return getEntity(entityClass,QueryWhere.create().where("id",id));
 	}
 	
 	/**
@@ -57,8 +58,8 @@ public class BizDAO extends SmartDAO{
 	 * @param id
 	 * @return
 	 */
-	public <T> T getExistedById(Class<T> domainClass,int id){
-		T bean=getById(domainClass,id);
+	public <T> T getExistedById(Class<T> entityClass,Serializable id){
+		T bean=getById(entityClass,id);
 		if(bean==null) {;
 			throw new SmartJdbcException("数据不存在");
 		}
@@ -70,8 +71,8 @@ public class BizDAO extends SmartDAO{
 	 * @param id
 	 * @return
 	 */
-	public <T> T getByIdForUpdate(Class<T> domainClass,int id){
-		return getDomain(domainClass,QueryWhere.create().where("id",id).forUpdate());
+	public <T> T getByIdForUpdate(Class<T> entityClass,Serializable id){
+		return getEntity(entityClass,QueryWhere.create().where("id",id).forUpdate());
 	}
 	//
 	/**

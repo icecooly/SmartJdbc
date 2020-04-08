@@ -1,12 +1,12 @@
-package test.domain.query;
+package test.entity.query;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
-import test.domain.ArticleUserLike;
-import test.domain.User;
-import test.domain.info.ArticleInfo;
+import test.entity.ArticleUserLike;
+import test.entity.User;
+import test.entity.info.ArticleInfo;
 
 /**
  * 

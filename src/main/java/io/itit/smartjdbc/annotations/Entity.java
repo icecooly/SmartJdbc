@@ -16,8 +16,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)  
 @Documented
 @Inherited  
-public @interface DomainDefine {
+public @interface Entity {
 	String comment() default "";
-	String tableName() default "";//tableName first than domainClass
-	Class<?> domainClass() default void.class;
+	String tableName() default "";//tableName first than entityClass
+	Class<?> entityClass() default void.class;
 }

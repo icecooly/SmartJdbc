@@ -1,6 +1,6 @@
-package test.domain;
+package test.entity;
 
-import io.itit.smartjdbc.annotations.DomainDefine;
+import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
 
 /**
@@ -8,8 +8,8 @@ import io.itit.smartjdbc.annotations.ForeignKey;
  * @author skydu
  *
  */
-@DomainDefine(domainClass=Article.class)
-public class Article extends BaseDomain{
+@Entity(entityClass=Article.class)
+public class Article extends BaseEntity{
 	//
 	public static final int STATUS_待审核=1;
 	public static final int STATUS_审核通过=2;
@@ -23,10 +23,10 @@ public class Article extends BaseDomain{
 	/**状态*/
 	public int status;
 
-	@ForeignKey(domainClass = User.class)
+	@ForeignKey(entityClass = User.class)
 	public int createUserId;
 	
-	@ForeignKey(domainClass = User.class)
+	@ForeignKey(entityClass = User.class)
 	public int updateUserId;
 	
 }

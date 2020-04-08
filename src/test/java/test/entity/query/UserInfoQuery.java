@@ -1,8 +1,8 @@
-package test.domain.query;
+package test.entity.query;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.QueryField;
-import test.domain.info.UserInfo;
+import test.entity.info.UserInfo;
 
 /**
  * 

@@ -1,17 +1,17 @@
-package test.domain;
+package test.entity;
 
 import java.util.Date;
 
-import io.itit.smartjdbc.annotations.DomainDefine;
+import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
-import test.domain.Role;
+import test.entity.Role;
 /**
  *用户
  * @author skydu
  *
  */
-@DomainDefine(domainClass=User.class)
-public class User extends BaseDomain{
+@Entity(entityClass=User.class)
+public class User extends BaseEntity{
 	
 	public static final int STATUS_在职=1;
 	public static final int STATUS_离职=2;
@@ -31,20 +31,20 @@ public class User extends BaseDomain{
 	
 	public int status;
 	
-	@ForeignKey(domainClass=Department.class)
+	@ForeignKey(entityClass=Department.class)
 	public int departmentId;
 	
-	@ForeignKey(domainClass=Role.class)
+	@ForeignKey(entityClass=Role.class)
 	public int roleId;
 	
 	/**最后登录时间*/
 	public Date lastLoginTime;
 	
 	/**创建人*/
-	@ForeignKey(domainClass=User.class)
+	@ForeignKey(entityClass=User.class)
 	public int createUserId;
 	
 	/**最后更新人*/
-	@ForeignKey(domainClass=User.class)
+	@ForeignKey(entityClass=User.class)
 	public int updateUserId;
 }

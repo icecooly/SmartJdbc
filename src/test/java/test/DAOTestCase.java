@@ -11,16 +11,16 @@ import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.util.DumpUtil;
 import test.dao.BizDAO;
-import test.domain.Article;
-import test.domain.User;
-import test.domain.info.ArticleInfo;
-import test.domain.info.UserInfo;
-import test.domain.info.UserSimpleInfo;
-import test.domain.info.UserStat;
-import test.domain.query.ArticleInfoQuery;
-import test.domain.query.UserInfoQuery;
-import test.domain.query.UserQuery;
-import test.domain.query.UserStatQuery;
+import test.entity.Article;
+import test.entity.User;
+import test.entity.info.ArticleInfo;
+import test.entity.info.UserInfo;
+import test.entity.info.UserSimpleInfo;
+import test.entity.info.UserStat;
+import test.entity.query.ArticleInfoQuery;
+import test.entity.query.UserInfoQuery;
+import test.entity.query.UserQuery;
+import test.entity.query.UserStatQuery;
 
 /**
  * 
@@ -70,7 +70,7 @@ public class DAOTestCase extends BaseTestCase{
 	
 	/**通过用户名查询用户*/
 	public void testGetByUserName() {
-		User user=dao.getDomain(User.class,QueryWhere.create().where("userName", "test"));
+		User user=dao.getEntity(User.class,QueryWhere.create().where("userName", "test"));
 		System.out.println(DumpUtil.dump(user));
 	}
 	

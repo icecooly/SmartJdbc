@@ -35,10 +35,10 @@ public class Config {
 	private static List<SqlInterceptor> sqlInterceptors=new ArrayList<>();
 	//
 	/**
-	 * default domainClass's name
+	 * default entityClass name
 	 */
-	private static Function<Class<?>,String> tableNameFunc=(domainClass)->{
-		return domainClass.getSimpleName();
+	private static Function<Class<?>,String> tableNameFunc=(entityClass)->{
+		return entityClass.getSimpleName();
 	};
 	
 	/**
@@ -52,8 +52,8 @@ public class Config {
 	 */
 	private static BiConsumer<SelectProvider,Query<?>> defaultOrderBy;
 	//
-	public static String getTableName(Class<?> domainClass) {
-		return tableNameFunc.apply(domainClass);
+	public static String getTableName(Class<?> entityClass) {
+		return tableNameFunc.apply(entityClass);
 	}
 	//
 	/**

@@ -47,19 +47,19 @@ public abstract class DAOInterceptor {
 	
 	/**
 	 * 
-	 * @param domainClass
+	 * @param entityClass
 	 * @param qt
 	 */
-	public void beforeDelete(Class<?> domainClass, QueryWhere qt) {
+	public void beforeDelete(Class<?> entityClass, QueryWhere qt) {
 	}
 
 	/**
 	 * 
 	 * @param result
-	 * @param domainClass
+	 * @param entityClass
 	 * @param qt
 	 */
-	public void afterDelete(int result, Class<?> domainClass, QueryWhere qt) {
+	public void afterDelete(int result, Class<?> entityClass, QueryWhere qt) {
 	}
 	
 	/**

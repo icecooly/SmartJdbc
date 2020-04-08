@@ -1,9 +1,9 @@
-package test.domain.query;
+package test.entity.query;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.OrderBys;
 import io.itit.smartjdbc.annotations.OrderBys.OrderBy;
-import test.domain.info.UserStat;
+import test.entity.info.UserStat;
 
 /**
  * 

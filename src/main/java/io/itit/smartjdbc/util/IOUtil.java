@@ -39,31 +39,6 @@ public class IOUtil {
 
 	//
 	//
-	public static byte[] compress(byte[] inputs) {
-		if (inputs.length == 0) {
-			return inputs;
-		}
-		Deflater deflater = new Deflater(Deflater.BEST_SPEED);
-		deflater.setInput(inputs);
-		deflater.finish();
-		byte outputs[] = new byte[0];
-		try(ByteArrayOutputStream stream = new ByteArrayOutputStream(inputs.length);){
-			byte[] bytes = new byte[CACHE_SIZE];
-			int value;
-			while (!deflater.finished()) {
-				value = deflater.deflate(bytes);
-				stream.write(bytes, 0, value);
-			}
-			outputs = stream.toByteArray();
-			deflater.end();
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-		}
-		return outputs;
-	}
-
-	//
-	//
 	public static byte[] decompress(byte[] input) {
 		if (input.length == 0) {
 			return input;
