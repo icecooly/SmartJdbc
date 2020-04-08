@@ -1,9 +1,7 @@
 package io.itit.smartjdbc.dao;
 
 import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
