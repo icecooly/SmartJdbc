@@ -33,7 +33,7 @@ public abstract class BaseDAO{
 	//
 	private String datasourceIndex;
 	//
-	private  static long SLOW_SQL_MIN_USE_TIME=1000;//1s
+	public static long SLOW_SQL_MIN_USE_TIME=1000;//1s
 	//
 	public BaseDAO() {
 	}
