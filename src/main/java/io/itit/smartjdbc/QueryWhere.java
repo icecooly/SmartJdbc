@@ -375,7 +375,7 @@ public class QueryWhere {
 	}
 	//
 	/**
-	 * 等于 =
+	 * 等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -385,7 +385,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * 不等于 <>
+	 * 不等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -395,7 +395,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * 小于 <
+	 * 小于
 	 * @param key
 	 * @param value
 	 * @return
@@ -405,7 +405,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * 小于等于 <
+	 * 小于等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -415,7 +415,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * 大于 >
+	 * 大于
 	 * @param key
 	 * @param value
 	 * @return
@@ -425,7 +425,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * 大于等于 >=
+	 * 大于等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -497,7 +497,7 @@ public class QueryWhere {
 	/**
 	 * in (值1，值2...)
 	 * @param key
-	 * @param values
+	 * @param value
 	 * @return
 	 */
 	public  QueryWhere in(String key,Object value) {
@@ -507,7 +507,7 @@ public class QueryWhere {
 	/**
 	 * not in (值1，值2...)
 	 * @param key
-	 * @param values
+	 * @param value
 	 * @return
 	 */
 	public  QueryWhere notin(String key,Object value) {
