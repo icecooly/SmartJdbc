@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -29,10 +30,9 @@ import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.LeftJoin;
-import io.itit.smartjdbc.annotations.OrderBys;
-import io.itit.smartjdbc.annotations.OrderBys.OrderBy;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
+import io.itit.smartjdbc.enums.OrderBy;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.StringUtil;
@@ -79,7 +79,7 @@ public class SelectProvider extends SqlProvider{
 	//
 	public static class SortField {
 		public String fieldName;
-		public int sortType;
+		public OrderBy sortType;
 		public int order;
 	}
 	//
@@ -589,6 +589,18 @@ public class SelectProvider extends SqlProvider{
 			}
 			if(value instanceof String) {
 				newSql=newSql.replaceAll(replaceGroup,"'"+value.toString()+"'");
+			}else if(value instanceof Collection<?>){
+				StringBuilder in=new StringBuilder();
+				Collection<?> array=(Collection<?>)value;
+				in.append("(");
+				for (Object v : array.toArray()) {
+					in.append(v).append(",");
+				}
+				if(in.length()>1) {
+					in.deleteCharAt(in.length()-1);
+				}
+				in.append(")");
+				newSql=newSql.replaceAll(replaceGroup,in.toString());
 			}else {
 				newSql=newSql.replaceAll(replaceGroup,value.toString());
 			}
@@ -619,62 +631,17 @@ public class SelectProvider extends SqlProvider{
 	//
 	public List<String> addOrderByList(Query<?> query) {
 		List<String> orderByList=new ArrayList<>();
-		if(query==null) {
+		if(query==null||query.orderBys==null||query.orderBys.isEmpty()) {
 			return orderByList;
 		}
-		boolean haveSort=false;
-		List<Field> fields = ClassUtils.getFieldList(query.getClass());
-		String[] querySortFields=query.sortFields;
-		List<SortField> sortFields=new ArrayList<>();
-		for (Field field : fields) {
-			if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
-				continue;
-			}
-			if(!field.getType().equals(int.class)) {
-				continue;
-			}
-			String fieldName=field.getName();
-			if(!fieldName.endsWith("Sort")) {
-				continue;
-			}
-			try {
-				int sortType=field.getInt(query);
-				if(sortType==0) {
-					continue;
-				}
-				String reallyFieldName=fieldName.substring(0,fieldName.length()-4);
-				String dbFieldName=convertFieldName(reallyFieldName);
-				SortField sortField=new SortField();
-				sortField.fieldName=dbFieldName;
-				sortField.sortType=sortType;
-				sortField.order=getSortFieldOrder(querySortFields,fieldName);
-				sortFields.add(sortField);
-				haveSort=true;
-			} catch (Exception e1) {
-				logger.error(e1.getMessage(),e1);
-			}
-		}
-		sortFields.sort((a,b)->{
-			return a.order-b.order;
-		});
-		for (SortField e : sortFields) {
-			if(e.sortType==Query.SORT_TYPE_ASC) {
-				orderByList.add(e.fieldName+" asc");
-			}else if(e.sortType==Query.SORT_TYPE_DESC) {
-				orderByList.add(e.fieldName+" desc");
-			}
-		}
-		if(!haveSort) {
-			OrderBys orderBys=query.getClass().getAnnotation(OrderBys.class);
-			if(orderBys!=null&&orderBys.orderBys()!=null) {
-				for (OrderBy orderBy : orderBys.orderBys()) {
-					if (query.orderType != null&& query.orderType == orderBy.orderType()) {
-						orderByList.add(orderBy.sql());
-					}
-				}
-			}
-			if(Config.getDefaultOrderBy()!=null) {
-				Config.getDefaultOrderBy().accept(this,query);
+		for (Map.Entry<String,OrderBy> entry : query.orderBys.entrySet()) {
+			String fieldName=entry.getKey();
+			OrderBy orderBy=entry.getValue();
+			String dbField=Config.convertFieldName(fieldName);
+			if(orderBy.equals(OrderBy.ASC)) {
+				orderByList.add(dbField+" asc");
+			}else if(orderBy.equals(OrderBy.DESC)) {
+				orderByList.add(dbField+" desc");
 			}
 		}
 		return orderByList;

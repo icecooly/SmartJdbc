@@ -4,16 +4,16 @@ import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
+import test.entity.Article;
 import test.entity.ArticleUserLike;
 import test.entity.User;
-import test.entity.info.ArticleInfo;
 
 /**
  * 
  * @author skydu
  *
  */
-public class ArticleInfoQuery extends Query<ArticleInfo>{
+public class ArticleQuery extends Query<Article>{
 
 	public String title;
 	

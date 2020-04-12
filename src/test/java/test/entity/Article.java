@@ -1,5 +1,6 @@
 package test.entity;
 
+import io.itit.smartjdbc.annotations.EntinyField;
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
 
@@ -28,5 +29,17 @@ public class Article extends BaseEntity{
 	
 	@ForeignKey(entityClass = User.class)
 	public int updateUserId;
+	
+	/**创建人名称*/
+	@EntinyField(foreignKeyFields="createUserId",field="name",persistent = false)
+	public String createUserName;
+	
+	/**创建人所在部门名称*/
+	@EntinyField(foreignKeyFields="createUserId,departmentId",field="name",persistent = false)
+	public String createUserDepartmentName;
+	
+	/***/
+	@EntinyField(foreignKeyFields="updateUserId",persistent = false)
+	public User updateUser;
 	
 }

@@ -29,4 +29,13 @@ public class UserQuery extends Query<User>{
 	
 	@QueryField(whereSql="json_contains(a.role_id_list,'${roleId}')")
     public Integer roleId; 
+	
+	@QueryField(whereSql="status=#{orStatus} or json_contains(a.role_id_list,'${orRoleId}')")
+    public Boolean statusOrRoleId;
+    
+	@QueryField(ingore = true)
+    public Integer orStatus;
+	
+	@QueryField(ingore = true)
+    public Integer orRoleId;
 }

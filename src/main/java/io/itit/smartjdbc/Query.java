@@ -1,6 +1,9 @@
 package io.itit.smartjdbc;
 
+import java.util.LinkedHashMap;
+
 import io.itit.smartjdbc.annotations.QueryField;
+import io.itit.smartjdbc.enums.OrderBy;
 
 /**
  * 
@@ -9,9 +12,6 @@ import io.itit.smartjdbc.annotations.QueryField;
  */
 public class Query<T> {
 	//
-	public static final int SORT_TYPE_ASC=1;
-	public static final int SORT_TYPE_DESC=2;
-	//
 	@QueryField(ingore=true)
 	public int pageIndex;
 	
@@ -19,20 +19,17 @@ public class Query<T> {
 	public int pageSize;
 	
 	@QueryField(ingore=true)
-	public Integer orderType;
-	@QueryField(ingore=true)
-	public String[] sortFields;//sort fileds order
+	public LinkedHashMap<String,OrderBy> orderBys;
 	//
-	public static Integer defaultOrderType=null;
 	public static Integer defaultPageSize=20;
 	//
 	public Query(){
 		pageSize=20;//
 		pageIndex=1;//从1开始
-		orderType=defaultOrderType;
 		if(defaultPageSize!=null) {
 			pageSize=defaultPageSize;
 		}
+		orderBys=new LinkedHashMap<>();
 	}
 	//
 	public int getStartPageIndex(){

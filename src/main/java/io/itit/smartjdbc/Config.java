@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.sql.DataSource;
 
 import io.itit.smartjdbc.connection.ConnectionManager;
 import io.itit.smartjdbc.connection.TransactionManager;
-import io.itit.smartjdbc.provider.SelectProvider;
 
 /**
  * 
@@ -47,10 +45,6 @@ public class Config {
 	private static Function<String,String> convertFieldNameFunc=(fieldName)->{
 		return fieldName;	
 	};
-	/**
-	 * defaultOrderBy
-	 */
-	private static BiConsumer<SelectProvider,Query<?>> defaultOrderBy;
 	//
 	public static String getTableName(Class<?> entityClass) {
 		return tableNameFunc.apply(entityClass);
@@ -160,19 +154,5 @@ public class Config {
 	 */
 	public static void addSqlInterceptor(SqlInterceptor sqlInterceptor) {
 		sqlInterceptors.add(sqlInterceptor);
-	}
-	/**
-	 * 
-	 * @return
-	 */
-	public static BiConsumer<SelectProvider,Query<?>> getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
-	/**
-	 * 
-	 * @param defaultOrderBy
-	 */
-	public static void setDefaultOrderBy(BiConsumer<SelectProvider,Query<?>> defaultOrderBy) {
-		Config.defaultOrderBy = defaultOrderBy;
 	}
 }
