@@ -7,7 +7,7 @@ import io.itit.smartjdbc.annotations.Entity;
  * @author skydu
  *
  */
-@Entity(entityClass=Department.class)
+@Entity(entityClass=Department.class,tableName = "t_department")
 public class Department extends BaseEntity{
 
 	public String name;

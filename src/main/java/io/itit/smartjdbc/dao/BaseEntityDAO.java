@@ -255,7 +255,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 					if(StringUtil.isEmpty(p.name)){
 						throw new SmartJdbcException("Param name cann't be null");
 					}
-					paraMap.put("#{"+p.name+"}", p.value);
+					paraMap.put(p.name, p.value);
 				}
 			}
 		}

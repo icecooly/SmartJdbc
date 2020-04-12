@@ -7,6 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import io.itit.smartjdbc.enums.SqlOperator;
+
 /**
  * 
  * @author skydu
@@ -23,8 +25,8 @@ public @interface QueryField {
 		  String childAndGroup() default "";
 	}
 	//
-	/** 操作符 非字符串默认是= 字符串默认是like */
-	public String operator() default "";
+	/** 操作符 非字符串默认是EQ*/
+	public SqlOperator operator() default SqlOperator.EQ;
 
 	/** 自定义查询sql */
 	public String whereSql() default "";//usage: (name like #{nameOrUserName} or userName like #{nameOrUserName})

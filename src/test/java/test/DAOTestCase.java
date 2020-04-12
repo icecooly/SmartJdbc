@@ -1,14 +1,15 @@
 package test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.DAOInterceptor;
-import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.QueryWhere;
+import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.util.DumpUtil;
 import test.dao.BizDAO;
 import test.entity.Article;
@@ -47,7 +48,20 @@ public class DAOTestCase extends BaseTestCase{
 				dao.setFieldValue(bean, "updateTime", new Date());
 			}
 		});
+		Config.setConvertFieldNameFunc(this::convertFieldName);
 	}
+	//
+	protected  String convertFieldName(String name) {
+		StringBuffer result = new StringBuffer();
+		for (char c : name.toCharArray()) {
+			if (Character.isUpperCase(c)) {
+				result.append("_");
+			}
+			result.append(Character.toLowerCase(c));
+		}
+		return result.toString();
+	}
+	//
 	static {
 	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 	}
@@ -55,23 +69,82 @@ public class DAOTestCase extends BaseTestCase{
 	/**新增用户*/
 	public void testAddUser() {
 		User user=new User();
-		user.name="关羽";
-		user.userName="guanyu";
-		user.password="111111";
+		user.name="张三";
+		user.userName="zhangsan";
+		user.roleIdList=Arrays.asList(1,2,3);
 		user.id=dao.add(user);
 		System.out.println(user.id);
 	}
 	
-	/**通过id查询用户*/
+	/**
+	 * 
+	 */
 	public void testGetById() {
 		User user=dao.getById(User.class, 1);
 		System.out.println(DumpUtil.dump(user));
 	}
 	
-	/**通过用户名查询用户*/
-	public void testGetByUserName() {
-		User user=dao.getEntity(User.class,QueryWhere.create().where("userName", "test"));
-		System.out.println(DumpUtil.dump(user));
+	public void testQuery() {
+		dao.getEntity(User.class,QueryWhere.create().where("user_name", "test"));
+		dao.getEntity(User.class,QueryWhere.create().eq("user_name", "test"));
+		dao.getEntity(User.class,QueryWhere.create().ne("user_name", "test"));
+		dao.getEntity(User.class,QueryWhere.create().lt("status", 1));
+		dao.getEntity(User.class,QueryWhere.create().le("status", 1));
+		dao.getEntity(User.class,QueryWhere.create().gt("status", 1));
+		dao.getEntity(User.class,QueryWhere.create().ge("status", 1));
+	}
+	
+	/**
+	 * 
+	 */
+	public void testQueryLike() {
+		dao.getEntity(User.class,QueryWhere.create().like("user_name","zhangsan"));
+		dao.getEntity(User.class,QueryWhere.create().likeLeft("user_name","yu"));
+		dao.getEntity(User.class,QueryWhere.create().likeRight("user_name","yu"));
+		dao.getEntity(User.class,QueryWhere.create().notLike("user_name","zhangsan"));
+		dao.getEntity(User.class,QueryWhere.create().notLikeLeft("user_name","yu"));
+		dao.getEntity(User.class,QueryWhere.create().notLikeRight("user_name","yu"));
+	}
+	
+	/**
+	 * 
+	 */
+	public void testQueryIn() {
+		dao.getEntity(User.class,QueryWhere.create().in("status",Arrays.asList(1,2,3)));
+		dao.getEntity(User.class,QueryWhere.create().in("user_name",Arrays.asList("zhangsan","zhangsan2")));
+		dao.getEntity(User.class,QueryWhere.create().in("status",new int[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().in("status",new byte[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().in("status",new long[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().in("user_name",new String[] {"zhangsan","zhangsan2"}));
+	}
+	
+	/**
+	 * 
+	 */
+	public void testQueryNotIn() {
+		dao.getEntity(User.class,QueryWhere.create().notin("status",Arrays.asList(1,2,3)));
+		dao.getEntity(User.class,QueryWhere.create().notin("user_name",Arrays.asList("zhangsan","zhangsan2")));
+		dao.getEntity(User.class,QueryWhere.create().notin("status",new int[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().notin("status",new byte[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().notin("status",new long[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().notin("user_name",new String[] {"zhangsan","zhangsan2"}));
+	}
+	
+	public void testQueryWhereSql() {
+		dao.getEntity(User.class,QueryWhere.create().whereSql("user_name=?","zhangsan"));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("user_name='zhangsan'"));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("user_name=#{userName}",
+				new SqlParam("userName", "zhangsan")));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("user_name=${userName}",
+				new SqlParam("userName", "zhangsan")));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("status=${status}",
+				new SqlParam("status", 1)));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("status=${status} or user_name like concat('%',#{userName},'%')",
+				new SqlParam("status", 1),
+				new SqlParam("userName", "yu")));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("status in ${status} or user_name like concat('%',#{userName},'%')",
+				new SqlParam("status", Arrays.asList(1,2,3)),
+				new SqlParam("userName", "yu")));
 	}
 	
 	/**查询用户列表*/
@@ -81,6 +154,18 @@ public class DAOTestCase extends BaseTestCase{
 		query.nameOrUserName="t";
 		List<User> list=dao.getList(query,"createTime","updateTime");
 		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testQueryInList() {
+		UserQuery query=new UserQuery();
+		query.statusInList=Arrays.asList(1,2);
+		dao.getList(query);
+	}
+	
+	public void testQueryNotInList() {
+		UserQuery query=new UserQuery();
+		query.statusNotInList=Arrays.asList(1,2);
+		dao.getList(query);
 	}
 	
 	/**查询用户列表总数*/
@@ -94,7 +179,7 @@ public class DAOTestCase extends BaseTestCase{
 	/**当然写sql也是支持的*/
 	public void testQueryUsers() {
 		List<User> users=dao.queryList(User.class, 
-				"select * from User where userName like concat('%'?,'%') and id=?", 
+				"select * from t_user where user_name like concat('%'?,'%') and id=?", 
 				"liu",
 				1);
 		System.out.println(DumpUtil.dump(users));
@@ -102,7 +187,7 @@ public class DAOTestCase extends BaseTestCase{
 	
 	public void testQueryUsers2() {
 		List<User> users=dao.queryList(User.class, 
-				"select * from User where userName like concat('%',#{userName},'%') and id=#{id}", 
+				"select * from t_user where user_name like concat('%',#{userName},'%') and id=#{id}", 
 				new SqlParam("userName", "liu"),
 				new SqlParam("id", 1));
 		System.out.println(DumpUtil.dump(users));
@@ -110,30 +195,29 @@ public class DAOTestCase extends BaseTestCase{
 	
 	public void testQueryUsersCount() {
 		int count=dao.queryCount(
-				"select count(1) from User where userName like concat('%',?,'%') and id=?", 
+				"select count(1) from t_user where user_name like concat('%',?,'%') and id=?", 
 				"liu",
 				1);
 		System.out.println(count);
 	}
 	
 	public void testGetUserIds() {
-		List<Integer> userIds=dao.queryForIntegers("select id from User where id=#{id}",
+		List<Integer> userIds=dao.queryForIntegers("select id from t_user where id=#{id}",
 				new SqlParam("id", 1));
 		System.out.println(DumpUtil.dump(userIds));
 		//
-		userIds=dao.queryForIntegers("select id from User where id=?",
+		userIds=dao.queryForIntegers("select id from t_user where id=?",
 				1);
 		System.out.println(DumpUtil.dump(userIds));
 	}
 	
 	public void testQueryUsersCount2() {
 		int count=dao.queryCount(
-				"select count(1) from User where userName like concat('%',#{userName},'%') and id=#{id}", 
+				"select count(1) from t_user where user_name like concat('%',#{userName},'%') and id=#{id}", 
 				new SqlParam("userName", "liu"),
 				new SqlParam("id", 1));
 		System.out.println(count);
 	}
-	
 	
 	public void testUpdateUser() {
 		User user=dao.getById(User.class, 1);
@@ -142,8 +226,8 @@ public class DAOTestCase extends BaseTestCase{
 	}
 	
 	public void testUpdateUser2() {
-		dao.executeUpdate("update User set name='关羽0' where id=?",1);
-		dao.executeUpdate("update User set name='关羽2' where id=#{id}",new SqlParam("id", 1));
+		dao.executeUpdate("update t_user set name='关羽0' where id=?",1);
+		dao.executeUpdate("update t_user set name='关羽2' where id=#{id}",new SqlParam("id", 1));
 	}
 	
 	/**删除用户*/

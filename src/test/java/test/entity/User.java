@@ -1,16 +1,16 @@
 package test.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
-import test.entity.Role;
 /**
  *用户
  * @author skydu
  *
  */
-@Entity(entityClass=User.class)
+@Entity(entityClass=User.class,tableName = "t_user")
 public class User extends BaseEntity{
 	
 	public static final int STATUS_在职=1;
@@ -20,8 +20,6 @@ public class User extends BaseEntity{
 	public static final int GENDER_女=2;
 	//
 	public String userName;
-	
-	public String password;
 	
 	public String name;
 	
@@ -34,8 +32,8 @@ public class User extends BaseEntity{
 	@ForeignKey(entityClass=Department.class)
 	public int departmentId;
 	
-	@ForeignKey(entityClass=Role.class)
-	public int roleId;
+	/**角色列表*/
+	public List<Integer> roleIdList;
 	
 	/**最后登录时间*/
 	public Date lastLoginTime;

@@ -8,7 +8,7 @@ import io.itit.smartjdbc.annotations.ForeignKey;
  * @author skydu
  *
  */
-@Entity(entityClass=Article.class)
+@Entity(entityClass=Article.class,tableName = "t_article")
 public class Article extends BaseEntity{
 	//
 	public static final int STATUS_待审核=1;

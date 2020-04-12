@@ -1,6 +1,7 @@
 package io.itit.smartjdbc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -9,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
+import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.util.ArrayUtils;
 import io.itit.smartjdbc.util.StringUtil;
 
 /**
@@ -27,7 +30,7 @@ public class QueryWhere {
 		public String alias;
 		public String key;
 		public Object value;
-		public String operator;
+		public SqlOperator operator;
 		public OrGroup orGroup;
 		public String sql;
 		public LinkedList<Object> sqlValues;
@@ -65,19 +68,19 @@ public class QueryWhere {
 	}
 	//
 	public QueryWhere where(String key,Object value){
-		return this.where(key, "=", value);
+		return this.where(key, SqlOperator.EQ, value);
 	}
 	//
-	public QueryWhere where(String key,String op,Object value){
+	public QueryWhere where(String key,SqlOperator op,Object value){
 		this.where(null, key, op, value);
 		return this;
 	}
 	//
-	public QueryWhere where(String alias,String key,String op,Object value){
+	public QueryWhere where(String alias,String key,SqlOperator op,Object value){
 		return where(alias, key, op, value, null);
 	}
 	//
-	public QueryWhere where(String alias,String key,String op,Object value,OrGroup orGroup){
+	public QueryWhere where(String alias,String key,SqlOperator op,Object value,OrGroup orGroup){
 		Where w=new Where();
 		w.alias=alias;
 		w.key=key;
@@ -117,7 +120,7 @@ public class QueryWhere {
 	//
 	public  QueryWhere in(String alias,String key,Object[] values,OrGroup orGroup) {
 		if(values!=null&&values.length>0) {
-			this.where(alias, key, "in", values,orGroup);
+			this.where(alias, key, SqlOperator.IN, values,orGroup);
 		}
 		return this;
 	}
@@ -128,7 +131,7 @@ public class QueryWhere {
 	//
 	public  QueryWhere notin(String alias,String key,Object[] values,OrGroup orGroup) {
 		if(values!=null&&values.length>0) {
-			this.where(alias, key, "not in", values,orGroup);
+			this.where(alias, key, SqlOperator.NOT_IN, values,orGroup);
 		}
 		return this;
 	}
@@ -245,12 +248,25 @@ public class QueryWhere {
 						sql.append(w.alias).append(".");
 					}
 					sql.append("`").append(key).append("` ");
-					sql.append(w.operator).append(" ");
-					if(w.operator.trim().equalsIgnoreCase("like")){
+					sql.append(getOperator(w.operator)).append(" ");
+					if(w.operator.equals(SqlOperator.LIKE)||
+							w.operator.equals(SqlOperator.NOT_LIKE)){
 						sql.append(" concat('%',"+value+",'%') ");
 						valueList.add(w.value);
-					}else if(w.operator.trim().equalsIgnoreCase("in")) {
-						Object[] values=(Object[])w.value;
+					}else if(w.operator.equals(SqlOperator.LIKE_LEFT)||
+							w.operator.equals(SqlOperator.NOT_LIKE_LEFT)){
+						sql.append(" concat('%',"+value+") ");
+						valueList.add(w.value);
+					}else if(w.operator.equals(SqlOperator.LIKE_RIGHT)||
+							w.operator.equals(SqlOperator.NOT_LIKE_RIGHT)){
+						sql.append(" concat("+value+",'%') ");
+						valueList.add(w.value);
+					}else if(w.operator.equals(SqlOperator.IS_NULL)){
+						valueList.add(w.value);
+					}else if(w.operator.equals(SqlOperator.IS_NOT_NULL)){
+						valueList.add(w.value);
+					}else if(w.operator.equals(SqlOperator.IN)) {
+						Object[] values=ArrayUtils.convert(w.value);
 						if(values!=null&&values.length>0) {
 							sql.append(" ( ");
 							for (int i = 0; i < values.length; i++) {
@@ -260,8 +276,8 @@ public class QueryWhere {
 							sql.deleteCharAt(sql.length() - 1);
 							sql.append(" ) ");
 						}
-					}else if(w.operator.trim().equalsIgnoreCase("not in")) {
-						Object[] values=(Object[])w.value;
+					}else if(w.operator.equals(SqlOperator.NOT_IN)) {
+						Object[] values=ArrayUtils.convert(w.value);
 						if(values!=null&&values.length>0) {
 							sql.append(" ( ");
 							for (int i = 0; i < values.length; i++) {
@@ -291,6 +307,50 @@ public class QueryWhere {
 		}
 	}
 	//
+	private String getOperator(SqlOperator opr) {
+		if(opr.equals(SqlOperator.EQ)) {
+			return "=";
+		}
+		if(opr.equals(SqlOperator.NE)) {
+			return "<>";
+		}
+		if(opr.equals(SqlOperator.LT)) {
+			return "<";
+		}
+		if(opr.equals(SqlOperator.LE)) {
+			return "<=";
+		}
+		if(opr.equals(SqlOperator.GT)) {
+			return ">";
+		}
+		if(opr.equals(SqlOperator.GE)) {
+			return ">=";
+		}
+		if(opr.equals(SqlOperator.LIKE)||
+				opr.equals(SqlOperator.LIKE_LEFT)||
+				opr.equals(SqlOperator.LIKE_RIGHT)) {
+			return "like";
+		}
+		if(opr.equals(SqlOperator.NOT_LIKE)||
+				opr.equals(SqlOperator.NOT_LIKE_LEFT)||
+				opr.equals(SqlOperator.NOT_LIKE_RIGHT)) {
+			return "not like";
+		}
+		if(opr.equals(SqlOperator.IN)) {
+			return "in";
+		}
+		if(opr.equals(SqlOperator.NOT_IN)) {
+			return "not in";
+		}
+		if(opr.equals(SqlOperator.IS_NULL)) {
+			return "is null";
+		}
+		if(opr.equals(SqlOperator.IS_NOT_NULL)) {
+			return "is not null";
+		}
+		return null;
+	}
+	//
 	/**
 	 * @return the orderBy
 	 */
@@ -313,4 +373,273 @@ public class QueryWhere {
 	public List<Where> getWheres() {
 		return wheres;
 	}
+	//
+	/**
+	 * 等于 =
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere eq(String key,Object value){
+		return this.where(key,SqlOperator.EQ, value);
+	}
+	
+	/**
+	 * 不等于 <>
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere ne(String key,Object value){
+		return this.where(key, SqlOperator.NE, value);
+	}
+	
+	/**
+	 * 小于 <
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere lt(String key,Object value){
+		return this.where(key, SqlOperator.LT, value);
+	}
+	
+	/**
+	 * 小于等于 <
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere le(String key,Object value){
+		return this.where(key, SqlOperator.LE, value);
+	}
+	
+	/**
+	 * 大于 >
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere gt(String key,Object value){
+		return this.where(key, SqlOperator.GT, value);
+	}
+	
+	/**
+	 * 大于等于 >=
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere ge(String key,Object value){
+		return this.where(key, SqlOperator.GE, value);
+	}
+	
+	/**
+	 * LIKE '%值%'
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere like(String key,Object value){
+		return this.where(key, SqlOperator.LIKE, value);
+	}
+	
+	/**
+	 * NOT LIKE '%值%'
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere notLike(String key,Object value){
+		return this.where(key,SqlOperator.NOT_LIKE, value);
+	}
+	
+	/**
+	 * LIKE '%值'
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere likeLeft(String key,Object value){
+		return this.where(key, SqlOperator.LIKE_LEFT, value);
+	}
+	
+	/**
+	 * NOT LIKE '%值'
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere notLikeLeft(String key,Object value){
+		return this.where(key, SqlOperator.NOT_LIKE_LEFT, value);
+	}
+	
+	/**
+	 * LIKE '值%'
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere likeRight(String key,Object value){
+		return this.where(key, SqlOperator.LIKE_RIGHT, value);
+	}
+	
+	/**
+	 * NOT LIKE '值%'
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere notLikeRight(String key,Object value){
+		return this.where(key, SqlOperator.NOT_LIKE_RIGHT, value);
+	}
+	
+	/**
+	 * in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere in(String key,Object value) {
+		return this.where(key, SqlOperator.IN, value);
+	}
+	
+	/**
+	 * not in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere notin(String key,Object value) {
+		return this.where(key, SqlOperator.NOT_IN, value);
+	}
+	
+	/**
+	 * not in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere notin(String key,Collection<?> values) {
+		return this.where(key, SqlOperator.NOT_IN, values);
+	}
+	
+	/**
+	 * in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere in(String key,int[] values) {
+		return this.where(key, SqlOperator.IN, values);
+	}
+	
+	/**
+	 * not in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere notin(String key,int[] values) {
+		return this.where(key, SqlOperator.NOT_IN, values);
+	}
+	
+	/**
+	 * in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere in(String key,short[] values) {
+		return this.where(key, SqlOperator.IN, values);
+	}
+	
+	/**
+	 * not in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere notin(String key,short[] values) {
+		return this.where(key, SqlOperator.NOT_IN, values);
+	}
+	
+	/**
+	 * in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere in(String key,long[] values) {
+		return this.where(key, SqlOperator.IN, values);
+	}
+	
+	/**
+	 * not in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere notin(String key,long[] values) {
+		return this.where(key, SqlOperator.NOT_IN, values);
+	}
+	
+	/**
+	 * in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere in(String key,byte[] values) {
+		return this.where(key, SqlOperator.IN, values);
+	}
+	
+	/**
+	 * not in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere notin(String key,byte[] values) {
+		return this.where(key, SqlOperator.NOT_IN, values);
+	}
+	
+	/**
+	 * in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere in(String key,String[] values) {
+		return this.where(key, SqlOperator.IN, values);
+	}
+	
+	/**
+	 * not in (值1，值2...)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public  QueryWhere notin(String key,String[] values) {
+		return this.where(key, SqlOperator.NOT_IN, values);
+	}
+	
+	/**
+	 * IS NULL
+	 * @param key
+	 * @return
+	 */
+	public QueryWhere isNull(String key){
+		return this.where(key, SqlOperator.IS_NULL);
+	}
+	
+	/**
+	 * IS NOT NULL
+	 * @param key
+	 * @return
+	 */
+	public QueryWhere isNotNull(String key){
+		return this.where(key, SqlOperator.IS_NOT_NULL);
+	}
+	
 }

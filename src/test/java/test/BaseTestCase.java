@@ -16,9 +16,9 @@ public abstract class BaseTestCase extends TestCase{
 	//
 	private static final String dbName="db_test";
 	private static final String dbHost="119.29.88.217";
-	private static final String dbPort="8001";
+	private static final String dbPort="3306";
 	private static final String dbUser="db_test";
-	private static final String dbPwd="dbtest12345";
+	private static final String dbPwd="DBtest12345!@#";
 	//
 	@Override
 	protected void setUp() throws Exception {

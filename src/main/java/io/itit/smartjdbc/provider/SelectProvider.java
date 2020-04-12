@@ -33,7 +33,7 @@ import io.itit.smartjdbc.annotations.OrderBys;
 import io.itit.smartjdbc.annotations.OrderBys.OrderBy;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
-import io.itit.smartjdbc.util.ArrayUtils;
+import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.StringUtil;
 
@@ -202,39 +202,19 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	public SelectProvider where(String alias,String key,Object value){
-		return this.where(alias,key, "=", value);
+		return this.where(alias,key, SqlOperator.EQ, value);
 	}
 	//
 	public SelectProvider where(String key,Object value){
-		return this.where(MAIN_TABLE_ALIAS,key, "=", value);
+		return this.where(MAIN_TABLE_ALIAS,key, SqlOperator.EQ, value);
 	}
 	//
-	public SelectProvider where(String alias,String key,String op,Object value){
-		return where(alias, key, op, value, null);
+	public SelectProvider where(String alias,String key,SqlOperator op,Object value){
+		return this.where(alias, key, op, value, null);
 	}
 	//
-	public SelectProvider where(String alias,String key,String op,Object value,OrGroup orGroup){
+	public SelectProvider where(String alias,String key,SqlOperator op,Object value,OrGroup orGroup){
 		qw.where(alias, key, op, value,orGroup);
-		return this;
-	}
-	//
-	public SelectProvider inOrNotin(String alias,String operator,String key,Object[] values,OrGroup orGroup){
-		if(StringUtil.isEmpty(operator)||operator.trim().equalsIgnoreCase("in")) {
-			qw.in(alias, key, values,orGroup);
-		}
-		else if(operator.trim().equalsIgnoreCase("not in")) {
-			qw.notin(alias, key, values,orGroup);
-		}
-		return this;
-	}
-	//
-	public SelectProvider in(String alias,String key,Object[] values){
-		qw.in(alias, key, values);
-		return this;
-	}
-	//
-	public SelectProvider notin(String alias,String key,Object[] values){
-		qw.notin(alias, key, values);
 		return this;
 	}
 	//
@@ -515,7 +495,6 @@ public class SelectProvider extends SqlProvider{
 		for (QueryFieldInfo info : fields) {
 			Field field=info.field;
 			try {
-				Class<?> fieldType = field.getType();
 				Object value=field.get(q);
 				QueryField queryField=field.getAnnotation(QueryField.class);
 				String alias = MAIN_TABLE_ALIAS;
@@ -535,30 +514,9 @@ public class SelectProvider extends SqlProvider{
 					if(queryField!=null&&(!StringUtil.isEmpty(queryField.field()))) {
 						dbFieldName=convertFieldName(queryField.field());
 					}
-					String operator="";
-					if(queryField!=null&&(!StringUtil.isEmpty(queryField.operator()))) {
+					SqlOperator operator=SqlOperator.EQ;
+					if(queryField!=null) {
 						operator=queryField.operator();
-					}
-					if (fieldType.equals(int[].class)||
-							fieldType.equals(short[].class)||
-							fieldType.equals(byte[].class)||
-							fieldType.equals(String[].class)) {//in or not in
-						if(fieldType.equals(int[].class)) {
-							inOrNotin(alias,operator,dbFieldName, ArrayUtils.convert((int[])value),info.orGroup);
-						}else if(fieldType.equals(short[].class)) {
-							inOrNotin(alias,operator,dbFieldName, ArrayUtils.convert((short[])value),info.orGroup);
-						}else if(fieldType.equals(byte[].class)) {
-							inOrNotin(alias,operator, dbFieldName, ArrayUtils.convert((byte[])value),info.orGroup);
-						}else if(fieldType.equals(String[].class)) {
-							inOrNotin(alias,operator, dbFieldName, ArrayUtils.convert((String[])value),info.orGroup);
-						}
-						continue;
-					}else if (StringUtil.isEmpty(operator)) {
-						if(fieldType.equals(String.class)) {//字符串默认like
-							operator="like";
-						}else {
-							operator="=";
-						}
 					}
 					where(alias,dbFieldName,operator,value,info.orGroup);
 				}
@@ -569,10 +527,13 @@ public class SelectProvider extends SqlProvider{
 		}
 	}
 	public static boolean preParseSql(String sql) {
-		Pattern p=Pattern.compile("\\#\\{[a-zA-Z_$][a-zA-Z0-9_$]*\\}");
-		Matcher m = p.matcher(sql);
-		if(m.find()) { 
-		    return true;
+		String[] regexs= {"\\#\\{[a-zA-Z_$][a-zA-Z0-9_$]*\\}","\\$\\{[a-zA-Z_$][a-zA-Z0-9_$]*\\}"};
+		for (String regex : regexs) {
+			Pattern p=Pattern.compile(regex);
+			Matcher m = p.matcher(sql);
+			if(m.find()) { 
+			    return true;
+			}
 		}
 		return false;
 	}
