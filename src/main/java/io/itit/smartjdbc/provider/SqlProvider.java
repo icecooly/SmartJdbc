@@ -18,7 +18,7 @@ import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.annotations.Entity;
-import io.itit.smartjdbc.annotations.EntinyField;
+import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.PrimaryKey;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.DumpUtil;
@@ -153,7 +153,7 @@ public abstract class SqlProvider {
 		if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
 			return false;
 		}
-		EntinyField entityField=field.getAnnotation(EntinyField.class);
+		EntityField entityField=field.getAnnotation(EntityField.class);
 		if(entityField!=null) {
 			return entityField.persistent();
 		}

@@ -11,7 +11,7 @@ import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.annotations.EntinyField;
+import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.JSONUtil;
 
@@ -64,7 +64,7 @@ public class UpdateProvider extends SqlProvider{
 			if(!isPersistentField(f)) {
 				continue;
 			}
-			EntinyField entityField=f.getAnnotation(EntinyField.class);
+			EntityField entityField=f.getAnnotation(EntityField.class);
 			if(entityField!=null&&entityField.autoIncrement()) {
 				continue;
 			}

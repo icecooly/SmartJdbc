@@ -25,7 +25,7 @@ import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.QueryWhere.Where;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.annotations.EntinyField;
+import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
@@ -668,7 +668,7 @@ public class SelectProvider extends SqlProvider{
 			if(excludeFields.contains(field.getName())){
 				continue;
 			}	
-			EntinyField entityField = field.getAnnotation(EntinyField.class);
+			EntityField entityField = field.getAnnotation(EntityField.class);
 			if(entityField!=null&&entityField.ignoreWhenSelect()) {
 				continue;
 			}
@@ -744,7 +744,7 @@ public class SelectProvider extends SqlProvider{
 		}
 	}
 	//
-	protected void addSelect(String tableAlias,Field field,EntinyField entityField) {
+	protected void addSelect(String tableAlias,Field field,EntityField entityField) {
 		String selectField=field.getName();
 		String asField=null;
 		if(!StringUtil.isEmpty(entityField.field())) {

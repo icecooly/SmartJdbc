@@ -1,7 +1,7 @@
 package test.entity.info;
 
 import io.itit.smartjdbc.annotations.Entity;
-import io.itit.smartjdbc.annotations.EntinyField;
+import io.itit.smartjdbc.annotations.EntityField;
 
 /**
  * 
@@ -13,6 +13,6 @@ public class UserStat {
 
 	public int gender;
 
-	@EntinyField(statFunc="count",field="id")
+	@EntityField(statFunc="count",field="id")
 	public int num;
 }

@@ -3,7 +3,7 @@ package test.entity;
 import java.util.Date;
 import java.util.List;
 
-import io.itit.smartjdbc.annotations.EntinyField;
+import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
 /**
@@ -47,6 +47,6 @@ public class User extends BaseEntity{
 	@ForeignKey(entityClass=User.class)
 	public int updateUserId;
 	
-	@EntinyField(foreignKeyFields="departmentId",field="name",persistent = false)
+	@EntityField(foreignKeyFields="departmentId",field="name",persistent = false)
 	public String departmentName;
 }

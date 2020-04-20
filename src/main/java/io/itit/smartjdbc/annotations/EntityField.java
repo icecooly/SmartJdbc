@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)  
 @Documented
 @Inherited  
-public @interface EntinyField {
+public @interface EntityField {
 	
 	/**字段注释*/
 	String comment() default "";
