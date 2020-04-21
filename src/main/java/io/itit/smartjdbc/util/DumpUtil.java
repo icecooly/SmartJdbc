@@ -13,6 +13,7 @@ public class DumpUtil {
 		if(o==null){
 			return "<NULL>";
 		}
-		return JSON.toJSONString(o,SerializerFeature.PrettyFormat);
+		return JSON.toJSONString(o,SerializerFeature.PrettyFormat,
+				SerializerFeature.WriteDateUseDateFormat);
 	}
 }
