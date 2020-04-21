@@ -19,7 +19,7 @@ public class Query<T> {
 	public int pageSize;
 	
 	@QueryField(ingore=true)
-	public LinkedHashMap<String,OrderBy> orderBys;
+	public LinkedHashMap<String,OrderBy> orderBys;//<userName,DESC>
 	//
 	public static Integer defaultPageSize=20;
 	//

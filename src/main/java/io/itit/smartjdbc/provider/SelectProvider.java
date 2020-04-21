@@ -636,6 +636,10 @@ public class SelectProvider extends SqlProvider{
 		}
 		for (Map.Entry<String,OrderBy> entry : query.orderBys.entrySet()) {
 			String fieldName=entry.getKey();
+			if(fieldName==null) {
+				continue;
+			}
+			fieldName=StringUtil.replaceBlank(fieldName);
 			OrderBy orderBy=entry.getValue();
 			String dbField=Config.convertFieldName(fieldName);
 			if(orderBy.equals(OrderBy.ASC)) {
