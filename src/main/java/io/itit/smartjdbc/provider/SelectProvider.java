@@ -32,6 +32,9 @@ import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.LeftJoin;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
+import io.itit.smartjdbc.cache.Caches;
+import io.itit.smartjdbc.cache.EntityFieldInfo;
+import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.enums.OrderBy;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.ClassUtils;
@@ -265,29 +268,18 @@ public class SelectProvider extends SqlProvider{
 		return this;
 	}
 	//
-	protected List<Field> getQueryFields(Query<?> query){
-		List<Field> fieldList=new ArrayList<>();
-		List<Field> fields = ClassUtils.getFieldList(query.getClass());
-		for (Field field : fields) {
+	protected List<io.itit.smartjdbc.cache.QueryFieldInfo> getQueryFields(Query<?> query){
+		List<io.itit.smartjdbc.cache.QueryFieldInfo> fieldList=new ArrayList<>();
+		io.itit.smartjdbc.cache.QueryInfo info=Caches.getQueryInfo(query.getClass());
+		for (io.itit.smartjdbc.cache.QueryFieldInfo fieldInfo : info.fieldList) {
 			try {
-				if (Modifier.isStatic(field.getModifiers()) || 
-						Modifier.isFinal(field.getModifiers())) {
-					continue;
-				}
-				if(field.getType().equals(int.class)&&field.getName().endsWith("Sort")) {//ingore Sort Field
-					continue;
-				}
-				Class<?> fieldType = field.getType();
+				Field field=fieldInfo.field;
 				Object reallyValue = field.get(query);
-				if (reallyValue == null
-						|| (fieldType.equals(String.class) && StringUtil.isEmpty((String) reallyValue))) {
+				if (reallyValue == null) {
 					continue;
 				}
-				QueryField queryField = field.getAnnotation(QueryField.class);
-				if (queryField!= null && queryField.ingore()) {
-					continue;
-				}
-				fieldList.add(field);
+				
+				fieldList.add(fieldInfo);
 			}catch (Exception e) {
 				logger.error(e.getMessage(),e);
 				throw new IllegalArgumentException(e);
@@ -317,13 +309,13 @@ public class SelectProvider extends SqlProvider{
 		if(query==null) {
 			return map;
 		}
-		List<Field> fields=getQueryFields(query);
+		List<io.itit.smartjdbc.cache.QueryFieldInfo> fieldInfos=getQueryFields(query);
 		int index = 1;
 		innerJoinFieldAliasMap=new HashMap<>();
-		for (Field field : fields) {
-			InnerJoin innerJoin=field.getAnnotation(InnerJoin.class);
-			InnerJoins innerJoins=field.getAnnotation(InnerJoins.class);
-			QueryField queryField=field.getAnnotation(QueryField.class);
+		for (io.itit.smartjdbc.cache.QueryFieldInfo fieldInfo : fieldInfos) {
+			InnerJoin innerJoin=fieldInfo.innerJoin;
+			InnerJoins innerJoins=fieldInfo.innerJoins;
+			QueryField queryField=fieldInfo.queryField;
 			String foreignKeyFields="";
 			if(queryField!=null) {
 				foreignKeyFields=queryField.foreignKeyFields();
@@ -367,7 +359,7 @@ public class SelectProvider extends SqlProvider{
 					table1=join.table2;
 					table1Alias=join.table2Alias;
 				}
-				innerJoinFieldAliasMap.put(field.getName(), table1Alias);
+				innerJoinFieldAliasMap.put(fieldInfo.fieldName, table1Alias);
 			}else if(!StringUtil.isEmpty(foreignKeyFields)) {
 				String[] foreignKeyIds=foreignKeyFields.split(",");
 				Class<?> table1=entityClass;
@@ -406,7 +398,7 @@ public class SelectProvider extends SqlProvider{
 					table1=table2;
 					table1Alias=join.table2Alias;
 				}
-				innerJoinFieldAliasMap.put(field.getName(), table1Alias);
+				innerJoinFieldAliasMap.put(fieldInfo.fieldName, table1Alias);
 			}else {
 				continue;
 			}
@@ -661,8 +653,9 @@ public class SelectProvider extends SqlProvider{
 	protected void buildSelectFields(){
 		int index=1;
 		Map<String, Join> map = new LinkedHashMap<>();
-		List<Field> fields=ClassUtils.getFieldList(entityClass);
-		for (Field field : fields) {
+		EntityInfo info=Caches.getEntityInfo(entityClass);
+		for (EntityFieldInfo fieldInfo : info.fieldList) {
+			Field field=fieldInfo.field;
 			if (Modifier.isStatic(field.getModifiers())|| Modifier.isFinal(field.getModifiers())) {
 				continue;
 			}
@@ -672,7 +665,7 @@ public class SelectProvider extends SqlProvider{
 			if(excludeFields.contains(field.getName())){
 				continue;
 			}	
-			EntityField entityField = field.getAnnotation(EntityField.class);
+			EntityField entityField = fieldInfo.entityField;
 			if(entityField!=null&&entityField.ignoreWhenSelect()) {
 				continue;
 			}
@@ -687,7 +680,7 @@ public class SelectProvider extends SqlProvider{
 				reallyName=entityField.field();
 			}
 			//
-			LeftJoin leftJoin=field.getAnnotation(LeftJoin.class);
+			LeftJoin leftJoin=fieldInfo.leftJoin;
 			if(leftJoin!=null) {
 				Join join=createLeftJoin(field.getName(),MAIN_TABLE_ALIAS,"l"+(index++),
 						entityClass,leftJoin.table2(),leftJoin.table1Field(),leftJoin.table2Field());
