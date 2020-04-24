@@ -8,7 +8,7 @@ import io.itit.smartjdbc.annotations.ForeignKey;
  * @author skydu
  *
  */
-@Entity(entityClass=ArticleUserLike.class)
+@Entity(tableName = "t_article_user_like")
 public class ArticleUserLike extends BaseEntity{
 	//
 	@ForeignKey(entityClass=Article.class)

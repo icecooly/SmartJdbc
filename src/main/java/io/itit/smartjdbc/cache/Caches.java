@@ -15,7 +15,9 @@ import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.LeftJoin;
 import io.itit.smartjdbc.annotations.QueryField;
+import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 import io.itit.smartjdbc.util.ClassUtils;
+import io.itit.smartjdbc.util.StringUtil;
 
 /**
  * 
@@ -81,15 +83,22 @@ public class Caches {
 				continue;
 			}
 			QueryField queryField = field.getAnnotation(QueryField.class);
-			if (queryField== null|| queryField.ingore()) {
+			if (queryField== null) {
 				continue;
 			}
 			QueryFieldInfo fieldInfo=new QueryFieldInfo();
 			fieldInfo.field=field;
+			fieldInfo.fieldType=field.getType();
 			fieldInfo.fieldName=field.getName();
 			fieldInfo.queryField=field.getAnnotation(QueryField.class);
 			fieldInfo.innerJoin=field.getAnnotation(InnerJoin.class);
 			fieldInfo.innerJoins=field.getAnnotation(InnerJoins.class);
+			if (fieldInfo.queryField != null) {
+				OrGroup orGroup=queryField.orGroup();
+				if(!StringUtil.isEmpty(orGroup.group())) {
+					fieldInfo.orGroup=queryField.orGroup();
+				}
+			}
 			fieldList.add(fieldInfo);
 		}
 		info.fieldList=fieldList;

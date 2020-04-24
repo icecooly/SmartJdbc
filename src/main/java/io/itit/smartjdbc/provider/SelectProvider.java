@@ -19,8 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.Query;
-import io.itit.smartjdbc.QueryFieldInfo;
-import io.itit.smartjdbc.QueryInfo;
 import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.QueryWhere.Where;
 import io.itit.smartjdbc.SmartJdbcException;
@@ -35,9 +33,10 @@ import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 import io.itit.smartjdbc.cache.Caches;
 import io.itit.smartjdbc.cache.EntityFieldInfo;
 import io.itit.smartjdbc.cache.EntityInfo;
+import io.itit.smartjdbc.cache.QueryFieldInfo;
+import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderBy;
 import io.itit.smartjdbc.enums.SqlOperator;
-import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.StringUtil;
 
 /**
@@ -268,10 +267,10 @@ public class SelectProvider extends SqlProvider{
 		return this;
 	}
 	//
-	protected List<io.itit.smartjdbc.cache.QueryFieldInfo> getQueryFields(Query<?> query){
-		List<io.itit.smartjdbc.cache.QueryFieldInfo> fieldList=new ArrayList<>();
-		io.itit.smartjdbc.cache.QueryInfo info=Caches.getQueryInfo(query.getClass());
-		for (io.itit.smartjdbc.cache.QueryFieldInfo fieldInfo : info.fieldList) {
+	protected List<QueryFieldInfo> getQueryFields(Query<?> query){
+		List<QueryFieldInfo> fieldList=new ArrayList<>();
+		QueryInfo info=Caches.getQueryInfo(query.getClass());
+		for (QueryFieldInfo fieldInfo : info.fieldList) {
 			try {
 				Field field=fieldInfo.field;
 				Object reallyValue = field.get(query);
@@ -309,10 +308,10 @@ public class SelectProvider extends SqlProvider{
 		if(query==null) {
 			return map;
 		}
-		List<io.itit.smartjdbc.cache.QueryFieldInfo> fieldInfos=getQueryFields(query);
+		List<QueryFieldInfo> fieldInfos=getQueryFields(query);
 		int index = 1;
 		innerJoinFieldAliasMap=new HashMap<>();
-		for (io.itit.smartjdbc.cache.QueryFieldInfo fieldInfo : fieldInfos) {
+		for (QueryFieldInfo fieldInfo : fieldInfos) {
 			InnerJoin innerJoin=fieldInfo.innerJoin;
 			InnerJoins innerJoins=fieldInfo.innerJoins;
 			QueryField queryField=fieldInfo.queryField;
@@ -424,44 +423,8 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected QueryInfo createQueryInfo(Query<?> query){
-		List<Field> fields = ClassUtils.getFieldList(query.getClass());
-		QueryInfo info=new QueryInfo();
-		for (Field field : fields) {
-			try {
-				if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
-					continue;
-				}
-				if(field.getType().equals(int.class)&&field.getName().endsWith("Sort")) {
-					continue;
-				}
-				Class<?> fieldType = field.getType();
-				Object reallyValue = field.get(query);
-				if (reallyValue == null
-						|| (fieldType.equals(String.class) && StringUtil.isEmpty((String) reallyValue))) {
-					continue;
-				}
-				QueryField queryField = field.getAnnotation(QueryField.class);
-				if (queryField != null && queryField.ingore()) {
-					continue;
-				}
-				QueryFieldInfo fieldInfo=new QueryFieldInfo();
-				fieldInfo.fieldType=fieldType;
-				fieldInfo.value=reallyValue;
-				fieldInfo.queryField=queryField;
-				fieldInfo.field=field;
-				if (queryField != null) {
-					OrGroup orGroup=queryField.orGroup();
-					if(!StringUtil.isEmpty(orGroup.group())) {
-						fieldInfo.orGroup=queryField.orGroup();
-					}
-				}
-				info.fields.add(fieldInfo);
-			}catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				throw new IllegalArgumentException(e.getMessage());
-			}
-		}
-		return info;
+		QueryInfo queryInfo = Caches.getQueryInfo(query.getClass());
+		return queryInfo;
 	}
 	/**
 	 * 
@@ -473,7 +436,10 @@ public class SelectProvider extends SqlProvider{
 		}
 		QueryInfo queryInfo=createQueryInfo(q);
 		Map<String,Object> paraMap=new HashMap<>();
-		List<QueryFieldInfo> fields=queryInfo.fields;
+		if(!q.params.isEmpty()) {
+			paraMap.putAll(q.params);
+		}
+		List<QueryFieldInfo> fields=queryInfo.fieldList;
 		for (QueryFieldInfo info : fields) {
 			Field field=info.field;
 			try {
@@ -488,6 +454,9 @@ public class SelectProvider extends SqlProvider{
 			Field field=info.field;
 			try {
 				Object value=field.get(q);
+				if(value==null) {
+					continue;
+				}
 				QueryField queryField=field.getAnnotation(QueryField.class);
 				String alias = MAIN_TABLE_ALIAS;
 				InnerJoins innerJoins=field.getAnnotation(InnerJoins.class);

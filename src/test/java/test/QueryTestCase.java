@@ -1,6 +1,5 @@
 package test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +21,11 @@ import test.entity.query.UserQuery;
  * @author skydu
  *
  */
-public class DAOTestCase extends BaseTestCase{
+public class QueryTestCase extends BaseTestCase{
 	//
 	BizDAO dao;
 	//
-	public DAOTestCase() {
+	public QueryTestCase() {
 		dao=new BizDAO();
 		Config.addDAOInterceptor(new DAOInterceptor() {
 			@Override
@@ -59,17 +58,6 @@ public class DAOTestCase extends BaseTestCase{
 	static {
 	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 	}
-	//
-	/**新增用户*/
-	public void testAddUser() {
-		User user=new User();
-		user.name="张三";
-		user.userName="zhangsan";
-		user.roleIdList=Arrays.asList(1,2,3);
-		user.id=dao.add(user);
-		System.out.println(user.id);
-	}
-	
 	/**
 	 * 
 	 */
@@ -170,8 +158,8 @@ public class DAOTestCase extends BaseTestCase{
 	public void testQueryStatusOrRoleId() {
 		UserQuery query=new UserQuery();
 		query.statusOrRoleId=true;
-		query.orStatus=1;
-		query.orRoleId=1;
+		query.param("orStatus",1);
+		query.param("orRoleId",1);
 		List<User> list=dao.getList(query);
 		System.out.println(DumpUtil.dump(list));
 	}
@@ -226,44 +214,11 @@ public class DAOTestCase extends BaseTestCase{
 				new SqlParam("id", 1));
 		System.out.println(count);
 	}
-	
-	public void testUpdateUser() {
-		User user=dao.getById(User.class, 1);
-		user.gender=User.GENDER_男;
-		dao.update(user);
-	}
-	
-	public void testUpdateUser2() {
-		dao.executeUpdate("update t_user set name='关羽0' where id=?",1);
-		dao.executeUpdate("update t_user set name='关羽2' where id=#{id}",new SqlParam("id", 1));
-	}
-	
-	/**删除用户*/
-	public void testDeleteUser() {
-		int count=dao.delete(User.class, QueryWhere.create().where("id", 3));
-		System.out.println(count);
-	}
-	//
-	/**添加文章*/
-	public void testAddArticle() throws IOException{
-		Article bean=new Article();
-		bean.title="桑切斯遭孤立?队友吃饭他加练 为融入曼联拼了";
-		bean.content="上周，有关桑切斯的负面消息很多，英媒体爆料他在曼联阵中独来独往、总是一个人吃饭，"
-				+ "无法融入到集体中，还有媒体称桑切斯甚至在比赛中遭到了队友的当面批评，"
-				+ "这些让外界对桑切斯在曼联的未来表示了担忧。不过，英媒体《每日镜报》"
-				+ "今日透露桑切斯在曼联并没有被孤立，智利人也没有刻意躲避队友，"
-				+ "他之所以经常一个人吃饭竟是这样的原因。";
-		bean.createUserId=1;
-		bean.updateUserId=1;
-		bean.status=Article.STATUS_待审核;
-		int id=dao.add(bean);
-		System.out.println(id);
-	}
 	//
 	/**
 	 * 查询文章详情
 	 */
-	public void testgetArticle() {
+	public void testGetArticle() {
 		Article info=dao.getById(Article.class,1);
 		System.out.println(DumpUtil.dump(info));
 	}
@@ -280,17 +235,16 @@ public class DAOTestCase extends BaseTestCase{
 	}
 	//
 	public void testSum() {
-		Long sum=dao.sum(User.class,Long.class, "roleId", QueryWhere.create());
+		Long sum=dao.sum(User.class,Long.class, "articleNum", QueryWhere.create());
 		System.out.println("sum:"+sum);
 	}
 	
 	public void testSumByQuery() {
 		UserQuery query=new UserQuery();
 		query.userName="liu";
-		Long sum=dao.sum(query,Long.class, "roleId");
+		Long sum=dao.sum(query,Long.class, "articleNum");
 		System.out.println("sum:"+sum);
 	}
-
 	//
 	public void testQueryUserList() {
 		UserQuery query=new UserQuery();

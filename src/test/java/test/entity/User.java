@@ -39,6 +39,8 @@ public class User extends BaseEntity{
 	/**最后登录时间*/
 	public Date lastLoginTime;
 	
+	public int articleNum;
+	
 	/**创建人*/
 	@ForeignKey(entityClass=User.class)
 	public int createUserId;

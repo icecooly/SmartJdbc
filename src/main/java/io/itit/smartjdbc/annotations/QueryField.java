@@ -31,9 +31,6 @@ public @interface QueryField {
 	/** 自定义查询sql */
 	public String whereSql() default "";//usage: (name like #{nameOrUserName} or userName like #{nameOrUserName})
 
-	/** 不作为查询条件 */
-	public boolean ingore() default false;
-
 	/**和表结构映射的字段名 默认就是自己;;如果有多个字段，用,分隔，通过or组合起来*/
 	public String field() default "";
 	

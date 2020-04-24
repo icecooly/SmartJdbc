@@ -1,8 +1,9 @@
 package io.itit.smartjdbc;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
-import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.OrderBy;
 
 /**
@@ -12,14 +13,13 @@ import io.itit.smartjdbc.enums.OrderBy;
  */
 public class Query<T> {
 	//
-	@QueryField(ingore=true)
 	public int pageIndex;
 	
-	@QueryField(ingore=true)
 	public int pageSize;
 	
-	@QueryField(ingore=true)
 	public LinkedHashMap<String,OrderBy> orderBys;//<javaField,DESC> 
+	
+	public Map<String,Object> params;
 	//
 	public static Integer defaultPageSize=20;
 	//
@@ -30,6 +30,7 @@ public class Query<T> {
 			pageSize=defaultPageSize;
 		}
 		orderBys=new LinkedHashMap<>();
+		params=new HashMap<>();
 	}
 	//
 	public int getStartPageIndex(){
@@ -38,6 +39,11 @@ public class Query<T> {
 	//
 	public Query<?> orderBy(String javaField,OrderBy orderby) {
 		orderBys.put(javaField, orderby);
+		return this;
+	}
+	//
+	public Query<?> param(String key,Object value){
+		params.put(key, value);
 		return this;
 	}
 }
