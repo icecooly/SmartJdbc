@@ -41,9 +41,9 @@ public class ArticleQuery extends Query<Article>{
 	@QueryField(field="userId")
 	public Integer likeUserId;
 	
-	@QueryField(orGroup=@OrGroup(group="123"),field="status")
+	@QueryField(orGroup=@OrGroup(group="1"),field="status")
 	public int[] orStatusList;
 
-	@QueryField(orGroup=@OrGroup(group="123"),field="createUserId")
+	@QueryField(orGroup=@OrGroup(group="1"),field="createUserId")
 	public int orCreateUserId;
 }
