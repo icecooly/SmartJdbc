@@ -31,7 +31,7 @@ public @interface QueryField {
 	/** 自定义查询sql */
 	public String whereSql() default "";//usage: (name like #{nameOrUserName} or userName like #{nameOrUserName})
 
-	/**和表结构映射的字段名 默认就是自己;;如果有多个字段，用,分隔，通过or组合起来*/
+	/**和表结构映射的字段名 默认就是自己;如果有多个字段，用,分隔，通过or组合起来*/
 	public String field() default "";
 	
 	/**别的表的关联字段  必须填对应的外键字段 可以有多个按照顺序依次  逗号分隔*/
