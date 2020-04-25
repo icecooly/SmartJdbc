@@ -172,20 +172,7 @@ public class SmartJdbcConfig implements TransactionManagementConfigurer {
 		SqlSessionFactory sessionFactory=new SqlSessionFactory();
 		sessionFactory.setDataSource(dataSource);
 		ConnectionManager.setTransactionManager(sessionFactory);
-		Config.setTableNameFunc(clazz->{return "t"+convertFieldName(clazz.getSimpleName());});//表结构映射User->t_user
-		Config.setConvertFieldNameFunc(this::convertFieldName);//字段映射userName->user_name
 		Config.addSqlInterceptor(sessionFactory);
-	}
-	
-	protected  String convertFieldName(String name) {
-		StringBuffer result = new StringBuffer();
-		for (char c : name.toCharArray()) {
-			if (Character.isUpperCase(c)) {
-				result.append("_");
-			}
-			result.append(Character.toLowerCase(c));
-		}
-		return result.toString();
 	}
 	
 	@Bean(name="annotationDrivenTransactionManager")
