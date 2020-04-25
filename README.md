@@ -176,19 +176,24 @@ public class UserQuery extends Query<User>{
 	private String departmentName;
 }
 ```
-### 4.4.1 where操作符 eq ne lt le gt ge
+### 4.4.1 where操作符 eq、 ne、 lt、 le、 gt、 ge
 
 ```java
 /**查询姓名等于‘张三’的用户*/
 dao.getEntity(User.class,QueryWhere.create().eq("name", "张三"));
+
 /**查询姓名不等于‘张三’的用户*/
 dao.getEntity(User.class,QueryWhere.create().ne("name", "张三"));
+
 /**查询年龄小于25岁的用户*/
 dao.getEntity(User.class,QueryWhere.create().lt("age", 25));
+
 /**查询年龄小于等于25岁的用户*/
 dao.getEntity(User.class,QueryWhere.create().le("age", 25));
+
 /**查询年龄大于25岁的用户*/
 dao.getEntity(User.class,QueryWhere.create().gt("age", 25));
+
 /**查询年龄大于等于25岁的用户*/
 dao.getEntity(User.class,QueryWhere.create().ge("age", 25));
 ```
@@ -215,7 +220,7 @@ dao.getEntity(User.class,QueryWhere.create().notLikeLeft("name","张"));
 dao.getEntity(User.class,QueryWhere.create().notLikeRight("name","张"));
 ```
 
-### 4.4.3 where操作符 in,not in
+### 4.4.3 where操作符 in、not in
 
 ```java
 dao.getEntity(User.class,QueryWhere.create().in("status",Arrays.asList(1,2,3)));
@@ -238,16 +243,22 @@ dao.getEntity(User.class,QueryWhere.create().notin("name",new String[] {"张三"
 
 ```java
 dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=?","张三"));
+
 dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='张三'"));
+
 dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=#{name}",
 				new SqlParam("name", "张三")));
+				
 dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=${name}",
 				new SqlParam("name", "张三")));
+				
 dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=${status}",
 				new SqlParam("status", 1)));
+				
 dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=${status} or a.name like concat('%',#{name},'%')",
 				new SqlParam("status", 1),
 				new SqlParam("name", "zhang")));
+				
 dao.getEntity(User.class,QueryWhere.create().whereSql("a.status in ${status} or a.name like concat('%',#{name},'%')",
 				new SqlParam("status", Arrays.asList(1,2,3)),
 				new SqlParam("name", "zhang")));
