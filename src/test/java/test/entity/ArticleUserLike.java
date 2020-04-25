@@ -1,7 +1,11 @@
 package test.entity;
 
+import java.util.Date;
+import java.util.List;
+
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -10,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Entity(tableName = "t_article_user_like")
-@Slf4j
+@Data
 public class ArticleUserLike extends BaseEntity{
 	//
 	@ForeignKey(entityClass=Article.class)

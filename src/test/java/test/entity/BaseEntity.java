@@ -1,8 +1,10 @@
 package test.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import io.itit.smartjdbc.annotations.PrimaryKey;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -10,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author skydu
  *
  */
-@Slf4j
+@Data
 public abstract class BaseEntity {
 	
 	@PrimaryKey

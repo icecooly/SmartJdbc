@@ -3,17 +3,17 @@ package test.entity;
 import java.util.Date;
 import java.util.List;
 
-import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.Entity;
+import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Data;
 /**
  *用户
  * @author skydu
  *
  */
 @Entity(tableName = "t_user")
-@Slf4j
+@Data
 public class User extends BaseEntity{
 	
 	public static final int STATUS_在职=1;

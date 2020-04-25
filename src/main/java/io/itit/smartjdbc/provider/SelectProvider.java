@@ -663,7 +663,7 @@ public class SelectProvider extends SqlProvider{
 				for (String id : foreignKeyIds) {
 					Field foreignKeyField=null;
 					try {
-						foreignKeyField=table1.getField(id);
+						foreignKeyField=table1.getDeclaredField(id);
 					} catch (Exception e) {
 						logger.error(e.getMessage(),e);
 						throw new IllegalArgumentException(e.getMessage()+"/"+table1.getSimpleName());

@@ -1,6 +1,10 @@
 package test.entity;
 
+import java.util.Date;
+import java.util.List;
+
 import io.itit.smartjdbc.annotations.Entity;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -9,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Entity(tableName = "t_department")
-@Slf4j
+@Data
 public class Department extends BaseEntity{
 
 	private String name;
