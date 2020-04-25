@@ -89,7 +89,7 @@ dao.deleteById(User.class, 1);
 ## 3.2 基本查询
 
 ```java
-除了基本数据类型会自动映射外，复杂数据类型List<对象>,Set<对象>等都可以自动映射
+除了基本数据类型会自动映射外,复杂数据类型List<对象>,Set<对象>等都可以自动映射
 User user=dao.getById(User.class, 1);
 User user=dao.getEntity(User.class,QueryWhere.create().where("userName", "zhangsan"));
 result:{
