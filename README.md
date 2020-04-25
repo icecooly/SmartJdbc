@@ -153,8 +153,7 @@ result:{
 
 ```java
 //查询姓名包含‘王’的用户列表
-List<User> list=dao.getList(User.class, 
-QueryWhere.create().where("name",SqlOperator.LIKE,"王"));
+List<User> list=dao.getList(User.class, QueryWhere.create().where("name",SqlOperator.LIKE,"王"));
 System.out.println(DumpUtil.dump(list));
 ```
 
