@@ -157,7 +157,7 @@ List<User> list=dao.getList(User.class, QueryWhere.create().where("name",SqlOper
 System.out.println(DumpUtil.dump(list));
 ```
 
-## 4.4 复杂查询(如果数据库设计是三范式，不冗余存储数据，查询时可以自动join，不用手工写sql)
+## 4.4 复杂查询
 
 ```java
 @Data
