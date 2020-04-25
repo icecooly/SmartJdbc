@@ -38,7 +38,7 @@ public class UserQuery extends Query<User>{
 	@QueryField(whereSql="json_contains(a.role_id_list,'${roleId}')")
 	private Integer roleId; 
 	
-	@QueryField(whereSql="a.status=#{orStatus} or json_contains(a.role_id_list,#{orRoleId})")
+	@QueryField(whereSql="a.status=#{orStatus} or json_contains(a.role_id_list,'${orRoleId}')")
 	private Boolean statusOrRoleId;
 	
 	@InnerJoin(table2 = User.class,table2Alias = "user",table1Fields ={"createUserId"},table2Fields ={"id"})
@@ -46,11 +46,11 @@ public class UserQuery extends Query<User>{
 	private String createUserName;
 	
 	@QueryField(foreignKeyFields = "departmentId",field = "name",operator = SqlOperator.LIKE)
-	private String departmentName;
+	private String departmentName2;
 	
 	@InnerJoin(table2 = Department.class,table2Alias = "dep",table1Fields ={"departmentId"},table2Fields ={"id"})
 	@QueryField(field = "name",operator = SqlOperator.LIKE)
-	private String departmentName2;
+	private String departmentName;
 	
 	@QueryField(alias = "dep",field = "status")
 	private Integer departmentStatus;

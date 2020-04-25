@@ -74,7 +74,7 @@ public class AddUpdateTestCase extends BaseTestCase{
 	public void testUpdateUser2() {
 		dao.executeUpdate("update t_user set name='王五' where id=?",2);
 		dao.executeUpdate("update t_user set name='王五' where id=#{id}",
-				new SqlParam("id", 1));
+				new SqlParam("id", 2));
 	}
 	
 	//
