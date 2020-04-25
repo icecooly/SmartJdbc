@@ -30,12 +30,12 @@ public class User extends BaseEntity{
 	
 	private String mobileNo;
 	
-	private int gender;
+	private Integer gender;
 	
-	private int status;
+	private Integer status;
 	
 	@ForeignKey(entityClass=Department.class)
-	private int departmentId;
+	private Integer departmentId;
 	
 	/**角色列表*/
 	private List<Integer> roleIdList;
@@ -43,15 +43,15 @@ public class User extends BaseEntity{
 	/**最后登录时间*/
 	private Date lastLoginTime;
 	
-	private int articleNum;
+	private Integer articleNum;
 	
 	/**创建人*/
 	@ForeignKey(entityClass=User.class)
-	private int createUserId;
+	private Integer createUserId;
 	
 	/**最后更新人*/
 	@ForeignKey(entityClass=User.class)
-	private int updateUserId;
+	private Integer updateUserId;
 	
 	@EntityField(foreignKeyFields="departmentId",field="name",persistent = false)
 	private String departmentName;

@@ -2,11 +2,7 @@ package test;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
 
-import io.itit.smartjdbc.Config;
-import io.itit.smartjdbc.DAOInterceptor;
-import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
 import test.dao.BizDAO;
 import test.entity.Article;
@@ -19,68 +15,68 @@ import test.entity.User;
  */
 public class AddUpdateTestCase extends BaseTestCase{
 	//
+	static {
+	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+	}
+	//
 	BizDAO dao;
 	//
 	public AddUpdateTestCase() {
 		dao=new BizDAO();
-		Config.addDAOInterceptor(new DAOInterceptor() {
-			@Override
-			public void beforeInsert(Object bean, boolean withGenerateKey,String[] excludeProperties) {
-				super.beforeInsert(bean, withGenerateKey, excludeProperties);
-				dao.setFieldValue(bean, "createTime", new Date());
-				dao.setFieldValue(bean, "updateTime", new Date());
-			}
-			//
-			@Override
-			public void beforeUpdate(Object bean, boolean excludeNull, String[] excludeProperties) {
-				super.beforeUpdate(bean, excludeNull, excludeProperties);
-				dao.setFieldValue(bean, "updateTime", new Date());
-			}
-		});
-		Config.setConvertFieldNameFunc(this::convertFieldName);
-	}
-	//
-	protected  String convertFieldName(String name) {
-		StringBuffer result = new StringBuffer();
-		for (char c : name.toCharArray()) {
-			if (Character.isUpperCase(c)) {
-				result.append("_");
-			}
-			result.append(Character.toLowerCase(c));
-		}
-		return result.toString();
-	}
-	//
-	static {
-	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 	}
 	//
 	/**新增用户*/
 	public void testAddUser() {
 		User user=new User();
-		user.setName("张三");
-		user.setUserName("zhangsan");
+		user.setName("王五");
+		user.setUserName("wangwu");
+		user.setStatus(1);
+		user.setDepartmentId(1);
 		user.setRoleIdList(Arrays.asList(1,2,3));
-		user.setId(dao.add(user));
+		user.setId((long)dao.add(user));
 		System.out.println(user.getId());
 	}
 	
+	/**
+	 * 更新所有字段
+	 */
 	public void testUpdateUser() {
-		User user=dao.getById(User.class, 1);
+		User user=dao.getById(User.class, 2);
 		user.setGender(User.GENDER_男);
+		user.setDepartmentId(2);
+		user.setStatus(2);
 		dao.update(user);
 	}
 	
-	public void testUpdateUser2() {
-		dao.executeUpdate("update t_user set name='关羽0' where id=?",1);
-		dao.executeUpdate("update t_user set name='关羽2' where id=#{id}",new SqlParam("id", 1));
+	/**
+	 * 只更新非空字段
+	 */
+	public void testUpdateExcludeNull() {
+		User user=new User();
+		user.setId(2L);
+		user.setDepartmentId(3);
+		user.setMobileNo("130000000000");
+		dao.updateExcludeNull(user);
 	}
 	
-	/**删除用户*/
-	public void testDeleteUser() {
-		int count=dao.delete(User.class, QueryWhere.create().where("id", 3));
-		System.out.println(count);
+	/**
+	 * 只更新status字段
+	 */
+	public void testUpdateUserStatus() {
+		User user=dao.getById(User.class, 2);
+		user.setStatus(3);
+		dao.updateIncludeFields(user, "status");
 	}
+	
+	/**
+	 * 
+	 */
+	public void testUpdateUser2() {
+		dao.executeUpdate("update t_user set name='王五' where id=?",2);
+		dao.executeUpdate("update t_user set name='王五' where id=#{id}",
+				new SqlParam("id", 1));
+	}
+	
 	//
 	/**添加文章*/
 	public void testAddArticle() throws IOException{

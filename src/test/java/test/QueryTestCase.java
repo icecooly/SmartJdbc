@@ -1,11 +1,8 @@
 package test;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-import io.itit.smartjdbc.Config;
-import io.itit.smartjdbc.DAOInterceptor;
 import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.enums.OrderBy;
@@ -22,42 +19,16 @@ import test.entity.query.UserQuery;
  *
  */
 public class QueryTestCase extends BaseTestCase{
+	static {
+	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+	}
 	//
 	BizDAO dao;
 	//
 	public QueryTestCase() {
 		dao=new BizDAO();
-		Config.addDAOInterceptor(new DAOInterceptor() {
-			@Override
-			public void beforeInsert(Object bean, boolean withGenerateKey,String[] excludeProperties) {
-				super.beforeInsert(bean, withGenerateKey, excludeProperties);
-				dao.setFieldValue(bean, "createTime", new Date());
-				dao.setFieldValue(bean, "updateTime", new Date());
-			}
-			//
-			@Override
-			public void beforeUpdate(Object bean, boolean excludeNull, String[] excludeProperties) {
-				super.beforeUpdate(bean, excludeNull, excludeProperties);
-				dao.setFieldValue(bean, "updateTime", new Date());
-			}
-		});
-		Config.setConvertFieldNameFunc(this::convertFieldName);
 	}
 	//
-	protected  String convertFieldName(String name) {
-		StringBuffer result = new StringBuffer();
-		for (char c : name.toCharArray()) {
-			if (Character.isUpperCase(c)) {
-				result.append("_");
-			}
-			result.append(Character.toLowerCase(c));
-		}
-		return result.toString();
-	}
-	//
-	static {
-	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
-	}
 	/**
 	 * 
 	 */
@@ -68,9 +39,9 @@ public class QueryTestCase extends BaseTestCase{
 	}
 	
 	public void testQuery() {
-		dao.getEntity(User.class,QueryWhere.create().where("user_name", "test"));
-		dao.getEntity(User.class,QueryWhere.create().eq("user_name", "test"));
-		dao.getEntity(User.class,QueryWhere.create().ne("user_name", "test"));
+		dao.getEntity(User.class,QueryWhere.create().where("user_name", "zhangsan"));
+		dao.getEntity(User.class,QueryWhere.create().eq("user_name", "zhangsan"));
+		dao.getEntity(User.class,QueryWhere.create().ne("user_name", "zhangsan"));
 		dao.getEntity(User.class,QueryWhere.create().lt("status", 1));
 		dao.getEntity(User.class,QueryWhere.create().le("status", 1));
 		dao.getEntity(User.class,QueryWhere.create().gt("status", 1));
@@ -82,11 +53,11 @@ public class QueryTestCase extends BaseTestCase{
 	 */
 	public void testQueryLike() {
 		dao.getEntity(User.class,QueryWhere.create().like("user_name","zhangsan"));
-		dao.getEntity(User.class,QueryWhere.create().likeLeft("user_name","yu"));
-		dao.getEntity(User.class,QueryWhere.create().likeRight("user_name","yu"));
+		dao.getEntity(User.class,QueryWhere.create().likeLeft("user_name","zhang"));
+		dao.getEntity(User.class,QueryWhere.create().likeRight("user_name","zhang"));
 		dao.getEntity(User.class,QueryWhere.create().notLike("user_name","zhangsan"));
-		dao.getEntity(User.class,QueryWhere.create().notLikeLeft("user_name","yu"));
-		dao.getEntity(User.class,QueryWhere.create().notLikeRight("user_name","yu"));
+		dao.getEntity(User.class,QueryWhere.create().notLikeLeft("user_name","zhang"));
+		dao.getEntity(User.class,QueryWhere.create().notLikeRight("user_name","zhang"));
 	}
 	
 	public void testQueryIn() {
@@ -118,10 +89,10 @@ public class QueryTestCase extends BaseTestCase{
 				new SqlParam("status", 1)));
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=${status} or user_name like concat('%',#{userName},'%')",
 				new SqlParam("status", 1),
-				new SqlParam("userName", "yu")));
+				new SqlParam("userName", "zhang")));
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status in ${status} or user_name like concat('%',#{userName},'%')",
 				new SqlParam("status", Arrays.asList(1,2,3)),
-				new SqlParam("userName", "yu")));
+				new SqlParam("userName", "zhang")));
 	}
 	
 	/**查询用户列表*/
@@ -265,7 +236,7 @@ public class QueryTestCase extends BaseTestCase{
 	//
 	public void testQueryUserList() {
 		UserQuery query=new UserQuery();
-		query.setNameOrUserName("关");
+		query.setNameOrUserName("张");
 		List<User> users=dao.getList(query);
 		System.out.println(DumpUtil.dump(users));
 	}

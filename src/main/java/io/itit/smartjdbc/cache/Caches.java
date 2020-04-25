@@ -3,6 +3,7 @@ package io.itit.smartjdbc.cache;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,6 +46,7 @@ public class Caches {
 		info.clazz=entityClass;
 		List<Field> fields=ClassUtils.getFieldList(entityClass);
 		List<EntityFieldInfo> fieldList=new ArrayList<>();
+		Map<String,Field> fieldMap=new HashMap<>();
 		for (Field field : fields) {
 			if (Modifier.isStatic(field.getModifiers()) || 
 					Modifier.isFinal(field.getModifiers())) {
@@ -55,8 +57,10 @@ public class Caches {
 			fieldInfo.entityField=field.getAnnotation(EntityField.class);
 			fieldInfo.leftJoin=field.getAnnotation(LeftJoin.class);
 			fieldList.add(fieldInfo);
+			fieldMap.put(field.getName(), field);
 		}
 		info.fieldList=fieldList;
+		info.fieldMap=fieldMap;
 		entityInfoMap.put(entityClass,info);
 		if(logger.isDebugEnabled()) {
 			logger.debug("createEntityInfo entityClass:{}",entityClass);

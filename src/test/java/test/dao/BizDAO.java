@@ -85,6 +85,7 @@ public class BizDAO extends SmartDAO{
 		try {
 			Field field=bean.getClass().getField(fieldName);
 			if(field!=null) {
+				field.setAccessible(true);
 				field.set(bean, value);
 			}
 		} catch (Exception e) {

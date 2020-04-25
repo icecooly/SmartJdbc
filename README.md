@@ -37,22 +37,43 @@ compile 'com.github.icecooly:SmartJdbc-Spring:1.0.1'
 # 3 例子
 
 ## 3.1 简单增删改
-
+```java
+@Data
+@Entity(tableName = "t_user")
+public class User{
+	
+	@PrimaryKey
+	private int id;
+	
+	/**用户名*/
+	private String userName;
+	
+	/**姓名*/
+	private String name;
+	
+	/**状态*/
+	private int status;
+	
+	/**角色列表*/
+	private List<Integer> roleIdList;
+	
+	/**最后登录时间*/
+	private Date lastLoginTime;
+```
 增加
 ```java
 User user=new User();
-user.name="刘备";
-user.userName="liubei";
-user.password="111111";
+user.name="张三";
+user.userName="zhangsan";
+user.roleIdList=Arrays.asList(1,2,3);//会自动转化为JSON.toString(roleIdList)
 user.id=dao.add(user);
 ```
 修改
 ```java
 User user=dao.getById(User.class, 1);
-user.name="刘备2";
-user.userName="liubei2";
-user.password="222222";
-user.id=dao.update(user);
+user.name="张三2";
+user.userName="zhangsan2";
+dao.update(user);
 ```
 删除
 ```java
@@ -63,7 +84,19 @@ dao.deleteById(User.class, 1);
 
 ```java
 User user=dao.getById(User.class, 1);
-User user=dao.getEntity(User.class,QueryWhere.create().where("userName", "test"));
+User user=dao.getEntity(User.class,QueryWhere.create().where("userName", "zhangsan"));
+result:{
+	"id":1,
+	"name":"张三",
+	"userName":"zhangsan",
+	"roleIdList":[
+		1,
+		2,
+		3
+	],
+	"createTime":"2020-04-12 12:08:43",
+	"updateTime":"2020-04-25 18:36:19",
+}
 ```
 
 ## 3.3 列表查询

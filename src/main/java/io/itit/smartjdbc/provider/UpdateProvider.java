@@ -73,6 +73,9 @@ public class UpdateProvider extends SqlProvider{
 				continue;
 			}
 			try {
+				if(!f.isAccessible()) {
+					f.setAccessible(true);
+				}
 				Object fieldValue=f.get(bean);
 				if(excludeNull&&fieldValue==null){
 					continue;
@@ -94,7 +97,7 @@ public class UpdateProvider extends SqlProvider{
 			qw=QueryWhere.create();
 			List<Field> primaryKey=getPrimaryKey(bean.getClass());
 			for (Field field : primaryKey) {
-				qw.where(convertFieldName(field.getName()),getFieldValue(bean, field.getName()));
+				qw.where(convertFieldName(field.getName()),getEntityFieldValue(bean, field.getName()));
 			}
 		}
 		WhereStatment ws=qw.whereStatement();
@@ -104,5 +107,4 @@ public class UpdateProvider extends SqlProvider{
 		}
 		return createSqlBean(sql.toString(), fieldList.toArray(new Object[fieldList.size()]));
 	}
-
 }

@@ -258,7 +258,7 @@ public abstract class BaseDAO{
 			throw new RuntimeException(e.getMessage(),e);
 		}finally {
 			if(logger.isDebugEnabled()){
-				logger.debug("query \nisException:{} \nuseTime:{}ms \nsql:{} \nparameters:{} \nobject:{}",
+				logger.debug("query \nisException:{} \nuseTime:{}ms \nsql:{} \nparameters:{} \nresult:{}",
 						isException,
 						useTime,
 						sql,
@@ -268,7 +268,7 @@ public abstract class BaseDAO{
 			afterExcute(sql, parameters);
 			DBStat.execute(sql,useTime,isException);//stat
 			if(!isException&&useTime>=SLOW_SQL_MIN_USE_TIME){
-				logger.warn("query \nisException:{} \nuseTime:{}ms \nsql:{} \nparameters:{} \nobject:{}",
+				logger.warn("query \nisException:{} \nuseTime:{}ms \nsql:{} \nparameters:{} \nresult:{}",
 						isException,
 						useTime,
 						sql,
@@ -299,7 +299,7 @@ public abstract class BaseDAO{
 			throw new RuntimeException(e.getMessage(),e);
 		}finally {
 			if(logger.isDebugEnabled()){
-				logger.debug("queryList \nisException:{} \nuseTime:{}ms \nsql:{}\nparameters:{}\nsize:{}",
+				logger.debug("queryList \nisException:{} \nuseTime:{}ms \nsql:{}\nparameters:{}\nresult:{}",
 						isException,
 						useTime,
 						sql,
@@ -310,7 +310,7 @@ public abstract class BaseDAO{
 			afterExcute(sql, parameters);
 			DBStat.execute(sql,useTime,isException);//stat
 			if(!isException&&useTime>=SLOW_SQL_MIN_USE_TIME){
-				logger.warn("queryList \nisException:{} \nuseTime:{}ms \nsql:{}\nparameters:{}\nsize:{}",
+				logger.warn("queryList \nisException:{} \nuseTime:{}ms \nsql:{}\nparameters:{}\nresult:{}",
 						isException,
 						useTime,
 						sql,

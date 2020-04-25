@@ -20,6 +20,8 @@ import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.PrimaryKey;
+import io.itit.smartjdbc.cache.Caches;
+import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.DumpUtil;
 import io.itit.smartjdbc.util.StringUtil;
@@ -101,15 +103,16 @@ public abstract class SqlProvider {
 	 * @param excludeProperties
 	 * @param type
 	 */
-	public static void checkExcludeProperties(String []excludeProperties,Class<?>type){
+	public static void checkExcludeProperties(String []excludeProperties,Class<?>entityClass){
+		EntityInfo info=Caches.getEntityInfo(entityClass);
 		for(String p:excludeProperties){
 			try {
-				if(type.getField(p)==null){	
+				if(info.fieldMap.containsKey(p)){	
 					return;
 				}
 			} catch (Exception e) {
-				throw new SmartJdbcException("can not find property:"+
-						p+" in type:"+type.getName());
+				throw new SmartJdbcException("excludeFields can not find property:"+
+						p+" in entityClass:"+entityClass.getName());
 			} 
 		}
 	}
@@ -177,10 +180,14 @@ public abstract class SqlProvider {
 	 * @param fieldName
 	 * @return
 	 */
-	public static Object getFieldValue(Object bean,String fieldName){
+	public static Object getEntityFieldValue(Object bean,String fieldName){
 		try {
-			Field field=bean.getClass().getField(fieldName);
+			EntityInfo info=Caches.getEntityInfo(bean.getClass());
+			Field field=info.fieldMap.get(fieldName);
 			if(field!=null) {
+				if(!field.isAccessible()) {
+					field.setAccessible(true);
+				}
 				return field.get(bean);
 			}
 		} catch (Exception e) {

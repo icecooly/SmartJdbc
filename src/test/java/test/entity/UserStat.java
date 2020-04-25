@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 public class UserStat {
 
-	private int gender;
+	private Integer gender;
 
 	@EntityField(statFunc="count",field="id")
-	private int num;
+	private Integer num;
 }

@@ -14,7 +14,7 @@ import lombok.Data;
 public abstract class BaseEntity {
 	
 	@PrimaryKey
-	private int id;
+	private Long id;
 	
 	private Date createTime;
 	

@@ -26,13 +26,13 @@ public class Article extends BaseEntity{
 	/**内容*/
 	private String content;
 	/**状态*/
-	private int status;
+	private Integer status;
 
 	@ForeignKey(entityClass = User.class)
-	private int createUserId;
+	private Integer createUserId;
 	
 	@ForeignKey(entityClass = User.class)
-	private int updateUserId;
+	private Integer updateUserId;
 	
 	/**创建人名称*/
 	@EntityField(foreignKeyFields="createUserId",field="name",persistent = false)

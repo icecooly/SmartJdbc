@@ -158,80 +158,87 @@ public abstract class BaseEntityDAO extends BaseDAO{
 					continue;
 				}
 			}
-			Object value = null;
-			if (fieldType.equals(String.class)) {
-				value = rs.getString(fieldName);
-			} else if (fieldType.equals(int.class)) {
-				value = rs.getInt(fieldName);
-			} else if (fieldType.equals(Integer.class)) {
-				value = (Integer) rs.getObject(fieldName);
-			} else if (fieldType.equals(short.class)) {
-				value = rs.getShort(fieldName);
-			} else if (fieldType.equals(Short.class)) {
-				value = (Short)rs.getObject(fieldName);
-			} else if (fieldType.equals(long.class)) {
-				value = rs.getLong(fieldName);
-			} else if (fieldType.equals(Long.class)) {
-				value = (Long)rs.getObject(fieldName);
-			} else if (fieldType.equals(double.class)) {
-				value = rs.getDouble(fieldName);
-			} else if (fieldType.equals(Double.class)) {
-				value = (Double)rs.getObject(fieldName);
-			} else if (fieldType.equals(float.class)) {
-				value = rs.getFloat(fieldName);
-			} else if (fieldType.equals(Float.class)) {
-				value = (Float)rs.getObject(fieldName);
-			} else if (fieldType.equals(Date.class)) {
-				value = rs.getTimestamp(fieldName);
-			} else if (fieldType.equals(boolean.class)) {
-				value = rs.getBoolean(fieldName);
-			} else if (fieldType.equals(Boolean.class)) {
-				value = (Boolean)rs.getObject(fieldName);
-			} else if (fieldType.equals(BigDecimal.class)) {
-				value = rs.getBigDecimal(fieldName);
-			}  else if (fieldType.equals(byte[].class)) {
-				Blob bb = rs.getBlob(fieldName);
-				if (bb != null) {
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					IOUtil.copy(bb.getBinaryStream(), bos);
-					value = bos.toByteArray();
-				}
-			} else {
-				if(columnNames.contains(fieldName)) {
-					String strValue=rs.getString(fieldName);
-					if(strValue!=null){
-						Type genericType=f.getGenericType();
-						if ( genericType instanceof ParameterizedType ) {  
-							 Type[] typeArguments = ((ParameterizedType)genericType).getActualTypeArguments();  
-							 if(typeArguments.length==1) {
-								 if(List.class.isAssignableFrom(fieldType) && (typeArguments[0] instanceof Class)) {
-									 value=JSONUtil.fromJsonList(strValue,(Class<?>) typeArguments[0]);
-								 }else if(Set.class.isAssignableFrom(fieldType) && (typeArguments[0] instanceof Class)) {
-									 value=JSONUtil.fromJsonSet(strValue,(Class<?>) typeArguments[0]);
+			try {
+				Object value = null;
+				if (fieldType.equals(String.class)) {
+					value = rs.getString(fieldName);
+				} else if (fieldType.equals(int.class)) {
+					value = rs.getInt(fieldName);
+				} else if (fieldType.equals(Integer.class)) {
+					value = (Integer) rs.getObject(fieldName);
+				} else if (fieldType.equals(short.class)) {
+					value = rs.getShort(fieldName);
+				} else if (fieldType.equals(Short.class)) {
+					value = (Short)rs.getObject(fieldName);
+				} else if (fieldType.equals(long.class)) {
+					value = rs.getLong(fieldName);
+				} else if (fieldType.equals(Long.class)) {
+					value = (Long)rs.getObject(fieldName);
+				} else if (fieldType.equals(double.class)) {
+					value = rs.getDouble(fieldName);
+				} else if (fieldType.equals(Double.class)) {
+					value = (Double)rs.getObject(fieldName);
+				} else if (fieldType.equals(float.class)) {
+					value = rs.getFloat(fieldName);
+				} else if (fieldType.equals(Float.class)) {
+					value = (Float)rs.getObject(fieldName);
+				} else if (fieldType.equals(Date.class)) {
+					value = rs.getTimestamp(fieldName);
+				} else if (fieldType.equals(boolean.class)) {
+					value = rs.getBoolean(fieldName);
+				} else if (fieldType.equals(Boolean.class)) {
+					value = (Boolean)rs.getObject(fieldName);
+				} else if (fieldType.equals(BigDecimal.class)) {
+					value = rs.getBigDecimal(fieldName);
+				}  else if (fieldType.equals(byte[].class)) {
+					Blob bb = rs.getBlob(fieldName);
+					if (bb != null) {
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						IOUtil.copy(bb.getBinaryStream(), bos);
+						value = bos.toByteArray();
+					}
+				} else {
+					if(columnNames.contains(fieldName)) {
+						String strValue=rs.getString(fieldName);
+						if(strValue!=null){
+							Type genericType=f.getGenericType();
+							if ( genericType instanceof ParameterizedType ) {  
+								 Type[] typeArguments = ((ParameterizedType)genericType).getActualTypeArguments();  
+								 if(typeArguments.length==1) {
+									 if(List.class.isAssignableFrom(fieldType) && (typeArguments[0] instanceof Class)) {
+										 value=JSONUtil.fromJsonList(strValue,(Class<?>) typeArguments[0]);
+									 }else if(Set.class.isAssignableFrom(fieldType) && (typeArguments[0] instanceof Class)) {
+										 value=JSONUtil.fromJsonSet(strValue,(Class<?>) typeArguments[0]);
+									 }
+								 }else if(typeArguments.length==2) {
+									 if(Map.class.isAssignableFrom(fieldType) && (typeArguments[0] instanceof Class) && (typeArguments[1] instanceof Class)) {
+										 value=JSONUtil.fromJsonMap(strValue,(Class<?>) typeArguments[0],(Class<?>) typeArguments[1]);
+									 }
 								 }
-							 }else if(typeArguments.length==2) {
-								 if(Map.class.isAssignableFrom(fieldType) && (typeArguments[0] instanceof Class) && (typeArguments[1] instanceof Class)) {
-									 value=JSONUtil.fromJsonMap(strValue,(Class<?>) typeArguments[0],(Class<?>) typeArguments[1]);
-								 }
+							 }else {
+								 value=JSONUtil.fromJson(strValue,fieldType);
 							 }
-						 }else {
-							 value=JSONUtil.fromJson(strValue,fieldType);
-						 }
-					}
-				}else {
-					Type genericType=f.getGenericType();
-					if ( genericType instanceof Class) { //only support Class
-						Class<?> subClass=((Class<?>)f.getGenericType());
-						value=subClass.newInstance();
-						String subPreAliasField=f.getName()+"_";
-						convertBean(value, subPreAliasField, rs, excludeFields);
+						}
+					}else {
+						Type genericType=f.getGenericType();
+						if ( genericType instanceof Class) { //only support Class
+							Class<?> subClass=((Class<?>)f.getGenericType());
+							value=subClass.newInstance();
+							String subPreAliasField=f.getName()+"_";
+							convertBean(value, subPreAliasField, rs, excludeFields);
+						}
 					}
 				}
+				f.setAccessible(true);
+				if (value != null) {
+					f.set(o, value);
+				}
+			} catch (Exception e) {
+				logger.error("convertBean failed.entityClass:{} fieldName:{}",type,f.getName());
+				logger.error(e.getMessage(),e);
+				throw new SmartJdbcException(e);
 			}
-			f.setAccessible(true);
-			if (value != null) {
-				f.set(o, value);
-			}
+			
 		}
 	}
 	//
