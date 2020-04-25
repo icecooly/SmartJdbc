@@ -60,7 +60,9 @@ public class User{
 	/**最后登录时间*/
 	private Date lastLoginTime;
 ```
-增加
+
+新增
+
 ```java
 User user=new User();
 user.name="张三";
@@ -68,14 +70,18 @@ user.userName="zhangsan";
 user.roleIdList=Arrays.asList(1,2,3);//会自动转化为JSON.toString(roleIdList)
 user.id=dao.add(user);
 ```
+
 修改
+
 ```java
 User user=dao.getById(User.class, 1);
 user.name="张三2";
 user.userName="zhangsan2";
 dao.update(user);
 ```
+
 删除
+
 ```java
 dao.deleteById(User.class, 1);
 ```
@@ -83,6 +89,7 @@ dao.deleteById(User.class, 1);
 ## 3.2 基本查询
 
 ```java
+除了基本数据类型会自动映射外，复杂数据类型List<对象>,Set<对象>等都可以自动映射
 User user=dao.getById(User.class, 1);
 User user=dao.getEntity(User.class,QueryWhere.create().where("userName", "zhangsan"));
 result:{
