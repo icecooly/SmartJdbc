@@ -24,7 +24,9 @@ public @interface QueryField {
 		  String group() default "";
 		  String childAndGroup() default "";
 	}
-	//
+	/**别名*/
+	public String alias() default "";//
+	
 	/** 操作符 非字符串默认是EQ*/
 	public SqlOperator operator() default SqlOperator.EQ;
 

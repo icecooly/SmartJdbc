@@ -2,6 +2,7 @@ package test.entity;
 
 import io.itit.smartjdbc.annotations.Entity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 
@@ -10,6 +11,7 @@ import lombok.Data;
  */
 @Entity(tableName = "t_role")
 @Data
+@EqualsAndHashCode(callSuper=true)
 public class Role extends BaseEntity{
 
 	/**角色名称*/

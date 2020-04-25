@@ -3,8 +3,12 @@ package test.entity.query;
 import java.util.List;
 
 import io.itit.smartjdbc.Query;
+import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.SqlOperator;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import test.entity.Department;
 import test.entity.User;
 
 /**
@@ -12,24 +16,39 @@ import test.entity.User;
  * @author skydu
  *
  */
+@EqualsAndHashCode(callSuper=true)
+@Data
 public class UserQuery extends Query<User>{
 
-	public String userName;
+	@QueryField
+	private String userName;
 	
-	public Integer gender;
+	@QueryField
+	private Integer gender;
 	
 	@QueryField(field="name,userName")
-	public String nameOrUserName;
+	private String nameOrUserName;
 	
 	@QueryField(field ="status",operator=SqlOperator.IN)
-	public List<Integer> statusInList;
+	private List<Integer> statusInList;
 	
 	@QueryField(field ="status",operator=SqlOperator.NOT_IN)
-	public List<Integer> statusNotInList;
+	private List<Integer> statusNotInList;
 	
 	@QueryField(whereSql="json_contains(a.role_id_list,'${roleId}')")
-    public Integer roleId; 
+	private Integer roleId; 
 	
 	@QueryField(whereSql="a.status=#{orStatus} or json_contains(a.role_id_list,#{orRoleId})")
-    public Boolean statusOrRoleId;
+	private Boolean statusOrRoleId;
+	
+	@InnerJoin(table2 = User.class,table2Alias = "user",table1Fields ={"createUserId"},table2Fields ={"id"})
+	@QueryField(field = "name")
+	private String createUserName;
+	
+	@InnerJoin(table2 = Department.class,table2Alias = "dep",table1Fields ={"departmentId"},table2Fields ={"id"})
+	@QueryField(field = "name",operator = SqlOperator.LIKE)
+	private String departmentName;
+	
+	@QueryField(alias = "dep",field = "status")
+	private Integer departmentStatus;
 }

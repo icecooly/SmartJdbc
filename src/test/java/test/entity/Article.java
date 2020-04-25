@@ -4,6 +4,7 @@ import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 文章
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 @Entity(tableName = "t_article")
 @Data
+@EqualsAndHashCode(callSuper=true)
 public class Article extends BaseEntity{
 	//
 	public static final int STATUS_待审核=1;
@@ -19,30 +21,30 @@ public class Article extends BaseEntity{
 	public static final int STATUS_审核未通过=3;
 	//
 	/**标题*/
-	public String title;
+	private String title;
 	
 	/**内容*/
-	public String content;
+	private String content;
 	/**状态*/
-	public int status;
+	private int status;
 
 	@ForeignKey(entityClass = User.class)
-	public int createUserId;
+	private int createUserId;
 	
 	@ForeignKey(entityClass = User.class)
-	public int updateUserId;
+	private int updateUserId;
 	
 	/**创建人名称*/
 	@EntityField(foreignKeyFields="createUserId",field="name",persistent = false)
-	public String createUserName;
+	private String createUserName;
 	
 	/**创建人所在部门名称*/
 	@EntityField(foreignKeyFields="createUserId,departmentId",field="name",persistent = false)
-	public String createUserDepartmentName;
+	private String createUserDepartmentName;
 	
 	/***/
 	@EntityField(foreignKeyFields="updateUserId",persistent = false)
-	public User updateUser;
+	private User updateUser;
 	
 	//
 	

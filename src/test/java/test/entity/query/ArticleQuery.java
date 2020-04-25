@@ -2,10 +2,15 @@ package test.entity.query;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
+import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.annotations.QueryField.OrGroup;
+import io.itit.smartjdbc.enums.SqlOperator;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import test.entity.Article;
 import test.entity.ArticleUserLike;
+import test.entity.Department;
 import test.entity.User;
 
 /**
@@ -13,37 +18,48 @@ import test.entity.User;
  * @author skydu
  *
  */
+@Data
+@EqualsAndHashCode(callSuper=true)
 public class ArticleQuery extends Query<Article>{
 
-	public String title;
+	@QueryField
+	private String title;
 	
-	public Integer status;
+	@QueryField
+	private Integer status;
 	
 	@QueryField(whereSql="and (title like concat('%',#{titleOrContent},'%') or content like concat('%',#{titleOrContent},'%'))")
-	public String titleOrContent;
+	private String titleOrContent;
 	
-	@InnerJoin(table2=User.class,table1Field="createUserId")
+	@InnerJoin(table2=User.class,table1Fields= {"createUserId"},table2Fields = {"id"})
 	@QueryField(field="name")
-	public String createUserName;
+	private String createUserName;
 
-	@InnerJoin(table2=User.class,table1Field="updateUserId")
+	@InnerJoin(table2=User.class,table1Fields= {"updateUserId"},table2Fields= {"id"})
 	@QueryField(field="name")
-	public String updateUserName;
+	private String updateUserName;
 	
 	@QueryField(field="status")
-	public int[] statusList;
-	
-	@QueryField(field="name",foreignKeyFields="createUserId,departmentId")
-	public String createUserDepartmentName;
+	private int[] statusList;
 	
 	/**likeUserId喜爱的文章*/
-	@InnerJoin(table2=ArticleUserLike.class,table2Field="articleId")
+	@InnerJoin(table2=ArticleUserLike.class,table1Fields = {"id"},table2Fields= {"articleId"})
 	@QueryField(field="userId")
-	public Integer likeUserId;
+	private Integer likeUserId;
 	
 	@QueryField(orGroup=@OrGroup(group="1"),field="status")
-	public int[] orStatusList;
+	private int[] orStatusList;
 
 	@QueryField(orGroup=@OrGroup(group="1"),field="createUserId")
-	public int orCreateUserId;
+	private Integer orCreateUserId;
+	
+	@QueryField(field="name",operator = SqlOperator.LIKE,foreignKeyFields="createUserId,departmentId")
+	private String createUserDepartmentName;
+	
+	@InnerJoins(joins = {
+			@InnerJoin(table2 = User.class,table1Fields = {"createUserId"},table2Fields = {"id"}),
+			@InnerJoin(table2 = Department.class,table1Fields = {"departmentId"},table2Fields = {"id"})
+			})
+	@QueryField(field="name",operator = SqlOperator.LIKE_RIGHT)
+	private String createUserDepartmentName2;
 }

@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface InnerJoins {
 	//
-	public InnerJoin[] innerJoins() default {};
+	public InnerJoin[] joins() default {};
 }

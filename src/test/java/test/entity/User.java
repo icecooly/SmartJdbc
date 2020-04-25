@@ -7,6 +7,7 @@ import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 /**
  *用户
  * @author skydu
@@ -14,6 +15,7 @@ import lombok.Data;
  */
 @Entity(tableName = "t_user")
 @Data
+@EqualsAndHashCode(callSuper=true)
 public class User extends BaseEntity{
 	
 	public static final int STATUS_在职=1;

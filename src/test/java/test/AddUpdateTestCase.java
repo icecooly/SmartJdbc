@@ -85,15 +85,15 @@ public class AddUpdateTestCase extends BaseTestCase{
 	/**添加文章*/
 	public void testAddArticle() throws IOException{
 		Article bean=new Article();
-		bean.title="桑切斯遭孤立?队友吃饭他加练 为融入曼联拼了";
-		bean.content="上周，有关桑切斯的负面消息很多，英媒体爆料他在曼联阵中独来独往、总是一个人吃饭，"
+		bean.setTitle("桑切斯遭孤立?队友吃饭他加练 为融入曼联拼了");
+		bean.setContent("上周，有关桑切斯的负面消息很多，英媒体爆料他在曼联阵中独来独往、总是一个人吃饭，"
 				+ "无法融入到集体中，还有媒体称桑切斯甚至在比赛中遭到了队友的当面批评，"
 				+ "这些让外界对桑切斯在曼联的未来表示了担忧。不过，英媒体《每日镜报》"
 				+ "今日透露桑切斯在曼联并没有被孤立，智利人也没有刻意躲避队友，"
-				+ "他之所以经常一个人吃饭竟是这样的原因。";
-		bean.createUserId=1;
-		bean.updateUserId=1;
-		bean.status=Article.STATUS_待审核;
+				+ "他之所以经常一个人吃饭竟是这样的原因。");
+		bean.setCreateUserId(1);
+		bean.setUpdateUserId(1);
+		bean.setStatus(Article.STATUS_待审核);
 		int id=dao.add(bean);
 		System.out.println(id);
 	}

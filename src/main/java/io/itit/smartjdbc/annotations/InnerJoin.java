@@ -7,7 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * on a.table1Field=table2Alias.table2Field
+ * on 
+ * 	table1Alias.table1Fields[0]=table2Alias.table2Fields[0] 
+ * 	and 
+ * 	table1Alias.table1Fields[1]=table2Alias.table2Fields[1]
+ * ...
  * @author skydu
  *
  */
@@ -15,14 +19,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)  
 @Documented
 public @interface InnerJoin {
-	//
-	public String table1Field() default "id";
 
-	public String table2Field() default "id";
+	/**表2*/
+	public Class<?> table2();
 	
-	public String[] table1Fields() default {};
+	/**表2别名*/
+	public String table2Alias() default "";
 
-	public String[] table2Fields() default {};
+	/**table1 on fields*/
+	public String[] table1Fields();
 
-	public Class<?> table2() default void.class;
+	/**table2 on fields*/
+	public String[] table2Fields();
 }
