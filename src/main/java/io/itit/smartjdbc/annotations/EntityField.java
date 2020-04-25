@@ -24,20 +24,21 @@ public @interface EntityField {
 	/**是否自增*/
 	boolean autoIncrement() default false;
 	
-	/**这个字段是别的表的关联字段  必须填对应的外键字段 可以有多个按照顺序依次y以逗号分隔*/
+	/**这个字段是别的表的关联字段  必须填对应的外键字段 可以有多个按照顺序依次以逗号分隔*/
 	String foreignKeyFields() default "";
 	
-	/**真实字段 eg:userName 注意:不是user_name*/
+	/**java字段 生成sql时会自动转化为数据库里的字段 eg:userName*/
 	String field() default "";
 
-	/**select distinct field*/
+	/**查询时去重*/
 	boolean distinct() default false;
 
-	/**select max() or sum() avg() */
+	/**统计函数 eg:select min() */
 	String statFunc() default "";
 	
-	/**ignore or not when select*/
+	/**查询时不映射sql*/
 	boolean ignoreWhenSelect() default false;
-	/**是否持久化*/
+	
+	/**是否持久化到数据库*/
 	boolean persistent() default true;
 }

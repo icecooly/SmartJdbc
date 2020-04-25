@@ -58,16 +58,16 @@ public class AddUpdateTestCase extends BaseTestCase{
 	/**新增用户*/
 	public void testAddUser() {
 		User user=new User();
-		user.name="张三";
-		user.userName="zhangsan";
-		user.roleIdList=Arrays.asList(1,2,3);
-		user.id=dao.add(user);
-		System.out.println(user.id);
+		user.setName("张三");
+		user.setUserName("zhangsan");
+		user.setRoleIdList(Arrays.asList(1,2,3));
+		user.setId(dao.add(user));
+		System.out.println(user.getId());
 	}
 	
 	public void testUpdateUser() {
 		User user=dao.getById(User.class, 1);
-		user.gender=User.GENDER_男;
+		user.setGender(User.GENDER_男);
 		dao.update(user);
 	}
 	

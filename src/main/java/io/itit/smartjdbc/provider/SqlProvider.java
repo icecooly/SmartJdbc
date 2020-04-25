@@ -78,17 +78,13 @@ public abstract class SqlProvider {
 	 * @return
 	 */
 	public static String getTableName(Class<?> entityClass) {
-		Class<?> tableClass=entityClass;
 		Entity entity=entityClass.getAnnotation(Entity.class);
 		if (entity != null) {
 			if(!StringUtil.isEmpty(entity.tableName())) {//tableName first
 				return entity.tableName();
 			}
-			if(!entity.entityClass().equals(void.class)){
-				tableClass=entity.entityClass();
-			}
 		}
-		return Config.getTableName(tableClass);
+		throw new SmartJdbcException("tableName not found "+entityClass);
 	}
 	
 	/**

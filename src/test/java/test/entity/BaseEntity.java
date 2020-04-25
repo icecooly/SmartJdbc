@@ -3,18 +3,20 @@ package test.entity;
 import java.util.Date;
 
 import io.itit.smartjdbc.annotations.PrimaryKey;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author skydu
  *
  */
+@Slf4j
 public abstract class BaseEntity {
 	
 	@PrimaryKey
-	public int id;
+	private int id;
 	
-	public Date createTime;
+	private Date createTime;
 	
-	public Date updateTime;
+	private Date updateTime;
 }

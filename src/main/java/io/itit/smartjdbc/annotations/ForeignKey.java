@@ -16,7 +16,9 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ForeignKey {
 	
+	/**实体类*/
 	Class<?> entityClass();
 	
+	/**实体类主键*/
 	String field() default "id"; 
 }

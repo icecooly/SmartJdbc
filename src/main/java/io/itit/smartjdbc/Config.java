@@ -33,35 +33,11 @@ public class Config {
 	private static List<SqlInterceptor> sqlInterceptors=new ArrayList<>();
 	//
 	/**
-	 * default entityClass name
-	 */
-	private static Function<Class<?>,String> tableNameFunc=(entityClass)->{
-		return entityClass.getSimpleName();
-	};
-	
-	/**
 	 * javaFieldName->dbName
 	 */
 	private static Function<String,String> convertFieldNameFunc=(fieldName)->{
 		return fieldName;	
 	};
-	//
-	public static String getTableName(Class<?> entityClass) {
-		return tableNameFunc.apply(entityClass);
-	}
-	//
-	/**
-	 * @return the tableNameFunc
-	 */
-	public static Function<Class<?>, String> getTableNameFunc() {
-		return tableNameFunc;
-	}
-	/**
-	 * @param tableNameFunc the tableNameFunc to set
-	 */
-	public static void setTableNameFunc(Function<Class<?>, String> tableNameFunc) {
-		Config.tableNameFunc = tableNameFunc;
-	}
 	/**
 	 * @return the convertFieldNameFunc
 	 */

@@ -1,16 +1,18 @@
 package test.entity;
 
 import io.itit.smartjdbc.annotations.Entity;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 部门
  * @author skydu
  *
  */
-@Entity(entityClass=Department.class,tableName = "t_department")
+@Entity(tableName = "t_department")
+@Slf4j
 public class Department extends BaseEntity{
 
-	public String name;
+	private String name;
 	
-	public int status;
+	private int status;
 }

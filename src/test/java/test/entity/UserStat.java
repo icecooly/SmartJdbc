@@ -1,18 +1,20 @@
-package test.entity.info;
+package test.entity;
 
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author skydu
  *
  */
-@Entity(tableName="User")
+@Entity(tableName="t_user")
+@Slf4j
 public class UserStat {
 
-	public int gender;
+	private int gender;
 
 	@EntityField(statFunc="count",field="id")
-	public int num;
+	private int num;
 }

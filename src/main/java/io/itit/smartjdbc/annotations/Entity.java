@@ -17,7 +17,10 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited  
 public @interface Entity {
+	
+	/**注释*/
 	String comment() default "";
+	
+	/**表名*/
 	String tableName() default "";//tableName first than entityClass
-	Class<?> entityClass() default void.class;
 }

@@ -6,12 +6,14 @@ import java.util.List;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
+import lombok.extern.slf4j.Slf4j;
 /**
  *用户
  * @author skydu
  *
  */
-@Entity(entityClass=User.class,tableName = "t_user")
+@Entity(tableName = "t_user")
+@Slf4j
 public class User extends BaseEntity{
 	
 	public static final int STATUS_在职=1;
@@ -20,35 +22,35 @@ public class User extends BaseEntity{
 	public static final int GENDER_男=1;
 	public static final int GENDER_女=2;
 	//
-	public String userName;
+	private String userName;
 	
-	public String name;
+	private String name;
 	
-	public String mobileNo;
+	private String mobileNo;
 	
-	public int gender;
+	private int gender;
 	
-	public int status;
+	private int status;
 	
 	@ForeignKey(entityClass=Department.class)
-	public int departmentId;
+	private int departmentId;
 	
 	/**角色列表*/
-	public List<Integer> roleIdList;
+	private List<Integer> roleIdList;
 	
 	/**最后登录时间*/
-	public Date lastLoginTime;
+	private Date lastLoginTime;
 	
-	public int articleNum;
+	private int articleNum;
 	
 	/**创建人*/
 	@ForeignKey(entityClass=User.class)
-	public int createUserId;
+	private int createUserId;
 	
 	/**最后更新人*/
 	@ForeignKey(entityClass=User.class)
-	public int updateUserId;
+	private int updateUserId;
 	
 	@EntityField(foreignKeyFields="departmentId",field="name",persistent = false)
-	public String departmentName;
+	private String departmentName;
 }

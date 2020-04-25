@@ -2,6 +2,7 @@ package test.entity;
 
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 用户喜爱文章
@@ -9,12 +10,12 @@ import io.itit.smartjdbc.annotations.ForeignKey;
  *
  */
 @Entity(tableName = "t_article_user_like")
+@Slf4j
 public class ArticleUserLike extends BaseEntity{
 	//
 	@ForeignKey(entityClass=Article.class)
-	public int articleId;
+	private int articleId;
 	
 	@ForeignKey(entityClass=User.class)
-	public int userId;
-	
+	private int userId;
 }

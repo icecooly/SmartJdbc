@@ -3,13 +3,15 @@ package test.entity;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 文章
  * @author skydu
  *
  */
-@Entity(entityClass=Article.class,tableName = "t_article")
+@Entity(tableName = "t_article")
+@Slf4j
 public class Article extends BaseEntity{
 	//
 	public static final int STATUS_待审核=1;
@@ -41,5 +43,8 @@ public class Article extends BaseEntity{
 	/***/
 	@EntityField(foreignKeyFields="updateUserId",persistent = false)
 	public User updateUser;
+	
+	//
+	
 	
 }
