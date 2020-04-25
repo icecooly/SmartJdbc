@@ -101,7 +101,7 @@ public abstract class SqlProvider {
 	/**
 	 * 
 	 * @param excludeProperties
-	 * @param type
+	 * @param entityClass
 	 */
 	public static void checkExcludeProperties(String []excludeProperties,Class<?>entityClass){
 		EntityInfo info=Caches.getEntityInfo(entityClass);
