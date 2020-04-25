@@ -108,7 +108,7 @@ public class SmartDAO extends BaseEntityDAO{
 				includeFieldSet.add(includeField);
 			}
 		}
-		return update(bean,includeFields);
+		return update(bean,includeFieldSet);
 	}
 	
 	/**

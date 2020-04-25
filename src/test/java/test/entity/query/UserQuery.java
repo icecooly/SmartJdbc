@@ -8,7 +8,6 @@ import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import test.entity.Department;
 import test.entity.User;
 
 /**
@@ -29,6 +28,12 @@ public class UserQuery extends Query<User>{
 	@QueryField(field="name,userName")
 	private String nameOrUserName;
 	
+	@QueryField(field ="age",operator=SqlOperator.GT)
+	private List<Integer> gtAge;
+	
+	@QueryField(field ="age",operator=SqlOperator.LT)
+	private List<Integer> ltAge;
+	
 	@QueryField(field ="status",operator=SqlOperator.IN)
 	private List<Integer> statusInList;
 	
@@ -45,13 +50,9 @@ public class UserQuery extends Query<User>{
 	@QueryField(field = "name")
 	private String createUserName;
 	
-	@QueryField(foreignKeyFields = "departmentId",field = "name",operator = SqlOperator.LIKE)
-	private String departmentName2;
-	
-	@InnerJoin(table2 = Department.class,table2Alias = "dep",table1Fields ={"departmentId"},table2Fields ={"id"})
-	@QueryField(field = "name",operator = SqlOperator.LIKE)
+	@QueryField(foreignKeyFields = "departmentId",field = "name")
 	private String departmentName;
 	
-	@QueryField(alias = "dep",field = "status")
-	private Integer departmentStatus;
+	@QueryField(foreignKeyFields = "departmentId",field = "name",operator = SqlOperator.LIKE)
+	private String likeDepartmentName;
 }

@@ -29,11 +29,10 @@ public class AddUpdateTestCase extends BaseTestCase{
 	public void testAddUser() {
 		User user=new User();
 		user.setName("王五");
-		user.setUserName("wangwu");
-		user.setStatus(1);
+		user.setAge(20);
 		user.setDepartmentId(1);
 		user.setRoleIdList(Arrays.asList(1,2,3));
-		user.setId((long)dao.add(user));
+		user.setId(dao.add(user));
 		System.out.println(user.getId());
 	}
 	
@@ -44,28 +43,28 @@ public class AddUpdateTestCase extends BaseTestCase{
 		User user=dao.getById(User.class, 2);
 		user.setGender(User.GENDER_男);
 		user.setDepartmentId(2);
-		user.setStatus(2);
+		user.setRoleIdList(Arrays.asList(1,2));
+		user.setAge(18);
 		dao.update(user);
 	}
 	
 	/**
-	 * 只更新非空字段
+	 * 更新非空字段
 	 */
 	public void testUpdateExcludeNull() {
 		User user=new User();
-		user.setId(2L);
-		user.setDepartmentId(3);
-		user.setMobileNo("130000000000");
+		user.setId(2);
+		user.setAge(50);
 		dao.updateExcludeNull(user);
 	}
 	
 	/**
-	 * 只更新status字段
+	 * 只更新age字段
 	 */
-	public void testUpdateUserStatus() {
+	public void testUpdateUserAge() {
 		User user=dao.getById(User.class, 2);
-		user.setStatus(3);
-		dao.updateIncludeFields(user, "status");
+		user.setAge(30);
+		dao.updateIncludeFields(user, "age");
 	}
 	
 	/**
