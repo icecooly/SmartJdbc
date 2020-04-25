@@ -18,20 +18,20 @@ SmartJdbc可以让你不用写DAO,不用写SQL,不用写XML。
 <dependency>
     <groupId>com.github.icecooly</groupId>
     <artifactId>SmartJdbc</artifactId>
-    <version>1.0.8</version>
+    <version>2.0.6</version>
 </dependency>
 <dependency>
     <groupId>com.github.icecooly</groupId>
     <artifactId>SmartJdbc-Spring</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 如果使用 Gradle 来构建项目，则需将下面的代码置于 build.gradle 文件的 dependencies 代码块中：
 
 ```groovy
-compile 'com.github.icecooly:SmartJdbc:1.0.8'
-compile 'com.github.icecooly:SmartJdbc-Spring:1.0.0'
+compile 'com.github.icecooly:SmartJdbc:2.0.6'
+compile 'com.github.icecooly:SmartJdbc-Spring:1.0.1'
 ```
 
 # 3 例子
