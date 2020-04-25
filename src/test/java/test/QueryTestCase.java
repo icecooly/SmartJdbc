@@ -62,8 +62,9 @@ public class QueryTestCase extends BaseTestCase{
 	 * 
 	 */
 	public void testGetById() {
-		User user=dao.getById(User.class, 1);
-		System.out.println(DumpUtil.dump(user));
+		for(int i=0;i<10;i++) {
+			dao.getById(User.class, 1);
+		}
 	}
 	
 	public void testQuery() {

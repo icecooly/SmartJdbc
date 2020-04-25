@@ -24,8 +24,8 @@ import io.itit.smartjdbc.provider.UpdateProvider;
  */
 public class SmartEntityDAO<T> extends BaseEntityDAO{
 	//
-	private String tableName;
-	private Class<T> entityClass;
+	protected String tableName;
+	protected Class<T> entityClass;
 	//
 	protected Class<T> getTypeClass(){
 		ParameterizedType pt=(ParameterizedType) getClass().getGenericSuperclass();

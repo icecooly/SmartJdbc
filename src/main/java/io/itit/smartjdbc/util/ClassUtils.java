@@ -46,22 +46,6 @@ public class ClassUtils {
 	/**
 	 * 
 	 * @param clazz
-	 * @param fieldName
-	 * @return
-	 */
-	public static boolean containField(Class<?> clazz,String fieldName) {
-		Field[] fields=clazz.getFields();
-		for (Field field : fields) {
-			if(field.getName().equals(fieldName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * 
-	 * @param clazz
 	 * @return
 	 */
 	public static List<Field> getFieldList(Class<?> clazz) {

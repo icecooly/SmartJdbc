@@ -9,9 +9,9 @@ import java.sql.Connection;
  */
 public class ConnectionHolder {
 	//
-	private Connection connection;
+	protected Connection connection;
 	//
-	private boolean useTransaction;
+	protected boolean useTransaction;
 	//
 	/**
 	 * @return the useTransaction

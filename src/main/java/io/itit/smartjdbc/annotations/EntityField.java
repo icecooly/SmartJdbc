@@ -18,6 +18,9 @@ import java.lang.annotation.Target;
 @Inherited  
 public @interface EntityField {
 	
+	/**java字段 生成sql时会自动转化为数据库里的字段 eg:userName*/
+	String field() default "";
+	
 	/**字段注释*/
 	String comment() default "";
 	
@@ -27,9 +30,6 @@ public @interface EntityField {
 	/**这个字段是别的表的关联字段  必须填对应的外键字段 可以有多个按照顺序依次以逗号分隔*/
 	String foreignKeyFields() default "";
 	
-	/**java字段 生成sql时会自动转化为数据库里的字段 eg:userName*/
-	String field() default "";
-
 	/**查询时去重*/
 	boolean distinct() default false;
 

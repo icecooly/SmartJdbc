@@ -306,7 +306,7 @@ public class SelectProvider extends SqlProvider{
 		return true;
 	}
 	//
-	private String getInnerJoinKey(InnerJoin innerJoin) {
+	protected String getInnerJoinKey(InnerJoin innerJoin) {
 		StringBuilder key=new StringBuilder();
 		for (String table1Field : innerJoin.table1Fields()) {
 			key.append(table1Field).append("-");
@@ -851,7 +851,7 @@ public class SelectProvider extends SqlProvider{
 		return sql.toString();
 	}
 	//
-	private void addJoin(StringBuilder sql,Join join) {
+	protected void addJoin(StringBuilder sql,Join join) {
 		sql.append(getTableName(join.table2)).append(" ").append(join.table2Alias);
 		sql.append(" on ");
 		for(int i=0;i<join.table1Fields.length;i++) {

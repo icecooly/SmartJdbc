@@ -11,7 +11,7 @@ import io.itit.smartjdbc.SmartJdbcException;
  */
 public class ConnectionManager {
 	//
-	private static TransactionManager transactionManager=new DefaultTransactionManager();
+	protected static TransactionManager transactionManager=new DefaultTransactionManager();
 	//
 	/**
 	 * @return the transactionManager

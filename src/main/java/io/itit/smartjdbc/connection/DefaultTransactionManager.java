@@ -21,7 +21,7 @@ public class DefaultTransactionManager implements TransactionManager{
 	//
 	private static Logger logger = LoggerFactory.getLogger(DefaultTransactionManager.class);
 	//
-	private static ThreadLocal<ConnectionHolder> connectionHolder = new ThreadLocal<>();
+	protected static ThreadLocal<ConnectionHolder> connectionHolder = new ThreadLocal<>();
 
 	/**
 	 * 

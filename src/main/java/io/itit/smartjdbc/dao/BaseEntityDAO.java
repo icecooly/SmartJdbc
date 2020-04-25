@@ -92,15 +92,22 @@ public abstract class BaseEntityDAO extends BaseDAO{
 		WRAP_TYPES.add(double.class);
 	}
 	//
-	private List<Field> getNoStaticFinalFields(Class<?> clazz) {
-		List<Field> fieldList=new ArrayList<>();
-		Field[] fields = clazz.getFields();
-		for (Field field : fields) {
-			if (Modifier.isStatic(field.getModifiers()) || 
-					Modifier.isFinal(field.getModifiers())) {
-				continue;
+	protected List<Field> getEntityFields(Class<?> clazz) {
+		List<Field> fieldList = new ArrayList<>();
+		Set<String> nameSet=new HashSet<>();
+		for(;clazz != Object.class;clazz = clazz.getSuperclass()) {
+			Field[] fields = clazz.getDeclaredFields();
+			for (Field field : fields) {
+				if (Modifier.isStatic(field.getModifiers()) || 
+						Modifier.isFinal(field.getModifiers())) {
+					continue;
+				}
+				if(nameSet.contains(field.getName())) {
+					continue;
+				}
+				nameSet.add(field.getName());
+				fieldList.add(field);
 			}
-			fieldList.add(field);
 		}
 		return fieldList;
 	}
@@ -126,7 +133,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 		for(int i=1;i<=columnCount;i++) {
 			columnNames.add(rsmd.getColumnLabel(i));
 		}
-		List<Field> fields=getNoStaticFinalFields(type);
+		List<Field> fields=getEntityFields(type);
 		for (Field f : fields) {
 			String fieldName = convertFieldName(f.getName());
 			if(preAliasField!=null) {
