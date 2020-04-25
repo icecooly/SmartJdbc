@@ -1,14 +1,9 @@
 package test.entity;
 
-import io.itit.smartjdbc.annotations.EntityField;
-
-import java.util.Date;
-import java.util.List;
-
 import io.itit.smartjdbc.annotations.Entity;
+import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 文章
