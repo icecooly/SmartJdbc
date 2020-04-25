@@ -43,7 +43,7 @@ compile 'com.github.icecooly:SmartJdbc-Spring:1.0.1'
 public class User{
 	
 	@PrimaryKey
-	private int id;
+	private Long id;
 	
 	/**用户名*/
 	private String userName;
@@ -52,7 +52,11 @@ public class User{
 	private String name;
 	
 	/**状态*/
-	private int status;
+	private Integer status;
+	
+	/**所属部门*/
+	@ForeignKey(entityClass=Department.class)
+	private Integer departmentId;
 	
 	/**角色列表*/
 	private List<Integer> roleIdList;
@@ -65,19 +69,29 @@ public class User{
 
 ```java
 User user=new User();
-user.name="张三";
-user.userName="zhangsan";
+user.setName("张三");
+user.setUserName("zhangsan");
 user.roleIdList=Arrays.asList(1,2,3);//会自动转化为JSON.toString(roleIdList)
-user.id=dao.add(user);
+user.setId((long)dao.add(user));
 ```
 
 修改
 
 ```java
+
+/**更新所有字段*/
 User user=dao.getById(User.class, 1);
-user.name="张三2";
-user.userName="zhangsan2";
+user.setName("张三2");
+user.setUserName("zhangsan2");
 dao.update(user);
+
+/**只更新非空字段*/
+User user=new User();
+user.setId(1L);
+user.setDepartmentId(3);
+user.setMobileNo("130000000000");
+dao.updateExcludeNull(user);
+
 ```
 
 删除
@@ -112,44 +126,31 @@ result:{
 //查询用户名包含test的用户列表,按照创建时间降序
 UserQuery query=new UserQuery();
 query.userName="test";
-query.orderType=UserQuery.ORDER_BY_CREATE_TIME_DESC;
 List<User> list=dao.getList(query);
 ```
 
 ## 3.4 复杂查询(如果数据库设计是三范式，不冗余存储数据，查询时可以自动join，不用手工写sql)
 
 ```java
-//查询角色名称是总监是用户列表
-public class User extends BaseEntity{
-	public String name;
+@Data
+public class UserQuery extends Query<User>{
+
+	@QueryField
+	private String userName;
 	
-	public String userName;
+	@QueryField
+	private Integer gender;
 	
-	public String password;
+	@QueryField(field ="status",operator=SqlOperator.IN)
+	private List<Integer> statusInList;
 	
-	public boolean gender;
-	
-	public Date lastLoginTime;
-	
-	@ForeignKey(entityClass=Department.class)
-	public int departmentId;
-	
-	@ForeignKey(entityClass=Role.class)
-	public int roleId;
-	
-	public String description;
+	@QueryField(foreignKeyFields="departmentId",field="name",operator=SqlOperator.LIKE)
+	private String departmentName;
 }
-public class UserInfo extends User{
-	@EntityField(foreignKeyFields="departmentId",field="name")
-	public String departmentName;
-	
-	@EntityField(foreignKeyFields="roleId",field="name")
-	public String roleName;
-}
-UserInfoQuery query=new UserInfoQuery();
-query.roleName="总监";
+UserQuery query=new UserQuery();
+query.setDepartmentName("技术部");
 query.pageSize=20;
-List<UserInfo> users=dao.getList(query);
+List<User> list=dao.getList(query);
 ```
 更多可参考test/DAOTestCase.java
 

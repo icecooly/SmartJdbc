@@ -45,9 +45,12 @@ public class UserQuery extends Query<User>{
 	@QueryField(field = "name")
 	private String createUserName;
 	
+	@QueryField(foreignKeyFields = "departmentId",field = "name",operator = SqlOperator.LIKE)
+	private String departmentName;
+	
 	@InnerJoin(table2 = Department.class,table2Alias = "dep",table1Fields ={"departmentId"},table2Fields ={"id"})
 	@QueryField(field = "name",operator = SqlOperator.LIKE)
-	private String departmentName;
+	private String departmentName2;
 	
 	@QueryField(alias = "dep",field = "status")
 	private Integer departmentStatus;
