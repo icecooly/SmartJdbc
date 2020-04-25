@@ -152,7 +152,7 @@ query.setDepartmentName("技术部");
 query.pageSize=20;
 List<User> list=dao.getList(query);
 ```
-更多可参考test/DAOTestCase.java
+更多复杂查询可参考test/QueryTestCase.java
 
 # 4 Spring Boot中使用SmartJdbc
 SmartJdbcConfig.java
