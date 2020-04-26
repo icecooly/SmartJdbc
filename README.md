@@ -325,7 +325,7 @@ List<User> list=dao.getList(query);
 
 其他更多复杂查询可参考test/QueryTestCase.java
 
-# 5 Spring Boot中使用SmartJdbc
+# 6 Spring Boot中使用SmartJdbc
 SmartJdbcConfig.java
 ```java
 @Configuration
