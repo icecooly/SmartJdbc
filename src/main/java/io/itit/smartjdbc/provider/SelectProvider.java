@@ -37,6 +37,7 @@ import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderBy;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.util.SqlUtil;
 import io.itit.smartjdbc.util.StringUtil;
 
 /**
@@ -618,7 +619,7 @@ public class SelectProvider extends SqlProvider{
 			if(fieldName==null) {
 				continue;
 			}
-			fieldName=StringUtil.replaceBlank(fieldName);
+			fieldName=SqlUtil.filterSql(fieldName);
 			OrderBy orderBy=entry.getValue();
 			String dbField=Config.convertFieldName(fieldName);
 			if(orderBy.equals(OrderBy.ASC)) {
