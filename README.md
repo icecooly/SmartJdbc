@@ -34,7 +34,7 @@ compile 'com.github.icecooly:SmartJdbc:2.0.7'
 compile 'com.github.icecooly:SmartJdbc-Spring:1.0.1'
 ```
 
-# 3特性
+# 3 特性
 
 * 强大的 CRUD 操作
 * 支持自动跨表查询无需写sql
