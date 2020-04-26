@@ -273,7 +273,7 @@ dao.getEntity(User.class,QueryWhere.create().
 				limit(0, 10));
 ```
 
-##5 跨表查询 Query<T>类
+## 5 跨表查询 Query<T>类
 ```java
 public class Query<T> {
 	//
