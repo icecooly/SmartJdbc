@@ -165,29 +165,29 @@ public abstract class BaseEntityDAO extends BaseDAO{
 				} else if (fieldType.equals(int.class)) {
 					value = rs.getInt(fieldName);
 				} else if (fieldType.equals(Integer.class)) {
-					value = (Integer) rs.getObject(fieldName);
+					value = rs.getObject(fieldName)==null?null:rs.getInt(fieldName);
 				} else if (fieldType.equals(short.class)) {
 					value = rs.getShort(fieldName);
 				} else if (fieldType.equals(Short.class)) {
-					value = (Short)rs.getObject(fieldName);
+					value = rs.getObject(fieldName)==null?null:rs.getShort(fieldName);
 				} else if (fieldType.equals(long.class)) {
 					value = rs.getLong(fieldName);
 				} else if (fieldType.equals(Long.class)) {
-					value = (Long)rs.getObject(fieldName);
+					value = rs.getObject(fieldName)==null?null:rs.getLong(fieldName);
 				} else if (fieldType.equals(double.class)) {
 					value = rs.getDouble(fieldName);
 				} else if (fieldType.equals(Double.class)) {
-					value = (Double)rs.getObject(fieldName);
+					value = rs.getObject(fieldName)==null?null:rs.getDouble(fieldName);
 				} else if (fieldType.equals(float.class)) {
 					value = rs.getFloat(fieldName);
 				} else if (fieldType.equals(Float.class)) {
-					value = (Float)rs.getObject(fieldName);
+					value = rs.getObject(fieldName)==null?null:rs.getFloat(fieldName);
 				} else if (fieldType.equals(Date.class)) {
 					value = rs.getTimestamp(fieldName);
 				} else if (fieldType.equals(boolean.class)) {
 					value = rs.getBoolean(fieldName);
 				} else if (fieldType.equals(Boolean.class)) {
-					value = (Boolean)rs.getObject(fieldName);
+					value = rs.getObject(fieldName)==null?null:rs.getBoolean(fieldName);
 				} else if (fieldType.equals(BigDecimal.class)) {
 					value = rs.getBigDecimal(fieldName);
 				}  else if (fieldType.equals(byte[].class)) {

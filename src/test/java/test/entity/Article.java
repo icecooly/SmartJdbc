@@ -27,7 +27,7 @@ public class Article extends BaseEntity{
 	private String content;
 	
 	/**状态*/
-	private int status;
+	private Integer status;
 
 	@ForeignKey(entityClass = User.class)
 	private Integer createUserId;

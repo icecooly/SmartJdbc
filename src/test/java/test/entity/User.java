@@ -18,11 +18,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=true)
 public class User extends BaseEntity{
 	//
-	public static final int GENDER_男=1;
-	public static final int GENDER_女=2;
+	public static final short GENDER_男=1;
+	public static final short GENDER_女=2;
 	
-	public static final int STATUS_在职=1;
-	public static final int STATUS_离职=2;
+	public static final short STATUS_在职=1;
+	public static final short STATUS_离职=2;
 
 	
 	/**用户名*/
@@ -35,17 +35,17 @@ public class User extends BaseEntity{
 	private String mobileNo;
 	
 	/**性别*/
-	private int gender;
+	private Short gender;
 	
 	/**工作状态*/
-	private int status;
+	private Short status;
 	
 	/**年龄*/
-	private int age;
+	private Integer age;
 	
 	/**所属部门*/
 	@ForeignKey(entityClass=Department.class)
-	private int departmentId;
+	private Integer departmentId;
 	
 	/**角色列表*/
 	private List<Integer> roleIdList;
@@ -54,7 +54,7 @@ public class User extends BaseEntity{
 	private Date lastLoginTime;
 	
 	/**分表文章数*/
-	private Integer articleNum;
+	private Long articleNum;
 	
 	/**创建人*/
 	@ForeignKey(entityClass=User.class)

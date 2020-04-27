@@ -16,8 +16,8 @@ import lombok.EqualsAndHashCode;
 public class ArticleUserLike extends BaseEntity{
 	//
 	@ForeignKey(entityClass=Article.class)
-	private int articleId;
+	private Integer articleId;
 	
 	@ForeignKey(entityClass=User.class)
-	private int userId;
+	private Integer userId;
 }
