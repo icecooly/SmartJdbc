@@ -153,6 +153,41 @@ public class SmartDAO extends BaseEntityDAO{
 		return result;
 	}
 	
+	
+	/**
+	 * 
+	 * @param bean
+	 * @param wq
+	 * @param excludeFields
+	 * @return
+	 */
+	public int update(Object bean,
+			QueryWhere wq,
+			String... excludeFields){
+		return update(bean, wq, false, null, excludeFields);
+	}
+	
+	/**
+	 * 
+	 * @param bean
+	 * @param wq
+	 * @param excludeNull
+	 * @param includeFields
+	 * @param excludeFields
+	 * @return
+	 */
+	public int update(Object bean,
+			QueryWhere wq,
+			boolean excludeNull,
+			Set<String> includeFields,
+			String... excludeFields){
+		beforeUpdate(bean,excludeNull,excludeFields);
+		SqlBean sqlBean=new UpdateProvider(bean, wq,excludeNull,includeFields,excludeFields).build();
+		int result=executeUpdate(sqlBean.sql,sqlBean.parameters);
+		afterUpdate(result,bean,excludeNull,excludeFields);
+		return result;
+	}
+	
 	/**
 	 * 
 	 * @param bean
