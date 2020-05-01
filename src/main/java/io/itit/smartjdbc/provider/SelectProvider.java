@@ -619,7 +619,7 @@ public class SelectProvider extends SqlProvider{
 			if(fieldName==null) {
 				continue;
 			}
-			fieldName=SqlUtil.filterSql(fieldName);
+			SqlUtil.checkColumnName(fieldName);
 			OrderBy orderBy=entry.getValue();
 			String dbField=Config.convertFieldName(fieldName);
 			if(orderBy.equals(OrderBy.ASC)) {

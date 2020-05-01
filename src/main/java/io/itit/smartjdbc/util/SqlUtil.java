@@ -1,7 +1,9 @@
 package io.itit.smartjdbc.util;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.itit.smartjdbc.Config;
+import io.itit.smartjdbc.SmartJdbcException;
 
 /**
  * 
@@ -9,24 +11,18 @@ import java.util.regex.Pattern;
  *
  */
 public class SqlUtil {
-
+	//
 	/**
-	 * 去除字符串中的空格、回车、换行符、制表符 / * \ ( )
-	 * @param str
-	 * @return
+	 * 
+	 * @param field
 	 */
-	public static String filterSql(String str) {
-        String dest = "";
-        if (str!=null) {
-            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
-            Matcher m = p.matcher(str);
-            dest = m.replaceAll("");
-        }
-        dest=dest.replaceAll("/","");
-        dest=dest.replaceAll("\\*","");
-        dest=dest.replaceAll("\\\\","");
-        dest=dest.replaceAll("\\(","");
-        dest=dest.replaceAll("\\)","");
-        return dest;
+	public static void checkColumnName(String field) {
+		String regex=Config.getColumnNameRegex();
+		if(StringUtil.isEmpty(regex)) {
+			return;
+		}
+		if(!Pattern.matches(regex, field)) {
+			throw new SmartJdbcException("SQL错误 columnName invalid "+field);
+		}
     }
 }

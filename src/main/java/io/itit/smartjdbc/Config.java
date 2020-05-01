@@ -41,6 +41,9 @@ public class Config {
 
 	/** 是否开启字段驼峰映射  默认开启*/
 	private static boolean fieldCamelCase = true;
+	
+	/** 列名允许的正则 默认数字+26个字母大小写+下划线+``+点*/
+	private static String columnNameRegex="^[A-Za-z0-9_`\\\\.]+$";
 
 	/**
 	 * @return the convertFieldNameFunc
@@ -185,4 +188,20 @@ public class Config {
 		}
 		return result.toString();
 	}
+	//
+
+	/**
+	 * @return the columnNameRegex
+	 */
+	public static String getColumnNameRegex() {
+		return columnNameRegex;
+	}
+
+	/**
+	 * @param columnNameRegex the columnNameRegex to set
+	 */
+	public static void setColumnNameRegex(String columnNameRegex) {
+		Config.columnNameRegex = columnNameRegex;
+	}
+	
 }
