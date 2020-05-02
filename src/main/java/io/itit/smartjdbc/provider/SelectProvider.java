@@ -20,16 +20,15 @@ import org.slf4j.LoggerFactory;
 import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.QueryWhere;
-import io.itit.smartjdbc.QueryWhere.Where;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
+import io.itit.smartjdbc.Where;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.LeftJoin;
 import io.itit.smartjdbc.annotations.QueryField;
-import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 import io.itit.smartjdbc.cache.Caches;
 import io.itit.smartjdbc.cache.EntityFieldInfo;
 import io.itit.smartjdbc.cache.EntityInfo;
@@ -211,21 +210,12 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	public SelectProvider where(String alias,String key,SqlOperator op,Object value){
-		return this.where(alias, key, op, value, null);
-	}
-	//
-	public SelectProvider where(String alias,String key,SqlOperator op,Object value,OrGroup orGroup){
-		qw.where(alias, key, op, value,orGroup);
+		qw.where(alias, key, op, value);
 		return this;
 	}
 	//
 	public SelectProvider whereSql(String sql,Object ...values){
-		qw.whereSql(sql,null, values);
-		return this;
-	}
-	//
-	public SelectProvider whereSql(String sql,OrGroup orGroup,Object ...values){
-		qw.whereSql(sql,orGroup, values);
+		qw.whereSql(sql, values);
 		return this;
 	}
 	//
@@ -266,16 +256,14 @@ public class SelectProvider extends SqlProvider{
 		return this;
 	}
 	//
-	protected List<QueryFieldInfo> getQueryFields(Query<?> query){
-		List<QueryFieldInfo> fieldList=new ArrayList<>();
-		QueryInfo info=Caches.getQueryInfo(query.getClass());
-		for (QueryFieldInfo fieldInfo : info.fieldList) {
+	protected void getQueryFields(List<QueryFieldInfo> fieldList,Object obj,QueryInfo queryInfo){
+		for (QueryFieldInfo fieldInfo : queryInfo.fieldList) {
 			try {
 				Field field=fieldInfo.field;
 				if(!field.isAccessible()) {
 					field.setAccessible(true);
 				}
-				Object reallyValue = field.get(query);
+				Object reallyValue = field.get(obj);
 				if (reallyValue == null) {
 					continue;
 				}
@@ -285,7 +273,21 @@ public class SelectProvider extends SqlProvider{
 				throw new IllegalArgumentException(e);
 			}
 		}
-		return fieldList;
+		for (QueryInfo e : queryInfo.children) {
+			try {
+				if(!e.field.isAccessible()) {
+					e.field.setAccessible(true);
+				}
+				Object reallyValue = e.field.get(obj);
+				if (reallyValue == null) {
+					continue;
+				}
+				getQueryFields(fieldList,reallyValue,e);
+			} catch (Exception ex) {
+				logger.error(ex.getMessage(),ex);
+				throw new IllegalArgumentException(ex);
+			}	
+		}
 	}
 	//
 	protected boolean isValidInnerJoin(InnerJoin innerJoin) {
@@ -325,7 +327,9 @@ public class SelectProvider extends SqlProvider{
 		if(query==null) {
 			return map;
 		}
-		List<QueryFieldInfo> fieldInfos=getQueryFields(query);
+		List<QueryFieldInfo> fieldInfos=new ArrayList<>();
+		QueryInfo info=Caches.getQueryInfo(query.getClass());
+		getQueryFields(fieldInfos,query,info);
 		int index = 1;
 		innerJoinFieldAliasMap=new HashMap<>();
 		for (QueryFieldInfo fieldInfo : fieldInfos) {
@@ -488,7 +492,7 @@ public class SelectProvider extends SqlProvider{
 				if(queryField!=null&&!StringUtil.isEmpty(queryField.whereSql())) {//whereSql check first
 					String whereSql=queryField.whereSql();
 					SqlBean sqlBean=parseSql(whereSql, paraMap);//eg:userName like #{userName}
-					whereSql(sqlBean.sql,info.orGroup,sqlBean.parameters);
+					whereSql(sqlBean.sql,sqlBean.parameters);
 				}else {
 					String dbFieldName=convertFieldName(field.getName());
 					if(queryField!=null&&(!StringUtil.isEmpty(queryField.field()))) {
@@ -498,7 +502,7 @@ public class SelectProvider extends SqlProvider{
 					if(queryField!=null) {
 						operator=queryField.operator();
 					}
-					where(alias,dbFieldName,operator,value,info.orGroup);
+					where(alias,dbFieldName,operator,value);
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage(),e);

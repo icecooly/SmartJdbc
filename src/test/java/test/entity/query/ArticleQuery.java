@@ -4,7 +4,6 @@ import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.QueryField;
-import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,12 +45,6 @@ public class ArticleQuery extends Query<Article>{
 	@InnerJoin(table2=ArticleUserLike.class,table1Fields = {"id"},table2Fields= {"articleId"})
 	@QueryField(field="userId")
 	private Integer likeUserId;
-	
-	@QueryField(orGroup=@OrGroup(group="1"),field="status")
-	private int[] orStatusList;
-
-	@QueryField(orGroup=@OrGroup(group="1"),field="createUserId")
-	private Integer orCreateUserId;
 	
 	@QueryField(field="name",operator = SqlOperator.LIKE,foreignKeyFields="createUserId,departmentId")
 	private String createUserDepartmentName;

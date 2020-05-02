@@ -15,10 +15,11 @@ import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.LeftJoin;
+import io.itit.smartjdbc.annotations.QueryConditionType;
 import io.itit.smartjdbc.annotations.QueryField;
-import io.itit.smartjdbc.annotations.QueryField.OrGroup;
+import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.util.ClassUtils;
-import io.itit.smartjdbc.util.StringUtil;
+import io.itit.smartjdbc.util.DumpUtil;
 
 /**
  * 
@@ -71,19 +72,30 @@ public class Caches {
 	public static QueryInfo getQueryInfo(Class<?> clazz) {
 		QueryInfo info=queryInfoMap.get(clazz);
 		if(info==null) {
-			info=createQueryInfo(clazz);
+			info=new QueryInfo(clazz,ConditionType.AND);
+			info=createQueryInfo(info);
+			queryInfoMap.put(clazz,info);
+			if(logger.isDebugEnabled()) {
+				logger.debug("createQueryInfo queryClass:{}\n{}",clazz,DumpUtil.dump(info));
+			}
 		}
 		return info;
 	}
 	//
-	private static QueryInfo createQueryInfo(Class<?> queryClass) {
-		QueryInfo info=new QueryInfo();
-		info.clazz=queryClass;
-		List<Field> fields=ClassUtils.getFieldList(queryClass);
+	private static QueryInfo createQueryInfo(QueryInfo info) {
+		List<Field> fields=ClassUtils.getFieldList(info.clazz);
 		List<QueryFieldInfo> fieldList=new ArrayList<>();
 		for (Field field : fields) {
 			if (Modifier.isStatic(field.getModifiers()) || 
 					Modifier.isFinal(field.getModifiers())) {
+				continue;
+			}
+			QueryConditionType fConditionType = field.getAnnotation(QueryConditionType.class);
+			if (fConditionType!=null) {
+				QueryInfo child=new QueryInfo(field.getType(),fConditionType.value());
+				child.field=field;
+				info.children.add(child);
+				createQueryInfo(child);
 				continue;
 			}
 			QueryField queryField = field.getAnnotation(QueryField.class);
@@ -97,19 +109,9 @@ public class Caches {
 			fieldInfo.queryField=field.getAnnotation(QueryField.class);
 			fieldInfo.innerJoin=field.getAnnotation(InnerJoin.class);
 			fieldInfo.innerJoins=field.getAnnotation(InnerJoins.class);
-			if (fieldInfo.queryField != null) {
-				OrGroup orGroup=queryField.orGroup();
-				if(!StringUtil.isEmpty(orGroup.group())) {
-					fieldInfo.orGroup=queryField.orGroup();
-				}
-			}
 			fieldList.add(fieldInfo);
 		}
 		info.fieldList=fieldList;
-		queryInfoMap.put(queryClass,info);
-		if(logger.isDebugEnabled()) {
-			logger.debug("createQueryInfo queryClass:{}",queryClass);
-		}
 		return info;
 	}
 }

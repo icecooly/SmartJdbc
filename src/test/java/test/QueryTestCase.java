@@ -5,6 +5,8 @@ import java.util.List;
 
 import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
+import io.itit.smartjdbc.Where;
+import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.OrderBy;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.DumpUtil;
@@ -13,6 +15,7 @@ import test.entity.Article;
 import test.entity.User;
 import test.entity.query.ArticleQuery;
 import test.entity.query.UserQuery;
+import test.entity.query.UserQuery.NameOrUserNameOrDeptName;
 
 /**
  * 
@@ -125,11 +128,31 @@ public class QueryTestCase extends BaseTestCase{
 		
 	}
 	
+	public void testQueryWhereOr() {
+		dao.getEntity(User.class,QueryWhere.create(ConditionType.OR).
+				like("user_name","root").
+				like("name","root")
+		);
+	}
+	
+	public void testQueryWhereAndOr() {
+		dao.getEntity(User.class,QueryWhere.create().
+				eq("status", 1).
+				or(new Where().
+						like("user_name","root").
+						like("l1","name","技术")
+				)
+		);
+	}
+	
 	/**查询用户列表*/
 	public void testGetUsers() {
 		UserQuery query=new UserQuery();
-		query.setUserName("test");
-		query.setNameOrUserName("t");
+		NameOrUserNameOrDeptName nameOrUserName=new NameOrUserNameOrDeptName();
+		nameOrUserName.setName("t");
+		nameOrUserName.setUserName("e");
+		nameOrUserName.setDeptName("技术");
+		query.setNameOrUserName(nameOrUserName);;
 		query.orderBy("name", OrderBy.ASC);
 		query.orderBy("id", OrderBy.DESC);
 		List<User> list=dao.getList(query,"createTime","updateTime");
@@ -265,22 +288,18 @@ public class QueryTestCase extends BaseTestCase{
 	//
 	public void testQueryUserList() {
 		UserQuery query=new UserQuery();
-		query.setNameOrUserName("张");
 		List<User> users=dao.getList(query);
 		System.out.println(DumpUtil.dump(users));
 	}
 	
 	public void testQueryWithWhereSql() {
 		UserQuery query=new UserQuery();
-		query.setNameOrUserName("zhang");
 		List<User> users=dao.getList(query);
 		System.out.println(DumpUtil.dump(users));
 	}
 	
 	public void testOr() {
 		ArticleQuery query=new ArticleQuery();
-		query.setOrCreateUserId(1);
-		query.setOrStatusList(new int[] {2,3});
 		List<Article> list=dao.getList(query);
 		System.out.println(DumpUtil.dump(list));
 	}

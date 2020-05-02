@@ -29,6 +29,7 @@ public class AddUpdateTestCase extends BaseTestCase{
 	public void testAddUser() {
 		User user=new User();
 		user.setName("王五");
+		user.setUserName("wangwu");
 		user.setAge(20);
 		user.setDepartmentId(1);
 		user.setRoleIdList(Arrays.asList(1,2,3));

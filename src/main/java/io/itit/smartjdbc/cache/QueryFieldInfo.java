@@ -6,7 +6,6 @@ import java.util.List;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
 import io.itit.smartjdbc.annotations.QueryField;
-import io.itit.smartjdbc.annotations.QueryField.OrGroup;
 
 /**
  * 
@@ -18,8 +17,6 @@ public class QueryFieldInfo {
 	public Field field;
 	
 	public Class<?> fieldType;
-	
-	public OrGroup orGroup;
 	
 	public String fieldName;//field.getName()
 	
