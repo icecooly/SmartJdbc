@@ -1,6 +1,8 @@
 package io.itit.smartjdbc.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,8 +25,7 @@ public class ClassUtils {
 		ClassLoader cl = null;
 		try {
 			cl = Thread.currentThread().getContextClassLoader();
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
 			// Cannot access thread context ClassLoader - falling back...
 		}
 		if (cl == null) {
@@ -34,15 +35,15 @@ public class ClassUtils {
 				// getClassLoader() returning null indicates the bootstrap ClassLoader
 				try {
 					cl = ClassLoader.getSystemClassLoader();
-				}
-				catch (Throwable ex) {
-					// Cannot access system ClassLoader - oh well, maybe the caller can live with null...
+				} catch (Throwable ex) {
+					// Cannot access system ClassLoader - oh well, maybe the caller can live with
+					// null...
 				}
 			}
 		}
 		return cl;
 	}
-	
+
 	/**
 	 * 
 	 * @param clazz
@@ -68,4 +69,25 @@ public class ClassUtils {
 		}
 		return fields;
 	}
+
+	/**
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static Class<?> getSuperClassGenricType(Class<?> clazz) {
+		Type genType = clazz.getGenericSuperclass();
+		if (!(genType instanceof ParameterizedType)) {
+			if (genType instanceof Class) {
+				return getSuperClassGenricType((Class<?>)genType);
+			}
+			return Object.class;
+		}
+		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+		if (params.length==0) {
+			return Object.class;
+		}
+		return (Class<?>) params[0];
+	}
+	
 }

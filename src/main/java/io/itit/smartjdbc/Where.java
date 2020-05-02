@@ -1,6 +1,5 @@
 package io.itit.smartjdbc;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,15 +25,18 @@ public class Where {
 	public List<Where> children;
 
 	public Where() {
-		children = new ArrayList<>();
-		sqlValues = new LinkedList<Object>();
+		this.children = new LinkedList<>();
+		this.sqlValues = new LinkedList<Object>();
 	}
-
+	
+	public Where(ConditionType conditionType) {
+		this.conditionType=conditionType;
+		this.children = new LinkedList<>();
+	}
 	//
 	public Where where(String key, SqlOperator op) {
-		return where(null, key, op, null);
+		return where(SqlProvider.MAIN_TABLE_ALIAS, key, op, null);
 	}
-
 	//
 	public Where where(String key, SqlOperator op, Object value) {
 		return where(SqlProvider.MAIN_TABLE_ALIAS, key, op, value);
@@ -49,21 +51,28 @@ public class Where {
 		children.add(w);
 		return this;
 	}
-
+	//
+	public Where whereSql(String sql, Object... values) {
+		Where w = new Where();
+		w.sql=sql;
+		for(int i=0;i<values.length;i++){
+			w.sqlValues.add(values[i]);
+		}
+		children.add(w);
+		return this;
+	}
 	//
 	public Where and(Where w) {
 		w.conditionType = ConditionType.AND;
 		children.add(w);
 		return this;
 	}
-
 	//
 	public Where or(Where w) {
 		w.conditionType = ConditionType.OR;
 		children.add(w);
 		return this;
 	}
-
 	//
 	//
 	/**

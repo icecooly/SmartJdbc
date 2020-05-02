@@ -23,16 +23,14 @@ public class QueryWhere {
 		public Object[] values;
 	}
 	//
-	protected List<Where> wheres;
+	protected Where where;
 	protected Set<String> orderBys;
 	protected int limitStart=0;
 	protected int limitEnd=-1;
 	protected boolean forUpdate;
-	protected ConditionType conditionType;
 	//
 	protected QueryWhere(ConditionType conditionType) {
-		this.conditionType=conditionType;
-		this.wheres=new LinkedList<>();
+		this.where=new Where(conditionType);
 		this.orderBys=new LinkedHashSet<>();
 	}
 	//
@@ -54,49 +52,31 @@ public class QueryWhere {
 	}
 	//
 	public QueryWhere where(String alias,String key,SqlOperator op,Object value){
-		Where w=new Where();
-		w.alias=alias;
-		w.key=key;
-		w.operator=op;
-		w.value=value;
-		addWhere(w);
+		where.where(alias, key, op, value);
 		return this;
 	}
 	//
 	public QueryWhere whereSql(String sql,Object ...values){
-		Where w=new Where();
-		w.sql=sql;
-		for(int i=0;i<values.length;i++){
-			w.sqlValues.add(values[i]);
-		}
-		addWhere(w);
+		where.whereSql(sql, values);
 		return this;
 	}
-	
 	/**
 	 * 
 	 * @param w
 	 * @return
 	 */
 	public QueryWhere and(Where w) {
-		w.conditionType=ConditionType.AND;
-		addWhere(w);
+		where.and(w);
 		return this;
 	}
-	
 	/**
 	 * 
 	 * @param w
 	 * @return
 	 */
 	public QueryWhere or(Where w) {
-		w.conditionType=ConditionType.OR;
-		addWhere(w);
+		where.or(w);
 		return this;
-	}
-	//
-	private void addWhere(Where w) {
-		this.wheres.add(w);
 	}
 	//
 	public QueryWhere orderBy(String orderBy){
@@ -126,13 +106,10 @@ public class QueryWhere {
 		List<Object>values=new LinkedList<Object>();
 		StringBuilder sql=new StringBuilder();
 		sql.append(" ");
-		Where parent=new Where();
-		parent.conditionType=conditionType;
-		parent.children=wheres;
-		int conditionCount=getConditionCount(parent);
+		int conditionCount=getConditionCount(where);
 		if(conditionCount>0) {
 			sql.append(" and ");
-			appendWhereSql(sql,values,parent);
+			appendWhereSql(sql,values,where);
 		}
 		sql.append(" ");
 		if(forUpdate) {
@@ -317,15 +294,47 @@ public class QueryWhere {
 	 * 
 	 * @return
 	 */
-	public List<Where> getWheres() {
-		return wheres;
+	public Where getWhere() {
+		return where;
 	}
 	
 	/**
-	 * @param wheres the wheres to set
+	 * 
+	 * @param where
 	 */
-	public void setWheres(List<Where> wheres) {
-		this.wheres = wheres;
+	public void setWhere(Where where) {
+		this.where = where;
+	}
+	
+	/**
+	 * @return the forUpdate
+	 */
+	public boolean isForUpdate() {
+		return forUpdate;
+	}
+	/**
+	 * @param forUpdate the forUpdate to set
+	 */
+	public void setForUpdate(boolean forUpdate) {
+		this.forUpdate = forUpdate;
+	}
+	/**
+	 * @param orderBys the orderBys to set
+	 */
+	public void setOrderBys(Set<String> orderBys) {
+		this.orderBys = orderBys;
+	}
+	/**
+	 * @param limitStart the limitStart to set
+	 */
+	public void setLimitStart(int limitStart) {
+		this.limitStart = limitStart;
+	}
+	/**
+	 * @param limitEnd the limitEnd to set
+	 */
+	public void setLimitEnd(int limitEnd) {
+		this.limitEnd = limitEnd;
 	}
 	//
 	/**

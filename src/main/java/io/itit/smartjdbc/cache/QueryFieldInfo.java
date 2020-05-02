@@ -18,7 +18,7 @@ public class QueryFieldInfo {
 	
 	public Class<?> fieldType;
 	
-	public String fieldName;//field.getName()
+	public String fieldName;//fullName.field.getName()
 	
 	public InnerJoin innerJoin;
 	

@@ -19,7 +19,8 @@ import io.itit.smartjdbc.annotations.QueryConditionType;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.util.ClassUtils;
-import io.itit.smartjdbc.util.DumpUtil;
+import io.itit.smartjdbc.util.JSONUtil;
+import io.itit.smartjdbc.util.StringUtil;
 
 /**
  * 
@@ -72,11 +73,11 @@ public class Caches {
 	public static QueryInfo getQueryInfo(Class<?> clazz) {
 		QueryInfo info=queryInfoMap.get(clazz);
 		if(info==null) {
-			info=new QueryInfo(clazz,ConditionType.AND);
+			info=new QueryInfo(null,null,clazz,ConditionType.AND);
 			info=createQueryInfo(info);
 			queryInfoMap.put(clazz,info);
 			if(logger.isDebugEnabled()) {
-				logger.debug("createQueryInfo queryClass:{}\n{}",clazz,DumpUtil.dump(info));
+				logger.debug("createQueryInfo queryClass:{}\n{}",clazz,JSONUtil.toJson(info));
 			}
 		}
 		return info;
@@ -92,8 +93,7 @@ public class Caches {
 			}
 			QueryConditionType fConditionType = field.getAnnotation(QueryConditionType.class);
 			if (fConditionType!=null) {
-				QueryInfo child=new QueryInfo(field.getType(),fConditionType.value());
-				child.field=field;
+				QueryInfo child=new QueryInfo(info.fullName,field,field.getType(),fConditionType.value());
 				info.children.add(child);
 				createQueryInfo(child);
 				continue;
@@ -105,7 +105,11 @@ public class Caches {
 			QueryFieldInfo fieldInfo=new QueryFieldInfo();
 			fieldInfo.field=field;
 			fieldInfo.fieldType=field.getType();
-			fieldInfo.fieldName=field.getName();
+			if(StringUtil.isEmpty(info.fullName)) {
+				fieldInfo.fieldName=field.getName();
+			}else {
+				fieldInfo.fieldName=info.fullName+"."+field.getName();
+			}
 			fieldInfo.queryField=field.getAnnotation(QueryField.class);
 			fieldInfo.innerJoin=field.getAnnotation(InnerJoin.class);
 			fieldInfo.innerJoins=field.getAnnotation(InnerJoins.class);

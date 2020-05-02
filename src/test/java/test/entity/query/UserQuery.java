@@ -4,9 +4,7 @@ import java.util.List;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
-import io.itit.smartjdbc.annotations.QueryConditionType;
 import io.itit.smartjdbc.annotations.QueryField;
-import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,20 +24,6 @@ public class UserQuery extends Query<User>{
 	
 	@QueryField
 	private Integer gender;
-	//
-	@Data
-	public static class NameOrUserNameOrDeptName{
-		@QueryField
-		private String name;
-		
-		@QueryField
-		private String userName;
-		
-		@QueryField(foreignKeyFields = "departmentId",field = "name")
-		private String deptName;
-	};
-	@QueryConditionType(ConditionType.OR)
-	private NameOrUserNameOrDeptName nameOrUserName;
 	
 	@QueryField(field ="age",operator=SqlOperator.GT)
 	private List<Integer> gtAge;

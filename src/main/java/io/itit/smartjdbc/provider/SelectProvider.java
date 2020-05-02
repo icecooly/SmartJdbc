@@ -36,6 +36,7 @@ import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderBy;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.util.JSONUtil;
 import io.itit.smartjdbc.util.SqlUtil;
 import io.itit.smartjdbc.util.StringUtil;
 
@@ -459,21 +460,15 @@ public class SelectProvider extends SqlProvider{
 		if(!q.params.isEmpty()) {
 			paraMap.putAll(q.params);
 		}
-		List<QueryFieldInfo> fields=queryInfo.fieldList;
-		for (QueryFieldInfo info : fields) {
-			Field field=info.field;
-			try {
-				Object value=field.get(q);
-				paraMap.put(field.getName(), value);
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-				throw new SmartJdbcException(e.getMessage());
-			}
-		}
-		for (QueryFieldInfo info : fields) {
-			Field field=info.field;
-			try {
-				Object value=field.get(q);
+		addWheres(qw.getWhere(), paraMap, q, queryInfo);
+		logger.error("xxxxxx:{}",JSONUtil.toJson(qw));
+	}
+	//
+	protected void addWheres(Where w,Map<String,Object> paraMap,Object obj,QueryInfo queryInfo) {
+		try {
+			for (QueryFieldInfo info : queryInfo.fieldList) {
+				Field field=info.field;
+				Object value=field.get(obj);
 				if(value==null) {
 					continue;
 				}
@@ -486,30 +481,48 @@ public class SelectProvider extends SqlProvider{
 				InnerJoin innerJoin=field.getAnnotation(InnerJoin.class);
 				if(innerJoin!=null||(innerJoins!=null&&innerJoins.joins()!=null)||
 						(queryField!=null&&!StringUtil.isEmpty(queryField.foreignKeyFields()))) {
-					alias=innerJoinFieldAliasMap.get(field.getName());
+					alias=innerJoinFieldAliasMap.get(info.fieldName);
 				}
 				//
 				if(queryField!=null&&!StringUtil.isEmpty(queryField.whereSql())) {//whereSql check first
 					String whereSql=queryField.whereSql();
 					SqlBean sqlBean=parseSql(whereSql, paraMap);//eg:userName like #{userName}
-					whereSql(sqlBean.sql,sqlBean.parameters);
+					w.whereSql(sqlBean.sql,sqlBean.parameters);
 				}else {
 					String dbFieldName=convertFieldName(field.getName());
 					if(queryField!=null&&(!StringUtil.isEmpty(queryField.field()))) {
 						dbFieldName=convertFieldName(queryField.field());
 					}
-					SqlOperator operator=SqlOperator.EQ;
+					SqlOperator operator=SqlOperator.EQ;//default eq
 					if(queryField!=null) {
 						operator=queryField.operator();
 					}
-					where(alias,dbFieldName,operator,value);
+					w.where(alias,dbFieldName,operator,value);
 				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-				throw new IllegalArgumentException(e.getMessage());
 			}
+			//
+			for (QueryInfo child : queryInfo.children) {
+				Object childObj=child.field.get(obj);
+				if(childObj==null) {
+					continue;
+				}
+				if(w.children.isEmpty()) {
+					w.conditionType=child.conditionType;
+					addWheres(w, paraMap, childObj, child);
+				}else {
+					Where childWhere=new Where(child.conditionType);
+					w.children.add(childWhere);
+					addWheres(childWhere, paraMap, childObj, child);
+				}
+				
+				
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	//
 	public static boolean preParseSql(String sql) {
 		String[] regexs= {"\\#\\{[a-zA-Z_$][a-zA-Z0-9_$]*\\}","\\$\\{[a-zA-Z_$][a-zA-Z0-9_$]*\\}"};
 		for (String regex : regexs) {
@@ -873,11 +886,6 @@ public class SelectProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		addWheres(query);
 		sql.append("where 1=1 ");
-		for (Where w : qw.getWheres()) {
-			if(w.alias==null) {
-				w.alias=MAIN_TABLE_ALIAS;
-			}
-		}
 		sql.append(qw.whereStatement().sql);
 		sql.append("\n");
 		return sql.toString();

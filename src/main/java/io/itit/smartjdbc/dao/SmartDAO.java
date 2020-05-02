@@ -1,6 +1,5 @@
 package io.itit.smartjdbc.dao;
 
-import java.lang.reflect.ParameterizedType;
 import java.sql.ResultSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -16,6 +15,7 @@ import io.itit.smartjdbc.provider.DeleteProvider;
 import io.itit.smartjdbc.provider.InsertProvider;
 import io.itit.smartjdbc.provider.SelectProvider;
 import io.itit.smartjdbc.provider.UpdateProvider;
+import io.itit.smartjdbc.util.ClassUtils;
 
 /**
  * 
@@ -480,9 +480,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> Class<T> getEntityClass(Query<T> query) {
-		ParameterizedType pt=(ParameterizedType) query.getClass().getGenericSuperclass();
-		Class<T>type=(Class<T>) pt.getActualTypeArguments()[0];
-		return type;
+		return (Class<T>) ClassUtils.getSuperClassGenricType(query.getClass());
 	}
 	
 	/**
