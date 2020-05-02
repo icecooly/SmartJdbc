@@ -163,15 +163,18 @@ public class QueryTestCase extends BaseTestCase{
 	/**查询用户列表*/
 	public void testGetUsers() {
 		UserQuery query=new UserQuery();
+		query.setUserName("root");
+		query.setName("r");
 		query.orderBy("name", OrderBy.ASC);
 		query.orderBy("id", OrderBy.DESC);
 		List<User> list=dao.getList(query,"createTime","updateTime");
 		System.out.println(DumpUtil.dump(list));
 	}
 	
-	/**查询用户列表*/
+	/**AND OR嵌套查询*/
 	public void testUserComplexQuery() {
 		UserComplexQuery query=new UserComplexQuery();
+		query.setGtAge(10);
 		NameOrUserNameOrDeptName nameOrUserName=new NameOrUserNameOrDeptName();
 		nameOrUserName.setName("t");
 		nameOrUserName.setUserName("e");

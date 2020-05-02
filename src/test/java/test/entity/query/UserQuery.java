@@ -19,17 +19,20 @@ import test.entity.User;
 @Data
 public class UserQuery extends Query<User>{
 
-	@QueryField
+	@QueryField(operator = SqlOperator.LIKE)
 	private String userName;
+	
+	@QueryField(operator = SqlOperator.LIKE)
+	private String name;
 	
 	@QueryField
 	private Integer gender;
 	
 	@QueryField(field ="age",operator=SqlOperator.GT)
-	private List<Integer> gtAge;
+	private Integer gtAge;
 	
 	@QueryField(field ="age",operator=SqlOperator.LT)
-	private List<Integer> ltAge;
+	private Integer ltAge;
 	
 	@QueryField(field ="status",operator=SqlOperator.IN)
 	private List<Integer> statusInList;

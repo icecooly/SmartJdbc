@@ -36,7 +36,6 @@ import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderBy;
 import io.itit.smartjdbc.enums.SqlOperator;
-import io.itit.smartjdbc.util.JSONUtil;
 import io.itit.smartjdbc.util.SqlUtil;
 import io.itit.smartjdbc.util.StringUtil;
 
@@ -460,8 +459,35 @@ public class SelectProvider extends SqlProvider{
 		if(!q.params.isEmpty()) {
 			paraMap.putAll(q.params);
 		}
+		createParaMap(paraMap, q, queryInfo);
 		addWheres(qw.getWhere(), paraMap, q, queryInfo);
-		logger.error("xxxxxx:{}",JSONUtil.toJson(qw));
+	}
+	//
+	private void createParaMap(Map<String,Object> paraMap,Object obj,QueryInfo queryInfo) {
+		try {
+			List<QueryFieldInfo> fields=queryInfo.fieldList;
+			for (QueryFieldInfo info : fields) {
+				Field field=info.field;
+				try {
+					Object value=field.get(obj);
+					paraMap.put(info.fieldName, value);
+				} catch (Exception e) {
+					logger.error(e.getMessage(),e);
+					throw new SmartJdbcException(e.getMessage());
+				}
+			}
+			for (QueryInfo child : queryInfo.children) {
+				Object childObj=child.field.get(obj);
+				if(childObj==null) {
+					continue;
+				}
+				createParaMap(paraMap, childObj, child);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		
 	}
 	//
 	protected void addWheres(Where w,Map<String,Object> paraMap,Object obj,QueryInfo queryInfo) {
@@ -570,7 +596,7 @@ public class SelectProvider extends SqlProvider{
 		for (String group : groups) {
 			Object value=paraMap.get(group);
 			if(value==null) {
-				throw new SmartJdbcException(group+" not found.\nsql:"+sql+
+				throw new SmartJdbcException("paraMap "+group+" not found.\nsql:"+sql+
 						"\nall can choose paras is:"+paraMap.keySet()); 
 			}
 			values[i++]=value;

@@ -153,7 +153,7 @@ public class QueryWhere {
 			return;
 		}
 		boolean and=parent.conditionType==ConditionType.AND?true:false;
-		sql.append(" (\n");
+		sql.append(" ( ");
 		int index=0;
 		for (Where w : wheres) {
 			if(index>0) {
@@ -224,7 +224,7 @@ public class QueryWhere {
 			}
 			index++;
 		}//for
-		sql.append("\n)\n");
+		sql.append(")\n");
 	}
 	//
 	private String getOperator(SqlOperator opr) {

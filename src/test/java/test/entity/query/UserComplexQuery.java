@@ -42,9 +42,4 @@ public class UserComplexQuery extends UserQuery{
 	
 	@QueryConditionType(ConditionType.OR)
 	private NameOrUserNameOrDeptName nameOrUserName;
-	
-	
-	
-	
-	
 }
