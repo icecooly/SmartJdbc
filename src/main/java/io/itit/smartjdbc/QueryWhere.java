@@ -110,7 +110,7 @@ public class QueryWhere {
 	}
 	/**
 	 * 
-	 * @param needAliasAl 是否都需要别名
+	 * @param needAliasAll
 	 * @return
 	 */
 	public WhereStatment whereStatement(boolean needAliasAll){
