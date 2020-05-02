@@ -133,20 +133,20 @@ public class QueryWhere {
 	}
 	//
 	public Object[] whereValues() {
-		return whereStatement().values;
+		return whereStatement(true).values;
 	}
 	//
 	//获取下一级的查询条件的数量（只是children 非递归）如果没有查询条件则删除这个查询
-	protected int getConditionCount(Where condition) {
-		if(condition==null) {
+	protected int getConditionCount(Where w) {
+		if(w==null) {
 			return 0;
 		}
-		if(condition.conditionType==null) {
+		if(w.conditionType==null) {
 			return 1;
 		}
 		int conditionCount=0;
-		if(condition.children!=null) {
-			for (Where child : condition.children) {
+		if(w.children!=null) {
+			for (Where child : w.children) {
 				if(child.conditionType==null) {
 					conditionCount++;
 				}

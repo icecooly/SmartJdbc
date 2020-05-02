@@ -321,12 +321,6 @@ public class QueryTestCase extends BaseTestCase{
 		System.out.println(DumpUtil.dump(users));
 	}
 	
-	public void testQueryWithWhereSql() {
-		UserQuery query=new UserQuery();
-		List<User> users=dao.getList(query);
-		System.out.println(DumpUtil.dump(users));
-	}
-	
 	public void testOr() {
 		ArticleQuery query=new ArticleQuery();
 		List<Article> list=dao.getList(query);
