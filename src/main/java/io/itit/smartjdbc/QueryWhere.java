@@ -47,7 +47,7 @@ public class QueryWhere {
 	}
 	//
 	public QueryWhere where(String key,SqlOperator op,Object value){
-		this.where(SqlProvider.MAIN_TABLE_ALIAS, key, op, value);
+		this.where(null, key, op, value);
 		return this;
 	}
 	//
@@ -100,8 +100,20 @@ public class QueryWhere {
 		forUpdate=true;
 		return this;
 	}
-	//
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public WhereStatment whereStatement(){
+		return whereStatement(false);
+	}
+	/**
+	 * 
+	 * @param needAliasAl 是否都需要别名
+	 * @return
+	 */
+	public WhereStatment whereStatement(boolean needAliasAll){
 		WhereStatment statment=new WhereStatment();
 		List<Object>values=new LinkedList<Object>();
 		StringBuilder sql=new StringBuilder();
@@ -109,7 +121,7 @@ public class QueryWhere {
 		int conditionCount=getConditionCount(where);
 		if(conditionCount>0) {
 			sql.append(" and ");
-			appendWhereSql(sql,values,where);
+			appendWhereSql(needAliasAll,sql,values,where);
 		}
 		sql.append(" ");
 		if(forUpdate) {
@@ -125,7 +137,7 @@ public class QueryWhere {
 	}
 	//
 	//获取下一级的查询条件的数量（只是children 非递归）如果没有查询条件则删除这个查询
-	private int getConditionCount(Where condition) {
+	protected int getConditionCount(Where condition) {
 		if(condition==null) {
 			return 0;
 		}
@@ -143,7 +155,7 @@ public class QueryWhere {
 		return conditionCount;
 	}
 	//
-	private void appendWhereSql(StringBuilder sql,List<Object> valueList,Where parent) {
+	protected void appendWhereSql(boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
 		List<Where> wheres=parent.children;
 		if(wheres==null||wheres.isEmpty()) {
 			return;
@@ -164,13 +176,17 @@ public class QueryWhere {
 				}
 			}
 			if(w.conditionType!=null) {
-				appendWhereSql(sql,valueList,w);
+				appendWhereSql(needAliasAll,sql,valueList,w);
 				continue;
 			}
 			if(w.key!=null){
 				String value="?";
 				if(w.alias!=null) {
 					sql.append(w.alias).append(".");
+				}else {
+					if(needAliasAll) {
+						sql.append(SqlProvider.MAIN_TABLE_ALIAS).append(".");
+					}
 				}
 				sql.append("`").append(w.key).append("` ");
 				sql.append(getOperator(w.operator)).append(" ");
@@ -227,7 +243,7 @@ public class QueryWhere {
 		sql.append(")\n");
 	}
 	//
-	private String getOperator(SqlOperator opr) {
+	protected String getOperator(SqlOperator opr) {
 		if(opr.equals(SqlOperator.EQ)) {
 			return "=";
 		}

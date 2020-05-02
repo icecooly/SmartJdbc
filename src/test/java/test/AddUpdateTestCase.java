@@ -3,6 +3,7 @@ package test;
 import java.io.IOException;
 import java.util.Arrays;
 
+import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
 import test.dao.BizDAO;
 import test.entity.Article;
@@ -33,6 +34,7 @@ public class AddUpdateTestCase extends BaseTestCase{
 		user.setAge(20);
 		user.setDepartmentId(1);
 		user.setRoleIdList(Arrays.asList(1,2,3));
+		user.setMobileNo("13012345678");
 		user.setId(dao.add(user));
 		System.out.println(user.getId());
 	}
@@ -92,5 +94,12 @@ public class AddUpdateTestCase extends BaseTestCase{
 		bean.setStatus(Article.STATUS_待审核);
 		int id=dao.add(bean);
 		System.out.println(id);
+	}
+	
+	/**
+	 * 
+	 */
+	public void testDelete() {
+		dao.delete(User.class, QueryWhere.create().where("id", 11));
 	}
 }

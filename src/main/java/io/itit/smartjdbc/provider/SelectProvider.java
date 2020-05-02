@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.QueryWhere;
+import io.itit.smartjdbc.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.Where;
@@ -908,11 +909,11 @@ public class SelectProvider extends SqlProvider{
 		sql.append("\n");
 	}
 	//
-	protected String getWhereSql() {
+	protected String getWhereSql(WhereStatment ws) {
 		StringBuilder sql=new StringBuilder();
 		addWheres(query);
 		sql.append("where 1=1 ");
-		sql.append(qw.whereStatement().sql);
+		sql.append(ws.sql);
 		sql.append("\n");
 		return sql.toString();
 	}
@@ -975,13 +976,14 @@ public class SelectProvider extends SqlProvider{
 		SqlBean bean=new SqlBean();
 		bean.selectSql=selectSql.toString();
 		bean.fromSql=getFromSql();
-		bean.whereSql=getWhereSql();
+		WhereStatment ws=qw.whereStatement(true);
+		bean.whereSql=getWhereSql(ws);
 		bean.groupBySql=getGroupBySql();
 		bean.orderBySql=getOrderBySql();
 		bean.limitSql=getLimitSql();
 		bean.forUpdateSql=getForUpdateSql();
 		bean.sql=bean.toSql();
-		bean.parameters=qw.whereValues();
+		bean.parameters=ws.values;
 		return bean;
 	}
 		

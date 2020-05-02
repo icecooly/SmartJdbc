@@ -6,7 +6,6 @@ import java.util.List;
 
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
-import io.itit.smartjdbc.provider.SqlProvider;
 
 /**
  * 
@@ -35,11 +34,11 @@ public class Where {
 	}
 	//
 	public Where where(String key, SqlOperator op) {
-		return where(SqlProvider.MAIN_TABLE_ALIAS, key, op, null);
+		return where(null, key, op, null);
 	}
 	//
 	public Where where(String key, SqlOperator op, Object value) {
-		return where(SqlProvider.MAIN_TABLE_ALIAS, key, op, value);
+		return where(null, key, op, value);
 	}
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value) {
