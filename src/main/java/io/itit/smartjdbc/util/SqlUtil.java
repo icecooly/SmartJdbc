@@ -22,7 +22,8 @@ public class SqlUtil {
 			return;
 		}
 		if(!Pattern.matches(regex, field)) {
-			throw new SmartJdbcException("SQL错误 columnName invalid "+field);
+			throw new SmartJdbcException("SQL错误 columnName invalid "+field+
+					"\n配置查看Config.getColumnNameRegex()");
 		}
     }
 }
