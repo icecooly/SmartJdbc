@@ -46,4 +46,42 @@ public class Query<T> {
 		params.put(key, value);
 		return this;
 	}
+	//
+	/**
+	 * @return the pageIndex
+	 */
+	public int getPageIndex() {
+		return pageIndex;
+	}
+	/**
+	 * @param pageIndex the pageIndex to set
+	 */
+	public void setPageIndex(int pageIndex) {
+		this.pageIndex = pageIndex;
+	}
+	/**
+	 * @return the pageSize
+	 */
+	public int getPageSize() {
+		return pageSize;
+	}
+	/**
+	 * @param pageSize the pageSize to set
+	 */
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	/**
+	 * @return the orderBys
+	 */
+	public LinkedHashMap<String, OrderBy> getOrderBys() {
+		return orderBys;
+	}
+	/**
+	 * @param orderBys the orderBys to set
+	 */
+	public void setOrderBys(LinkedHashMap<String, OrderBy> orderBys) {
+		this.orderBys = orderBys;
+	}
+	
 }
