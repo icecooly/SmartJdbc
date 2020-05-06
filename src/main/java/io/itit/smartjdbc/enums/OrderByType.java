@@ -9,7 +9,7 @@ package io.itit.smartjdbc.enums;
  * @author skydu
  *
  */
-public enum OrderBy {
+public enum OrderByType {
    ASC,
    DESC
    ;

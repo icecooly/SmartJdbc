@@ -240,7 +240,7 @@ public class QueryWhere {
 			}
 			index++;
 		}//for
-		sql.append(")\n");
+		sql.append(")");
 	}
 	//
 	protected String getOperator(SqlOperator opr) {

@@ -7,7 +7,7 @@ import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.Where;
 import io.itit.smartjdbc.enums.ConditionType;
-import io.itit.smartjdbc.enums.OrderBy;
+import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.DumpUtil;
 import test.dao.BizDAO;
@@ -165,8 +165,8 @@ public class QueryTestCase extends BaseTestCase{
 		UserQuery query=new UserQuery();
 		query.setUserName("root");
 		query.setName("r");
-		query.orderBy("name", OrderBy.ASC);
-		query.orderBy("id", OrderBy.DESC);
+		query.orderBy("name", OrderByType.ASC.name());
+		query.orderBy("id", OrderByType.DESC.name());
 		List<User> list=dao.getList(query,"createTime","updateTime");
 		System.out.println(DumpUtil.dump(list));
 	}

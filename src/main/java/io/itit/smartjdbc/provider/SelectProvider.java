@@ -34,7 +34,7 @@ import io.itit.smartjdbc.cache.EntityFieldInfo;
 import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
-import io.itit.smartjdbc.enums.OrderBy;
+import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.SqlUtil;
 import io.itit.smartjdbc.util.StringUtil;
@@ -75,12 +75,6 @@ public class SelectProvider extends SqlProvider{
 		public Join() {
 			joins=new ArrayList<>();
 		}
-	}
-	//
-	public static class SortField {
-		public String fieldName;
-		public OrderBy sortType;
-		public int order;
 	}
 	//
 	protected Class<?> entityClass;
@@ -657,17 +651,17 @@ public class SelectProvider extends SqlProvider{
 		if(query==null||query.orderBys==null||query.orderBys.isEmpty()) {
 			return orderByList;
 		}
-		for (Map.Entry<String,OrderBy> entry : query.orderBys.entrySet()) {
+		for (Map.Entry<String,String> entry : query.orderBys.entrySet()) {
 			String fieldName=entry.getKey();
 			if(fieldName==null) {
 				continue;
 			}
 			SqlUtil.checkColumnName(fieldName);
-			OrderBy orderBy=entry.getValue();
+			String orderBy=entry.getValue();
 			String dbField=Config.convertFieldName(fieldName);
-			if(orderBy.equals(OrderBy.ASC)) {
+			if(orderBy.equals(OrderByType.ASC.name())) {
 				orderByList.add(dbField+" asc");
-			}else if(orderBy.equals(OrderBy.DESC)) {
+			}else if(orderBy.equals(OrderByType.DESC.name())) {
 				orderByList.add(dbField+" desc");
 			}
 		}

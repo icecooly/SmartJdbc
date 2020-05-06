@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import io.itit.smartjdbc.enums.OrderBy;
-
 /**
  * 
  * @author icecooly
@@ -17,7 +15,7 @@ public class Query<T> {
 	
 	public int pageSize;
 	
-	public LinkedHashMap<String,OrderBy> orderBys;//<javaField,DESC> 
+	public LinkedHashMap<String,String> orderBys;//<javaField,DESC> 
 	
 	public Map<String,Object> params;
 	//
@@ -37,7 +35,7 @@ public class Query<T> {
 		return (pageIndex-1)*pageSize;
 	}
 	//
-	public Query<?> orderBy(String javaField,OrderBy orderby) {
+	public Query<?> orderBy(String javaField,String orderby) {
 		orderBys.put(javaField, orderby);
 		return this;
 	}
@@ -74,13 +72,13 @@ public class Query<T> {
 	/**
 	 * @return the orderBys
 	 */
-	public LinkedHashMap<String, OrderBy> getOrderBys() {
+	public LinkedHashMap<String, String> getOrderBys() {
 		return orderBys;
 	}
 	/**
 	 * @param orderBys the orderBys to set
 	 */
-	public void setOrderBys(LinkedHashMap<String, OrderBy> orderBys) {
+	public void setOrderBys(LinkedHashMap<String, String> orderBys) {
 		this.orderBys = orderBys;
 	}
 	
