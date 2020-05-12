@@ -36,6 +36,7 @@ import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.SqlUtil;
 import io.itit.smartjdbc.util.StringUtil;
 
@@ -384,7 +385,7 @@ public class SelectProvider extends SqlProvider{
 				for (String id : foreignKeyIds) {
 					Field foreignKeyField=null;
 					try {
-						foreignKeyField=table1.getDeclaredField(id);
+						foreignKeyField=ClassUtils.getExistedField(table1,id);
 					} catch (Exception e) {
 						logger.error(e.getMessage(),e);
 						throw new IllegalArgumentException(e.getMessage()+"/"+table1.getSimpleName());
@@ -719,7 +720,7 @@ public class SelectProvider extends SqlProvider{
 				for (String id : foreignKeyIds) {
 					Field foreignKeyField=null;
 					try {
-						foreignKeyField=table1.getDeclaredField(id);
+						foreignKeyField=ClassUtils.getExistedField(table1,id);
 					} catch (Exception e) {
 						logger.error(e.getMessage(),e);
 						throw new IllegalArgumentException(e.getMessage()+"/"+table1.getSimpleName());

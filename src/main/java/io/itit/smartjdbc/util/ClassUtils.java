@@ -45,7 +45,7 @@ public class ClassUtils {
 	}
 
 	/**
-	 * 
+	 * 获取类的所有字段(包括父类的)
 	 * @param clazz
 	 * @return
 	 */
@@ -90,4 +90,30 @@ public class ClassUtils {
 		return (Class<?>) params[0];
 	}
 	
+	
+	/**
+	 * 
+	 * @param clazz
+	 * @param fieldName
+	 * @return
+	 */
+	public static Field getField(Class<?> clazz,String fieldName) {
+		List<Field> fields=getFieldList(clazz);
+		for (Field field : fields) {
+			if(field.getName().equals(fieldName)) {
+				return field;
+			}
+		}
+		return null;
+	}
+	//
+	public static Field getExistedField(Class<?> clazz,String fieldName) {
+		List<Field> fields=getFieldList(clazz);
+		for (Field field : fields) {
+			if(field.getName().equals(fieldName)) {
+				return field;
+			}
+		}
+		throw new SmartJdbcException("no such field "+fieldName+"/"+clazz.getSimpleName());
+	}
 }
