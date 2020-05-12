@@ -27,15 +27,7 @@ public class BizDAO extends SmartDAO{
 	public int add(Object bean){
 		return insert(bean, true, "id");
 	}
-	
-	/**
-	 * 
-	 * @param bean
-	 * @return
-	 */
-	public int update(Object bean){
-		return update(bean,"id");
-	}
+
 	/**
 	 * 
 	 * @param id

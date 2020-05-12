@@ -48,11 +48,11 @@ public class AddUpdateTestCase extends BaseTestCase{
 		user.setDepartmentId(2);
 		user.setRoleIdList(Arrays.asList(1,2));
 		user.setAge(18);
-		dao.update(user);
+		dao.updateIncludeNull(user);
 	}
 	
 	/**
-	 * 更新非空字段
+	 * 更新字段
 	 */
 	public void testUpdate() {
 		User user=new User();
