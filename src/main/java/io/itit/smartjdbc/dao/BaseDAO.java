@@ -111,8 +111,8 @@ public abstract class BaseDAO{
 			isException=true;
 			throw new RuntimeException(e.getMessage(),e);
 		}finally {
-			if(logger.isInfoEnabled()){
-				logger.info("executeUpdate \nisException:{} \nuseTime:{}ms \nresult:{} \nsql:{} \nparameters:{}\n{}",
+			if(logger.isDebugEnabled()){
+				logger.debug("executeUpdate \nisException:{} \nuseTime:{}ms \nresult:{} \nsql:{} \nparameters:{}\n{}",
 						isException,
 						useTime,
 						result,
@@ -198,8 +198,8 @@ public abstract class BaseDAO{
 			isException=true;
 			throw new RuntimeException(e.getMessage(),e);
 		}finally {
-			if(logger.isInfoEnabled()){
-				logger.info("executeBatch \nisException:{} \nuseTime:{}ms \nresult:{} \nsql:{} \nparameters:{}\n{}",
+			if(logger.isDebugEnabled()){
+				logger.debug("executeBatch \nisException:{} \nuseTime:{}ms \nresult:{} \nsql:{} \nparameters:{}\n{}",
 						isException,
 						useTime,
 						result,
