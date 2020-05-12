@@ -15,6 +15,7 @@ import io.itit.smartjdbc.provider.DeleteProvider;
 import io.itit.smartjdbc.provider.InsertProvider;
 import io.itit.smartjdbc.provider.SelectProvider;
 import io.itit.smartjdbc.provider.UpdateProvider;
+import io.itit.smartjdbc.util.ArrayUtils;
 import io.itit.smartjdbc.util.ClassUtils;
 
 /**
@@ -117,9 +118,19 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @param excludeFields
 	 * @return
 	 */
-	public int update(Object bean,
-			String... excludeFields){
+	public int updateExcludeFields(Object bean,String ... excludeFields) {
 		return update(bean,true,null,excludeFields);
+	}
+	
+	/**
+	 * 
+	 * @param bean
+	 * @param excludeFields
+	 * @return
+	 */
+	public int update(Object bean,
+			String... includeFields){
+		return update(bean,true,ArrayUtils.toSet(includeFields));
 	}
 	
 	/**
@@ -139,6 +150,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 * 
 	 * @param bean
 	 * @param excludeNull
+	 * @param includeFields
 	 * @param excludeFields
 	 * @return
 	 */

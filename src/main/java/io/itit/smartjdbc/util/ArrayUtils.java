@@ -1,6 +1,8 @@
 package io.itit.smartjdbc.util;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -97,5 +99,16 @@ public class ArrayUtils {
 			ret[i]=t[i];
 		}
 		return ret;
+	}
+	//
+	public static Set<String> toSet(String ... includeFields){
+		if(includeFields==null) {
+			return null;
+		}
+		Set<String> set=new HashSet<>();
+		for (String field : includeFields) {
+			set.add(field);
+		}
+		return set;
 	}
 }
