@@ -117,8 +117,8 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	 * @param bean
 	 * @return
 	 */
-	public int updateExcludeNull(T bean){
-		return update(bean,true,null);
+	public int updateIncludeNull(T bean){
+		return update(bean,false,null);
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	 */
 	public int update(T bean,
 			String... excludeFields){
-		return update(bean,false,null,excludeFields);
+		return update(bean,true,null,excludeFields);
 	}
 	
 	/**
@@ -159,7 +159,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	public int update(T bean,
 			Set<String> includeFields,
 			String... excludeFields) {
-		return update(bean,false,includeFields,excludeFields);
+		return update(bean,true,includeFields,excludeFields);
 	}
 	//
 	/**

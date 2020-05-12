@@ -54,11 +54,11 @@ public class AddUpdateTestCase extends BaseTestCase{
 	/**
 	 * 更新非空字段
 	 */
-	public void testUpdateExcludeNull() {
+	public void testUpdate() {
 		User user=new User();
 		user.setId(2);
 		user.setAge(50);
-		dao.updateExcludeNull(user);
+		dao.update(user);
 	}
 	
 	/**

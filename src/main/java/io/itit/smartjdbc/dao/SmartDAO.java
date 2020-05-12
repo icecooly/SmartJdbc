@@ -90,8 +90,8 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @param bean
 	 * @return
 	 */
-	public int updateExcludeNull(Object bean){
-		return update(bean,true,null);
+	public int updateIncludeNull(Object bean){
+		return update(bean,false,null);
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 */
 	public int update(Object bean,
 			String... excludeFields){
-		return update(bean,false,null,excludeFields);
+		return update(bean,true,null,excludeFields);
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class SmartDAO extends BaseEntityDAO{
 	public int update(Object bean,
 			Set<String> includeFields,
 			String... excludeFields) {
-		return update(bean,false,includeFields,excludeFields);
+		return update(bean,true,includeFields,excludeFields);
 	}
 	//
 	/**
@@ -164,7 +164,7 @@ public class SmartDAO extends BaseEntityDAO{
 	public int update(Object bean,
 			QueryWhere wq,
 			String... excludeFields){
-		return update(bean, wq, false, null, excludeFields);
+		return update(bean, wq, true, null, excludeFields);
 	}
 	
 	/**
