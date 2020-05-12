@@ -87,7 +87,7 @@ public class SmartDAO extends BaseEntityDAO{
 	}
 	
 	/**
-	 * 
+	 * 更新包括Null字段
 	 * @param bean
 	 * @return
 	 */
@@ -123,9 +123,9 @@ public class SmartDAO extends BaseEntityDAO{
 	}
 	
 	/**
-	 * 
+	 * 更新（不包括Null字段）
 	 * @param bean
-	 * @param includeFields
+	 * @param includeFields 如果includeFields有Null字段也会更新
 	 * @return
 	 */
 	public int update(Object bean,
