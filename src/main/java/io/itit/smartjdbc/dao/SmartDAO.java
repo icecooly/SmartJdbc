@@ -125,7 +125,7 @@ public class SmartDAO extends BaseEntityDAO{
 	/**
 	 * 
 	 * @param bean
-	 * @param excludeFields
+	 * @param includeFields
 	 * @return
 	 */
 	public int update(Object bean,
