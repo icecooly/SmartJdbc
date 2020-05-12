@@ -203,9 +203,7 @@ public class QueryWhere {
 					sql.append(" concat("+value+",'%') ");
 					valueList.add(w.value);
 				}else if(w.operator.equals(SqlOperator.IS_NULL)){
-					valueList.add(w.value);
 				}else if(w.operator.equals(SqlOperator.IS_NOT_NULL)){
-					valueList.add(w.value);
 				}else if(w.operator.equals(SqlOperator.IN)) {
 					Object[] values=ArrayUtils.convert(w.value);
 					if(values!=null&&values.length>0) {

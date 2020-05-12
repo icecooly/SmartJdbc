@@ -42,4 +42,9 @@ public class UserComplexQuery extends UserQuery{
 	
 	@QueryConditionType(ConditionType.OR)
 	private NameOrUserNameOrDeptName nameOrUserName;
+	
+	
+	//
+	@QueryField(operator = SqlOperator.IS_NOT_NULL)
+	private Boolean nameIsNotNull;
 }
