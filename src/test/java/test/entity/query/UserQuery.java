@@ -40,6 +40,10 @@ public class UserQuery extends Query<User>{
 	@QueryField(field ="status",operator=SqlOperator.NOT_IN)
 	private List<Integer> statusNotInList;
 	
+	@QueryField(field ="status",operator=SqlOperator.IN)
+	private Integer[] statusInList2;
+	
+	
 	@QueryField(whereSql="json_contains(a.role_id_list,'${roleId}')")
 	private Integer roleId; 
 	
