@@ -20,6 +20,7 @@ public class Query<T> {
 	public Map<String,Object> params;
 	//
 	public static Integer defaultPageSize=20;
+	public static String defaultOrderBy;//id desc
 	//
 	public Query(){
 		pageSize=20;//

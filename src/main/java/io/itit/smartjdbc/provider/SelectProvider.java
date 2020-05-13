@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -649,8 +650,15 @@ public class SelectProvider extends SqlProvider{
 	//
 	public List<String> addOrderByList(Query<?> query) {
 		List<String> orderByList=new ArrayList<>();
-		if(query==null||query.orderBys==null||query.orderBys.isEmpty()) {
+		if(query==null) {
 			return orderByList;
+		}
+		if(query.orderBys==null||query.orderBys.isEmpty()) {
+			if(Query.defaultOrderBy!=null) {
+				return Arrays.asList(Query.defaultOrderBy);
+			}else {
+				return orderByList;
+			}
 		}
 		for (Map.Entry<String,String> entry : query.orderBys.entrySet()) {
 			String fieldName=entry.getKey();
