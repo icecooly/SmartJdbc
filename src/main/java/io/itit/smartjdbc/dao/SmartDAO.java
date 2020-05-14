@@ -525,9 +525,7 @@ public class SmartDAO extends BaseEntityDAO{
 		return queryForList(sqlBean.sql, new ResultSetHandler<T>() {
 			@Override
 			public T handleRow(ResultSet row) throws Exception {
-				T o=entityClass.newInstance();
-				convertBean(o,row);
-				return o;
+				return convertBean(entityClass,row);
 			}}, sqlBean.parameters);
 	}
 	
@@ -558,9 +556,7 @@ public class SmartDAO extends BaseEntityDAO{
 		return queryForObject(sqlBean.sql, new ResultSetHandler<T>() {
 			@Override
 			public T handleRow(ResultSet row) throws Exception {
-				T o=entityClass.newInstance();
-				convertBean(o,row);
-				return o;
+				return convertBean(entityClass,row);
 			}}, sqlBean.parameters);
 	}
 	
