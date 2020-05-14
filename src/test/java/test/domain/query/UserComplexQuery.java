@@ -1,4 +1,4 @@
-package test.entity.query;
+package test.domain.query;
 
 import io.itit.smartjdbc.annotations.QueryConditionType;
 import io.itit.smartjdbc.annotations.QueryField;

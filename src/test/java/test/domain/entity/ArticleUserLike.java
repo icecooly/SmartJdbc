@@ -1,4 +1,4 @@
-package test.entity;
+package test.domain.entity;
 
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.ForeignKey;

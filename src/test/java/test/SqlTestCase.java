@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.SqlUtil;
-import test.entity.query.UserComplexQuery;
-import test.entity.query.UserQuery;
+import test.domain.query.UserComplexQuery;
+import test.domain.query.UserQuery;
 
 /**
  * 

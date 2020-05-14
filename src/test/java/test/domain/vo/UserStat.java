@@ -1,4 +1,4 @@
-package test.entity;
+package test.domain.vo;
 
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;

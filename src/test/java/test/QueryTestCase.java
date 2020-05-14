@@ -11,13 +11,14 @@ import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.DumpUtil;
 import test.dao.BizDAO;
-import test.entity.Article;
-import test.entity.User;
-import test.entity.query.ArticleQuery;
-import test.entity.query.UserComplexQuery;
-import test.entity.query.UserComplexQuery.NameOrUserNameOrDeptName;
-import test.entity.query.UserComplexQuery.StatusAndMobile;
-import test.entity.query.UserQuery;
+import test.domain.entity.Article;
+import test.domain.entity.User;
+import test.domain.query.ArticleQuery;
+import test.domain.query.UserComplexQuery;
+import test.domain.query.UserComplexQuery.NameOrUserNameOrDeptName;
+import test.domain.query.UserComplexQuery.StatusAndMobile;
+import test.domain.query.UserQuery;
+import test.domain.vo.UserSimple;
 
 /**
  * 
@@ -271,6 +272,12 @@ public class QueryTestCase extends BaseTestCase{
 				"select * from t_user where name like concat('%',#{name},'%') and id=#{id}", 
 				new SqlParam("name", "liu"),
 				new SqlParam("id", 1));
+		System.out.println(DumpUtil.dump(users));
+	}
+	
+	public void testQueryUsers3() {
+		List<UserSimple> users=dao.queryList(UserSimple.class, 
+				"select *,1 as test from t_user");
 		System.out.println(DumpUtil.dump(users));
 	}
 	

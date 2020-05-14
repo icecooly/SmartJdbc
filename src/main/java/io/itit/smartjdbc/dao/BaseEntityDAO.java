@@ -27,7 +27,6 @@ import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.SqlParam;
-import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.provider.SelectProvider;
 import io.itit.smartjdbc.provider.SqlProvider;
 import io.itit.smartjdbc.util.IOUtil;
@@ -149,10 +148,6 @@ public abstract class BaseEntityDAO extends BaseDAO{
 				fieldName=preAliasField+fieldName;
 			}
 			Class<?> fieldType = f.getType();
-			EntityField entityField=f.getAnnotation(EntityField.class);
-			if(entityField!=null&&entityField.ignoreWhenSelect()) {
-				continue;
-			}
 			if(!columnNames.contains(fieldName)) {
 				if(WRAP_TYPES.contains(fieldType)){
 					continue;

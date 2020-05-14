@@ -1,4 +1,4 @@
-package test.entity.query;
+package test.domain.query;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.InnerJoin;
@@ -7,10 +7,10 @@ import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import test.entity.Article;
-import test.entity.ArticleUserLike;
-import test.entity.Department;
-import test.entity.User;
+import test.domain.entity.Article;
+import test.domain.entity.ArticleUserLike;
+import test.domain.entity.Department;
+import test.domain.entity.User;
 
 /**
  * 

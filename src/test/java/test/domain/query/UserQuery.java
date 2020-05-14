@@ -1,4 +1,4 @@
-package test.entity.query;
+package test.domain.query;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import test.entity.User;
+import test.domain.entity.User;
 
 /**
  * 

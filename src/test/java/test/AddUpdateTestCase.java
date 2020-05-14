@@ -6,8 +6,8 @@ import java.util.Arrays;
 import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
 import test.dao.BizDAO;
-import test.entity.Article;
-import test.entity.User;
+import test.domain.entity.Article;
+import test.domain.entity.User;
 
 /**
  * 
