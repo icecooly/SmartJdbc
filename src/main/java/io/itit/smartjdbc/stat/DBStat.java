@@ -151,7 +151,7 @@ public class DBStat {
 		}
 		//
 		format="%-5s %-8s %-8s %-15s %-15s " +
-				"%-15s %-15s %-50s\n";
+				"%-15s %-15s %-100s\n";
 		stat.append(String.format(format,
 				"#","COUNT","AVG","LAST TIME",
 				"MAX TIME","MIN_TIME",
