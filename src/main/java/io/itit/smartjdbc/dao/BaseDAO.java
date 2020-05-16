@@ -18,7 +18,7 @@ import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.ResultSetHandler;
 import io.itit.smartjdbc.SqlInterceptor;
 import io.itit.smartjdbc.connection.ConnectionManager;
-import io.itit.smartjdbc.util.DBStat;
+import io.itit.smartjdbc.stat.DBStat;
 import io.itit.smartjdbc.util.DumpUtil;
 import io.itit.smartjdbc.util.JdbcUtil;
 
@@ -121,7 +121,7 @@ public abstract class BaseDAO{
 						dumpParameters(parameters));
 			}
 			afterExcute(sql, parameters);
-			DBStat.execute(sql,useTime,isException);//stat
+			DBStat.stat(sql,useTime,isException);//stat
 			if(!isException&&useTime>=SLOW_SQL_MIN_USE_TIME){
 				logger.warn("executeUpdate  \nuseTime:{}ms \nresult:{} \nsql:{} \nparameters:{}\n{}",
 						useTime,
@@ -208,7 +208,7 @@ public abstract class BaseDAO{
 						DumpUtil.dump(parameters));
 			}
 			afterExcute(sql, parameters);
-			DBStat.execute(sql,useTime,isException);//stat
+			DBStat.stat(sql,useTime,isException);//stat
 			if(!isException&&useTime>=SLOW_SQL_MIN_USE_TIME){
 				logger.warn("executeBatch  \nuseTime:{}ms \nresult:{} \nsql:{} \nparameters:{}\n{}",
 						useTime,
@@ -266,7 +266,7 @@ public abstract class BaseDAO{
 						DumpUtil.dump(bean));
 			}
 			afterExcute(sql, parameters);
-			DBStat.execute(sql,useTime,isException);//stat
+			DBStat.stat(sql,useTime,isException);//stat
 			if(!isException&&useTime>=SLOW_SQL_MIN_USE_TIME){
 				logger.warn("query \nisException:{} \nuseTime:{}ms \nsql:{} \nparameters:{} \nresult:{}",
 						isException,
@@ -308,7 +308,7 @@ public abstract class BaseDAO{
 						);
 			}
 			afterExcute(sql, parameters);
-			DBStat.execute(sql,useTime,isException);//stat
+			DBStat.stat(sql,useTime,isException);//stat
 			if(!isException&&useTime>=SLOW_SQL_MIN_USE_TIME){
 				logger.warn("queryList \nisException:{} \nuseTime:{}ms \nsql:{}\nparameters:{}\nresult:{}",
 						isException,

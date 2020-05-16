@@ -1,4 +1,4 @@
-package io.itit.smartjdbc.util;
+package io.itit.smartjdbc.stat;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class DBStat {
 	//
 	public static boolean isOpen=true;
+	public static int maxSqlNum=500;
 	//
 	public static class SqlStat{
 		public long invokeCount;
@@ -30,8 +31,14 @@ public class DBStat {
 	private static AtomicLong invokeCount = new AtomicLong();
 	private static AtomicLong exceptionCount = new AtomicLong();
 	private static Map<String,SqlStat> sqlMap=new ConcurrentHashMap<>();
-	//
-	public static void execute(String sql,long time,boolean exception) {
+	
+	/**
+	 * 
+	 * @param sql
+	 * @param time
+	 * @param exception
+	 */
+	public static void stat(String sql,long time,boolean exception) {
 		if(!isOpen){
 			return;
 		}
@@ -67,7 +74,9 @@ public class DBStat {
 			sqlStat.avgInvokeTime=time;
 			sqlStat.invokeCount=1;;
 			sqlStat.totalInvokeTime=time;
-			sqlMap.put(sql, sqlStat);
+			if(sqlMap.size()<maxSqlNum) {
+				sqlMap.put(sql, sqlStat);
+			}
 		}else{
 			sqlStat.invokeCount++;
 			sqlStat.lastInvokeTime=time;
