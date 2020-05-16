@@ -35,7 +35,7 @@ public class AddUpdateTestCase extends BaseTestCase{
 		user.setDepartmentId(1);
 		user.setRoleIdList(Arrays.asList(1,2,3));
 		user.setMobileNo("13012345678");
-		user.setId(dao.add(user));
+		user.setId(dao.insert(user));
 		System.out.println(user.getId());
 	}
 	
@@ -92,7 +92,7 @@ public class AddUpdateTestCase extends BaseTestCase{
 		bean.setCreateUserId(1);
 		bean.setUpdateUserId(1);
 		bean.setStatus(Article.STATUS_待审核);
-		int id=dao.add(bean);
+		int id=dao.insert(bean);
 		System.out.println(id);
 	}
 	

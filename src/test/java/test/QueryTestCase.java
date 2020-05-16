@@ -1,7 +1,10 @@
 package test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
@@ -18,6 +21,7 @@ import test.domain.query.UserComplexQuery;
 import test.domain.query.UserComplexQuery.NameOrUserNameOrDeptName;
 import test.domain.query.UserComplexQuery.StatusAndMobile;
 import test.domain.query.UserQuery;
+import test.domain.vo.Test;
 import test.domain.vo.UserSimple;
 
 /**
@@ -355,6 +359,18 @@ public class QueryTestCase extends BaseTestCase{
 		query.setCreateUserDepartmentName("技术");
 		query.setCreateUserDepartmentName2("技术");
 		List<Article> list=dao.getList(query);
+		System.out.println(DumpUtil.dump(list));
+	}
+	//
+	public void testQueryTest() {
+		Test test=new Test();
+		test.setArticleList(Arrays.asList(new Article("test1")));
+		Map<String,List<Article>> map=new HashMap<>();
+		map.put("testList",Arrays.asList(new Article("test2")));
+		test.setArticleMap(map);
+		int id=dao.insert(test);
+		String sql="select * from t_test where id=?";
+		List<Test> list=dao.queryList(Test.class, sql,id);
 		System.out.println(DumpUtil.dump(list));
 	}
 }

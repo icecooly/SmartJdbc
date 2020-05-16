@@ -48,6 +48,12 @@ public class Article extends BaseEntity{
 	private User updateUser;
 	
 	//
-	
+	public Article() {
+		
+	}
+	//
+	public Article(String title) {
+		this.title=title;
+	}
 	
 }

@@ -89,7 +89,7 @@ User user=new User();
 user.setName("张三");
 user.setDepartmentId(1);
 user.setRoleIdList(Arrays.asList(1,2,3));//会自动转化为JSON.toString(roleIdList)
-user.setId((long)dao.add(user));
+user.setId((long)dao.insert(user));
 ```
 
 修改

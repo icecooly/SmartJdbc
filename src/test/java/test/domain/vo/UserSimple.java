@@ -1,6 +1,7 @@
 package test.domain.vo;
 
 import io.itit.smartjdbc.annotations.Entity;
+import lombok.Data;
 
 /**
  * 
@@ -8,14 +9,15 @@ import io.itit.smartjdbc.annotations.Entity;
  *
  */
 @Entity(tableName = "t_user")
+@Data
 public class UserSimple {
 	
-	public Integer id;
+	private Integer id;
 	
 	
-	public String name;
+	private String name;
 	
 	
-	public Integer test;
+	private Integer test;
 
 }
