@@ -60,6 +60,19 @@ public class JSONUtil {
 	public static <K, V> Map<K, List<V>> fromJsonMapListValue(String json, Class<K> keyType,  Class<V> valueType) {
 	     return JSON.parseObject(json,new TypeReference<Map<K, List<V>>>(keyType, valueType) {});
 	}
+	
+	/**
+	 * 
+	 * @param <K>
+	 * @param <V>
+	 * @param json
+	 * @param keyType
+	 * @param valueType
+	 * @return
+	 */
+	public static <K, V> Map<K, Set<V>> fromJsonMapSetValue(String json, Class<K> keyType,  Class<V> valueType) {
+	     return JSON.parseObject(json,new TypeReference<Map<K, Set<V>>>(keyType, valueType) {});
+	}
 	/**
 	 * 
 	 * @param json

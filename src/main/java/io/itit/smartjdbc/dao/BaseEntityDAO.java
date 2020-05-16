@@ -210,7 +210,14 @@ public abstract class BaseEntityDAO extends BaseDAO{
 										 value=JSONUtil.fromJsonMap(strValue,(Class<?>) typeArguments[0],(Class<?>) typeArguments[1]);
 									 }else if(Map.class.isAssignableFrom(fieldType) && (typeArguments[0] instanceof Class) && (typeArguments[1] instanceof ParameterizedType)){
 										 Type[] typeArguments2 = ((ParameterizedType)typeArguments[1]).getActualTypeArguments();
-										 value=JSONUtil.fromJsonMapListValue(strValue,(Class<?>) typeArguments[0],(Class<?>) typeArguments2[0]);
+										 if(typeArguments2.length==1) {
+											 Type rowType=((ParameterizedType)typeArguments[1]).getRawType();
+											 if(rowType.equals(List.class) && (typeArguments2[0] instanceof Class)) {
+												 value=JSONUtil.fromJsonMapListValue(strValue,(Class<?>) typeArguments[0],(Class<?>) typeArguments2[0]);
+											 }else if(rowType.equals(Set.class) && (typeArguments2[0] instanceof Class)) {
+												 value=JSONUtil.fromJsonMapSetValue(strValue,(Class<?>) typeArguments[0],(Class<?>) typeArguments2[0]);
+											 }
+										 }
 									 }
 								 }
 							 }else {
