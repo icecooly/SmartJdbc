@@ -668,9 +668,9 @@ public class SelectProvider extends SqlProvider{
 			SqlUtil.checkColumnName(fieldName);
 			String orderBy=entry.getValue();
 			String dbField=Config.convertFieldName(fieldName);
-			if(orderBy.equals(OrderByType.ASC.name())) {
+			if(orderBy.equalsIgnoreCase(OrderByType.ASC.name())) {
 				orderByList.add(dbField+" asc");
-			}else if(orderBy.equals(OrderByType.DESC.name())) {
+			}else if(orderBy.equalsIgnoreCase(OrderByType.DESC.name())) {
 				orderByList.add(dbField+" desc");
 			}
 		}
