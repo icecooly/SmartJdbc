@@ -109,6 +109,36 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getEntity(User.class,QueryWhere.create().notin("name",new String[] {"张三","张三2"}));
 	}
 	
+	public void testJsonContains() {
+		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",Arrays.asList(1,2,3)));
+		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",new int[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",new byte[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",new long[] {1,2}));
+		//
+		UserQuery query=new UserQuery();
+		query.setRoleId(1);
+		dao.getList(query);
+		//
+		query=new UserQuery();
+		query.setRoleIdList(new Integer[] {1,2});
+		dao.getList(query);
+	}
+	
+	public void testNotJsonContains() {
+		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",Arrays.asList(1,2,3)));
+		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",new int[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",new byte[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",new long[] {1,2}));
+		//
+		UserQuery query=new UserQuery();
+		query.setNotRoleId(1);
+		dao.getList(query);
+		//
+		query=new UserQuery();
+		query.setNotRoleIdList(new Integer[] {1,2});
+		dao.getList(query);
+	}
+	
 	public void testQueryIsNull() {
 		dao.getEntity(User.class,QueryWhere.create().isNull("name"));
 		dao.getEntity(User.class,QueryWhere.create().isNotNull("name"));

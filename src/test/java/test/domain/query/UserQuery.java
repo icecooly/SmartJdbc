@@ -44,8 +44,17 @@ public class UserQuery extends Query<User>{
 	private Integer[] statusInList2;
 	
 	
-	@QueryField(whereSql="json_contains(a.role_id_list,'${roleId}')")
+	@QueryField(operator = SqlOperator.JSONCONTAINS,field = "roleIdList")
 	private Integer roleId; 
+	
+	@QueryField(operator = SqlOperator.JSONCONTAINS)
+	private Integer[] roleIdList; 
+	
+	@QueryField(operator = SqlOperator.NOT_JSONCONTAINS,field = "roleIdList")
+	private Integer notRoleId; 
+	
+	@QueryField(operator = SqlOperator.NOT_JSONCONTAINS,field = "roleIdList")
+	private Integer[] notRoleIdList; 
 	
 	@QueryField(whereSql="a.status=#{orStatus} or json_contains(a.role_id_list,'${orRoleId}')")
 	private Boolean statusOrRoleId;

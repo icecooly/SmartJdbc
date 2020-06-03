@@ -155,6 +155,19 @@ public class QueryWhere {
 		return conditionCount;
 	}
 	//
+	private String getSqlKey(Where w,boolean needAliasAll) {
+		StringBuilder sql=new StringBuilder();
+		if(w.alias!=null) {
+			sql.append(w.alias).append(".");
+		}else {
+			if(needAliasAll) {
+				sql.append(SqlProvider.MAIN_TABLE_ALIAS).append(".");
+			}
+		}
+		sql.append("`").append(w.key).append("` ");
+		return sql.toString();
+	}
+	//
 	protected void appendWhereSql(boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
 		List<Where> wheres=parent.children;
 		if(wheres==null||wheres.isEmpty()) {
@@ -180,55 +193,70 @@ public class QueryWhere {
 				continue;
 			}
 			if(w.key!=null){
-				String value="?";
-				if(w.alias!=null) {
-					sql.append(w.alias).append(".");
+				String sqlKey=getSqlKey(w, needAliasAll);
+				if(w.operator.equals(SqlOperator.JSONCONTAINS)||
+						w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
+					Object[] values=ArrayUtils.convert(w.value);
+					if(values!=null&&values.length>0) {
+						for (int i = 0; i < values.length; i++) {
+							sql.append(" json_contains(").append(sqlKey).append(",JSON_ARRAY(?)").append(") ");
+							if(w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
+								sql.append("=0 ");
+							}
+							valueList.add(values[i]);
+							if(i!=(values.length-1)) {
+								if(w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
+									sql.append(" and ");
+								}else {
+									sql.append(" or ");
+								}
+							}
+						}
+					}
 				}else {
-					if(needAliasAll) {
-						sql.append(SqlProvider.MAIN_TABLE_ALIAS).append(".");
-					}
-				}
-				sql.append("`").append(w.key).append("` ");
-				sql.append(getOperator(w.operator)).append(" ");
-				if(w.operator.equals(SqlOperator.LIKE)||
-						w.operator.equals(SqlOperator.NOT_LIKE)){
-					sql.append(" concat('%',"+value+",'%') ");
-					valueList.add(w.value);
-				}else if(w.operator.equals(SqlOperator.LIKE_LEFT)||
-						w.operator.equals(SqlOperator.NOT_LIKE_LEFT)){
-					sql.append(" concat('%',"+value+") ");
-					valueList.add(w.value);
-				}else if(w.operator.equals(SqlOperator.LIKE_RIGHT)||
-						w.operator.equals(SqlOperator.NOT_LIKE_RIGHT)){
-					sql.append(" concat("+value+",'%') ");
-					valueList.add(w.value);
-				}else if(w.operator.equals(SqlOperator.IS_NULL)){
-				}else if(w.operator.equals(SqlOperator.IS_NOT_NULL)){
-				}else if(w.operator.equals(SqlOperator.IN)) {
-					Object[] values=ArrayUtils.convert(w.value);
-					if(values!=null&&values.length>0) {
-						sql.append(" ( ");
-						for (int i = 0; i < values.length; i++) {
-							sql.append(" ?,");
-							valueList.add(values[i]);
+					String value="?";
+					sql.append(sqlKey);
+					sql.append(getOperator(w.operator)).append(" ");
+					if(w.operator.equals(SqlOperator.LIKE)||
+							w.operator.equals(SqlOperator.NOT_LIKE)){
+						sql.append(" concat('%',"+value+",'%') ");
+						valueList.add(w.value);
+					}else if(w.operator.equals(SqlOperator.LIKE_LEFT)||
+							w.operator.equals(SqlOperator.NOT_LIKE_LEFT)){
+						sql.append(" concat('%',"+value+") ");
+						valueList.add(w.value);
+					}else if(w.operator.equals(SqlOperator.LIKE_RIGHT)||
+							w.operator.equals(SqlOperator.NOT_LIKE_RIGHT)){
+						sql.append(" concat("+value+",'%') ");
+						valueList.add(w.value);
+					}else if(w.operator.equals(SqlOperator.IS_NULL)){
+					}else if(w.operator.equals(SqlOperator.IS_NOT_NULL)){
+					}else if(w.operator.equals(SqlOperator.IN)) {
+						Object[] values=ArrayUtils.convert(w.value);
+						if(values!=null&&values.length>0) {
+							sql.append(" ( ");
+							for (int i = 0; i < values.length; i++) {
+								sql.append(" ?,");
+								valueList.add(values[i]);
+							}
+							sql.deleteCharAt(sql.length() - 1);
+							sql.append(" ) ");
 						}
-						sql.deleteCharAt(sql.length() - 1);
-						sql.append(" ) ");
-					}
-				}else if(w.operator.equals(SqlOperator.NOT_IN)) {
-					Object[] values=ArrayUtils.convert(w.value);
-					if(values!=null&&values.length>0) {
-						sql.append(" ( ");
-						for (int i = 0; i < values.length; i++) {
-							sql.append(" ?,");
-							valueList.add(values[i]);
+					}else if(w.operator.equals(SqlOperator.NOT_IN)) {
+						Object[] values=ArrayUtils.convert(w.value);
+						if(values!=null&&values.length>0) {
+							sql.append(" ( ");
+							for (int i = 0; i < values.length; i++) {
+								sql.append(" ?,");
+								valueList.add(values[i]);
+							}
+							sql.deleteCharAt(sql.length() - 1);
+							sql.append(" ) ");
 						}
-						sql.deleteCharAt(sql.length() - 1);
-						sql.append(" ) ");
+					}else{
+						sql.append("  "+value+" ");
+						valueList.add(w.value);
 					}
-				}else{
-					sql.append("  "+value+" ");
-					valueList.add(w.value);
 				}
 			}else{
 				sql.append(" "+ w.sql+" ");
@@ -875,6 +903,57 @@ public class QueryWhere {
 		return this.where(alias,key, SqlOperator.NOT_IN, values);
 	}
 	
+	/**
+	 *  JSON_CONTAINS (`key`,值1) or JSON_CONTAINS (`key`,值2)
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContains(String key,Object value) {
+		return this.where(key, SqlOperator.JSONCONTAINS, value);
+	}
+	
+	/**
+	 * JSON_CONTAINS (`key`,值1) or JSON_CONTAINS (`key`,值2)
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public QueryWhere jsonContains(String key,Collection<?> values) {
+		return this.where(key, SqlOperator.JSONCONTAINS, values);
+	}
+	
+	/**
+	 * JSON_CONTAINS (alias.`key`,值1) or JSON_CONTAINS (alias.`key`,值2)
+	 * @param alias
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContains(String alias,String key,Object value) {
+		return this.where(alias,key, SqlOperator.JSONCONTAINS, value);
+	}
+	
+	/**
+	 *  JSON_CONTAINS (`key`,值1)=0 and JSON_CONTAINS (`key`,值2)=0
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere notJsonContains(String key,Object value) {
+		return this.where(key, SqlOperator.NOT_JSONCONTAINS, value);
+	}
+	
+	/**
+	 * JSON_CONTAINS (alias.`key`,值1)=0 and JSON_CONTAINS (alias.`key`,值2)
+	 * @param alias
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere notJsonContains(String alias,String key,Object value) {
+		return this.where(alias,key, SqlOperator.NOT_JSONCONTAINS, value);
+	}
 	/**
 	 * `key` IS NULL
 	 * @param key
