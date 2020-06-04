@@ -198,6 +198,7 @@ public class QueryWhere {
 						w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
 					Object[] values=ArrayUtils.convert(w.value);
 					if(values!=null&&values.length>0) {
+						sql.append("( ");
 						for (int i = 0; i < values.length; i++) {
 							sql.append(" json_contains(").append(sqlKey).append(",JSON_ARRAY(?)").append(") ");
 							if(w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
@@ -212,6 +213,7 @@ public class QueryWhere {
 								}
 							}
 						}
+						sql.append(") ");
 					}
 				}else {
 					String value="?";

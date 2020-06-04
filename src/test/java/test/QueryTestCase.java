@@ -120,6 +120,7 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getList(query);
 		//
 		query=new UserQuery();
+		query.setGtAge(10);
 		query.setRoleIdList(new Integer[] {1,2});
 		dao.getList(query);
 	}
