@@ -96,7 +96,7 @@ public class SmartDAO extends BaseEntityDAO{
 	}
 	
 	/**
-	 * 
+	 * 更新指定的字段(如果字段值为NULL,则不会更新)
 	 * @param bean
 	 * @param includeFields
 	 * @return
@@ -113,6 +113,23 @@ public class SmartDAO extends BaseEntityDAO{
 	}
 	
 	/**
+	 * 更新指定的字段(如果字段值为NULL,也会更新)
+	 * @param bean
+	 * @param includeFields
+	 * @return
+	 */
+	public int updateIncludeFieldsIncludeNull(Object bean,String ... includeFields) {
+		Set<String> includeFieldSet=null;
+		if(includeFields!=null&&includeFields.length>0) {
+			includeFieldSet=new LinkedHashSet<>();
+			for (String includeField : includeFields) {
+				includeFieldSet.add(includeField);
+			}
+		}
+		return update(bean,false,includeFieldSet);
+	}
+	
+	/**
 	 * 
 	 * @param bean
 	 * @param excludeFields
@@ -125,7 +142,7 @@ public class SmartDAO extends BaseEntityDAO{
 	/**
 	 * 更新（不包括Null字段）
 	 * @param bean
-	 * @param includeFields 如果includeFields有Null字段也会更新
+	 * @param includeFields
 	 * @return
 	 */
 	public int update(Object bean,
@@ -136,8 +153,8 @@ public class SmartDAO extends BaseEntityDAO{
 	/**
 	 * 
 	 * @param bean
-	 * @param includeFields
-	 * @param excludeFields
+	 * @param includeFields 只更新这些指定的字段
+	 * @param excludeFields 排除更新这些指定的字段
 	 * @return
 	 */
 	public int update(Object bean,
@@ -149,9 +166,9 @@ public class SmartDAO extends BaseEntityDAO{
 	/**
 	 * 
 	 * @param bean
-	 * @param excludeNull
-	 * @param includeFields
-	 * @param excludeFields
+	 * @param excludeNull 是否更新值为NULL的字段  true:不更新 false:更新
+	 * @param includeFields 只更新这些指定的字段
+	 * @param excludeFields 排除更新这些指定的字段
 	 * @return
 	 */
 	public int update(Object bean,
@@ -183,9 +200,9 @@ public class SmartDAO extends BaseEntityDAO{
 	 * 
 	 * @param bean
 	 * @param wq
-	 * @param excludeNull
-	 * @param includeFields
-	 * @param excludeFields
+	 * @param excludeNull	是否更新值为NULL的字段  true:不更新 false:更新
+	 * @param includeFields	只更新这些指定的字段
+	 * @param excludeFields 排除更新这些指定的字段
 	 * @return
 	 */
 	public int update(Object bean,

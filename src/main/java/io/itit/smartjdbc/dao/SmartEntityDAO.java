@@ -123,7 +123,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	}
 	
 	/**
-	 * 
+	 * 更新指定的字段(如果字段值为NULL,则不会更新)
 	 * @param bean
 	 * @param includeFields
 	 * @return
@@ -140,6 +140,23 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	}
 	
 	/**
+	 * 更新指定的字段(如果字段值为NULL,也会更新)
+	 * @param bean
+	 * @param includeFields
+	 * @return
+	 */
+	public int updateIncludeFieldsIncludeNull(T bean,String ... includeFields) {
+		Set<String> includeFieldSet=null;
+		if(includeFields!=null&&includeFields.length>0) {
+			includeFieldSet=new LinkedHashSet<>();
+			for (String includeField : includeFields) {
+				includeFieldSet.add(includeField);
+			}
+		}
+		return update(bean,false,includeFieldSet);
+	}
+	
+	/**
 	 * 
 	 * @param bean
 	 * @param excludeFields
@@ -152,7 +169,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	/**
 	 * 更新（不包括Null字段）
 	 * @param bean
-	 * @param includeFields 如果includeFields有Null字段也会更新
+	 * @param includeFields
 	 * @return
 	 */
 	public int update(T bean,
