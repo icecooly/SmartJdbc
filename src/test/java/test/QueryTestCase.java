@@ -374,6 +374,8 @@ public class QueryTestCase extends BaseTestCase{
 	//
 	public void testQueryUserList() {
 		UserQuery query=new UserQuery();
+		query.orderBy("id", "desc");
+		query.orderBy("name", "asc");
 		List<User> users=dao.getList(query);
 		System.out.println(DumpUtil.dump(users));
 	}
