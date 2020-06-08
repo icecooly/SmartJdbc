@@ -456,7 +456,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 */
 	public <T> List<T> getAll(Query<T> query,String ... excludeFields){
 		Class<T> entityClass=getEntityClass(query);
-		query.pageSize=Integer.MAX_VALUE;
+		query.setPageSize(Integer.MAX_VALUE);
 		SqlBean sqlBean=new SelectProvider(entityClass).query(query).excludeFields(excludeFields).build();
 		return queryList(entityClass,sqlBean.sql,sqlBean.parameters);
 	}

@@ -355,7 +355,7 @@ public class QueryTestCase extends BaseTestCase{
 	public void testGetUserLikeArticles() {
 		ArticleQuery query=new ArticleQuery();
 		query.setLikeUserId(1);
-		query.pageSize=20;
+		query.setPageSize(20);
 		List<Article> list=dao.getList(query);
 		System.out.println(DumpUtil.dump(list));
 	}

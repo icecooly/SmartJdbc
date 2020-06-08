@@ -1,7 +1,8 @@
 package io.itit.smartjdbc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,16 +12,55 @@ import java.util.Map;
  */
 public class Query<T> {
 	//
-	public int pageIndex;
+	private int pageIndex;
 	
-	public int pageSize;
+	private int pageSize;
 	
-	public LinkedHashMap<String,String> orderBys;//<javaField,DESC> 
+	private List<OrderBy> orderByList;
 	
-	public Map<String,Object> params;
+	private Map<String,Object> params;
 	//
 	public static Integer defaultPageSize=20;
 	public static String defaultOrderBy;//id desc
+	//
+	public static class OrderBy{
+		//
+		public String field;//userName
+		public String type;//ASC DESC
+		/**
+		 * @return the field
+		 */
+		public String getField() {
+			return field;
+		}
+		/**
+		 * @param field the field to set
+		 */
+		public void setField(String field) {
+			this.field = field;
+		}
+		/**
+		 * @return the type
+		 */
+		public String getType() {
+			return type;
+		}
+		/**
+		 * @param type the type to set
+		 */
+		public void setType(String type) {
+			this.type = type;
+		}
+		//
+		public OrderBy() {
+			
+		}
+		//
+		public OrderBy(String field,String type) {
+			this.field=field;
+			this.type=type;
+		}
+	}
 	//
 	public Query(){
 		pageSize=20;//
@@ -28,7 +68,7 @@ public class Query<T> {
 		if(defaultPageSize!=null) {
 			pageSize=defaultPageSize;
 		}
-		orderBys=new LinkedHashMap<>();
+		orderByList=new ArrayList<>();
 		params=new HashMap<>();
 	}
 	//
@@ -36,8 +76,8 @@ public class Query<T> {
 		return (pageIndex-1)*pageSize;
 	}
 	//
-	public Query<?> orderBy(String javaField,String orderby) {
-		orderBys.put(javaField, orderby);
+	public Query<?> orderBy(String field,String orderby) {
+		orderByList.add(new OrderBy(field, orderby));
 		return this;
 	}
 	//
@@ -71,16 +111,28 @@ public class Query<T> {
 		this.pageSize = pageSize;
 	}
 	/**
-	 * @return the orderBys
+	 * @return the orderByList
 	 */
-	public LinkedHashMap<String, String> getOrderBys() {
-		return orderBys;
+	public List<OrderBy> getOrderByList() {
+		return orderByList;
 	}
 	/**
-	 * @param orderBys the orderBys to set
+	 * @param orderByList the orderByList to set
 	 */
-	public void setOrderBys(LinkedHashMap<String, String> orderBys) {
-		this.orderBys = orderBys;
+	public void setOrderByList(List<OrderBy> orderByList) {
+		this.orderByList = orderByList;
+	}
+	/**
+	 * @return the params
+	 */
+	public Map<String, Object> getParams() {
+		return params;
+	}
+	/**
+	 * @param params the params to set
+	 */
+	public void setParams(Map<String, Object> params) {
+		this.params = params;
 	}
 	
 }

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.Query;
+import io.itit.smartjdbc.Query.OrderBy;
 import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
@@ -452,8 +453,8 @@ public class SelectProvider extends SqlProvider{
 		}
 		QueryInfo queryInfo=createQueryInfo(q);
 		Map<String,Object> paraMap=new HashMap<>();
-		if(!q.params.isEmpty()) {
-			paraMap.putAll(q.params);
+		if(!q.getParams().isEmpty()) {
+			paraMap.putAll(q.getParams());
 		}
 		createParaMap(paraMap, q, queryInfo);
 		addWheres(qw.getWhere(), paraMap, q, queryInfo);
@@ -653,20 +654,20 @@ public class SelectProvider extends SqlProvider{
 		if(query==null) {
 			return orderByList;
 		}
-		if(query.orderBys==null||query.orderBys.isEmpty()) {
+		if(query.getOrderByList()==null||query.getOrderByList().isEmpty()) {
 			if(Query.defaultOrderBy!=null) {
 				return Arrays.asList(Query.defaultOrderBy);
 			}else {
 				return orderByList;
 			}
 		}
-		for (Map.Entry<String,String> entry : query.orderBys.entrySet()) {
-			String fieldName=entry.getKey();
+		for (OrderBy order : query.getOrderByList()) {
+			String fieldName=order.field;
 			if(fieldName==null) {
 				continue;
 			}
 			SqlUtil.checkColumnName(fieldName);
-			String orderBy=entry.getValue();
+			String orderBy=order.type;
 			String dbField=Config.convertFieldName(fieldName);
 			if(orderBy.equalsIgnoreCase(OrderByType.ASC.name())) {
 				orderByList.add(dbField+" asc");
@@ -681,7 +682,7 @@ public class SelectProvider extends SqlProvider{
 		if(query==null) {
 			return;
 		}
-		this.limit(query.getStartPageIndex(),query.pageSize);
+		this.limit(query.getStartPageIndex(),query.getPageSize());
 	}
 	//
 	protected void buildSelectFields(){
