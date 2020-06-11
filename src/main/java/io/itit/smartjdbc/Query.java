@@ -1,5 +1,6 @@
 package io.itit.smartjdbc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,8 @@ public class Query<T> {
 	public static Integer defaultPageSize=20;
 	public static String defaultOrderBy;//id desc
 	//
-	public static class OrderBy{
+	@SuppressWarnings("serial")
+	public static class OrderBy implements Serializable{
 		//
 		public String field;//userName
 		public String type;//ASC DESC
