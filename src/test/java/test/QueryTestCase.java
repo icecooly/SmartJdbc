@@ -145,6 +145,12 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getEntity(User.class,QueryWhere.create().isNotNull("name"));
 	}
 	
+	public void testIsNull() {
+		UserQuery query=new UserQuery();
+		query.setUserNameIsNull(true);
+		dao.getEntity(query);
+	}
+	
 	public void testQueryWhereSql() {
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=?","张三"));
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='张三'"));

@@ -25,6 +25,9 @@ public class UserQuery extends Query<User>{
 	@QueryField(operator = SqlOperator.LIKE)
 	private String name;
 	
+	@QueryField(operator = SqlOperator.IS_NULL,field = "userName")
+	private Boolean userNameIsNull;
+	
 	@QueryField
 	private Integer gender;
 	
