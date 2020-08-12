@@ -30,7 +30,6 @@ public class InsertProvider extends SqlProvider{
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
 		Class<?>type=bean.getClass();
-		checkExcludeProperties(excludeProperties,type);
 		String tableName=getTableName(type);
 		sql.append("insert into ").append(tableName).append("(");
 		Set<String> excludesNames = new TreeSet<String>();

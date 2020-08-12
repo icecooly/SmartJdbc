@@ -240,7 +240,7 @@ public class QueryTestCase extends BaseTestCase{
 		statusAndMobile.setMobileNo("130");
 		statusAndMobile.setStatus(1);
 		nameOrUserName.setStatusAndMobile(statusAndMobile);
-		query.setNameOrUserName(nameOrUserName);;
+		query.setNameOrUserName(nameOrUserName);
 		List<User> list=dao.getList(query);
 		System.out.println(DumpUtil.dump(list));
 	}

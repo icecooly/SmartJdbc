@@ -28,7 +28,6 @@ import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.provider.SelectProvider;
-import io.itit.smartjdbc.provider.SqlProvider;
 import io.itit.smartjdbc.util.IOUtil;
 import io.itit.smartjdbc.util.JSONUtil;
 import io.itit.smartjdbc.util.StringUtil;
@@ -124,7 +123,6 @@ public abstract class BaseEntityDAO extends BaseDAO{
 			excludesNames.add(e);
 		}
 		Class<?> type = o.getClass();
-		SqlProvider.checkExcludeProperties(excludeFields,type);
 		//
 		ResultSetMetaData rsmd=rs.getMetaData();
 		int columnCount=rsmd.getColumnCount();

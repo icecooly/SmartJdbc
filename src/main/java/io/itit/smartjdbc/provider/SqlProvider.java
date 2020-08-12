@@ -97,25 +97,6 @@ public abstract class SqlProvider {
 	public static String convertFieldName(String name) {
 		return Config.convertFieldName(name);
 	}
-
-	/**
-	 * 
-	 * @param excludeProperties
-	 * @param entityClass
-	 */
-	public static void checkExcludeProperties(String []excludeProperties,Class<?>entityClass){
-		EntityInfo info=Caches.getEntityInfo(entityClass);
-		for(String p:excludeProperties){
-			try {
-				if(info.fieldMap.containsKey(p)){	
-					return;
-				}
-			} catch (Exception e) {
-				throw new SmartJdbcException("excludeFields can not find property:"+
-						p+" in entityClass:"+entityClass.getName());
-			} 
-		}
-	}
 	
 	/**
 	 * 

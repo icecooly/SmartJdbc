@@ -44,7 +44,6 @@ public class UpdateProvider extends SqlProvider{
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
 		Class<?>type=bean.getClass();
-		checkExcludeProperties(excludeFields,type);
 		String tableName=getTableName(type);
 		sql.append("update ").append(tableName).append(" ");
 		Set<String> excludesNames = new TreeSet<String>();
