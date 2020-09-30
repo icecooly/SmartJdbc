@@ -104,7 +104,7 @@ public class UpdateProvider extends SqlProvider{
 			} catch (Exception e) {
 				throw new SmartJdbcException(e);
 			}
-			sql.append(" `").append(fieldName).append("`=?,");
+			sql.append(" "+identifier()).append(fieldName).append(identifier()+"=?,");
 		}
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(" where 1=1");
@@ -116,7 +116,7 @@ public class UpdateProvider extends SqlProvider{
 				queryWhere.where(convertFieldName(field.getName()),getEntityFieldValue(object, field.getName()));
 			}
 		}
-		WhereStatment ws=queryWhere.whereStatement();
+		WhereStatment ws=queryWhere.whereStatement(this);
 		sql.append(ws.sql);
 		for(Object o:ws.values){
 			fieldList.add(o);

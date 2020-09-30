@@ -73,7 +73,7 @@ public abstract class InsertProvider extends SqlProvider{
 			} catch (Exception e) {
 				throw new SmartJdbcException(e);
 			}
-			sql.append("`").append(fieldName).append("`,");
+			sql.append(identifier()).append(fieldName).append(identifier()+",");
 		}
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(")");

@@ -11,10 +11,6 @@ import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.ResultSetHandler;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.provider.SelectProvider;
-import io.itit.smartjdbc.provider.factory.DeleteProviderFactory;
-import io.itit.smartjdbc.provider.factory.InsertProviderFactory;
-import io.itit.smartjdbc.provider.factory.SelectProviderFactory;
-import io.itit.smartjdbc.provider.factory.UpdateProviderFactory;
 import io.itit.smartjdbc.util.ArrayUtils;
 import io.itit.smartjdbc.util.ClassUtils;
 
@@ -42,7 +38,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 */
 	public int insert(Object o,boolean withGenerateKey,String... excludeFields){
 		beforeInsert(o, withGenerateKey, excludeFields);
-		SqlBean sqlBean=InsertProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=insertProvider().
 				object(o).
 				excludeFields(excludeFields).
 				build();
@@ -179,7 +175,7 @@ public class SmartDAO extends BaseEntityDAO{
 			Set<String> includeFields,
 			String... excludeFields){
 		beforeUpdate(bean,excludeNull,excludeFields);
-		SqlBean sqlBean=UpdateProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=updateProvider().
 				object(bean).
 				excludeNull(excludeNull).
 				includeFields(includeFields).
@@ -219,7 +215,7 @@ public class SmartDAO extends BaseEntityDAO{
 			Set<String> includeFields,
 			String... excludeFields){
 		beforeUpdate(bean,excludeNull,excludeFields);
-		SqlBean sqlBean=UpdateProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=updateProvider().
 				object(bean).
 				excludeNull(excludeNull).
 				includeFields(includeFields).
@@ -269,7 +265,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 */
 	public int delete(Class<?> entityClass,QueryWhere qw){
 		beforeDelete(entityClass,qw);
-		SqlBean sqlBean=DeleteProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=deleteProvider().
 				entityClass(entityClass).
 				queryWhere(qw).
 				build();
@@ -327,7 +323,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public <T> T getEntity(Class<T> entityClass,QueryWhere qw,Set<String> includeFields,String ... excludeFields){
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(qw).
 				includeFields(includeFields).
@@ -357,7 +353,7 @@ public class SmartDAO extends BaseEntityDAO{
 	public <T> T getEntity(Query<?> query,String ... excludeFields){
 		beforeQuery(query);
 		Class<T> entityClass=(Class<T>) getEntityClass(query);
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(query).
 				excludeFields(excludeFields).
@@ -397,7 +393,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public <T> List<T> getList(Class<T> entityClass,QueryWhere qw,Set<String> includeFields,String ... excludeFields){
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(qw).
 				includeFields(includeFields).
@@ -425,7 +421,7 @@ public class SmartDAO extends BaseEntityDAO{
 	public <T> List<T> getList(Query<T> query,Set<String> includeFields,String ... excludeFields){
 		beforeQuery(query);
 		Class<T> entityClass=getEntityClass(query);
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(query).
 				includeFields(includeFields).
@@ -453,7 +449,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public <T> List<T> getAll(Class<T> entityClass,String ... excludeFields){
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				excludeFields(excludeFields).
 				build();
@@ -468,7 +464,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public <T> List<T> getAll(Class<T> entityClass,QueryWhere query,String ... excludeFields){
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(query).
 				excludeFields(excludeFields).
@@ -485,7 +481,7 @@ public class SmartDAO extends BaseEntityDAO{
 	public <T> List<T> getAll(Query<T> query,String ... excludeFields){
 		Class<T> entityClass=getEntityClass(query);
 		query.setPageSize(Integer.MAX_VALUE);
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(query).
 				excludeFields(excludeFields).
@@ -500,7 +496,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public int getListCount(Class<?> entityClass,QueryWhere qw){
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				selectCount().
 				query(qw).
@@ -517,7 +513,7 @@ public class SmartDAO extends BaseEntityDAO{
 	public int getListCount(Query<?> query){
 		beforeQuery(query);
 		Class<?> entityClass=getEntityClass(query);
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				selectCount().
 				query(query).
@@ -630,7 +626,7 @@ public class SmartDAO extends BaseEntityDAO{
 	@SuppressWarnings("unchecked")
 	public <S extends Number>S sum(Query<?> query,Class<S> clazz,String field){
 		Class<?> entityClass=getEntityClass(query);
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(query).
 				sum(field).
@@ -664,7 +660,7 @@ public class SmartDAO extends BaseEntityDAO{
 	 */
 	@SuppressWarnings("unchecked")
 	public <S extends Number>S sum(Class<?> entityClass,Class<S> clazz,String field,QueryWhere qt){
-		SqlBean sqlBean=SelectProviderFactory.create(getSmartDataSource()).
+		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				sum(field).
 				query(qt).
@@ -689,6 +685,4 @@ public class SmartDAO extends BaseEntityDAO{
 		}
 		throw new IllegalArgumentException(clazz.getSimpleName()+" not supported");
 	}
-	
-	//
 }

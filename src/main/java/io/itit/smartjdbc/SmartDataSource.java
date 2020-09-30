@@ -1,6 +1,7 @@
 package io.itit.smartjdbc;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +49,39 @@ public class SmartDataSource {
 	public SmartDataSource(DataSource dataSource,TransactionManager transactionManager) {
 		this.dataSource=dataSource;
 		this.transactionManager=transactionManager;
-		this.databaseType=getDatabaseType();
 		this.sqlInterceptors=new ArrayList<>();
 		this.daoInterceptors=new ArrayList<>();
+	}
+	//
+	public void init() throws Exception {
+		Connection conn=null;
+		try {
+			conn=dataSource.getConnection();
+			String driverClassName=DriverManager.getDriver(conn.getMetaData().getURL()).getClass().getName();
+			if(driverClassName.equals("com.mysql.cj.jdbc.Driver")) {
+				databaseType=DatabaseType.MYSQL;
+			}else if(driverClassName.equals("org.postgresql.Driver")) {
+				databaseType=DatabaseType.POSTGRESQL;
+			}else {
+				throw new SmartJdbcException("not support database "+driverClassName);
+			}
+			logger.info("init {} databaseType:{]",conn.getClass().getName(),databaseType);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			throw e;
+		}finally {
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					logger.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+	//
+	public void start() throws Exception{
+		
 	}
 	/**
 	 * @return the convertFieldNameFunc
@@ -158,27 +189,6 @@ public class SmartDataSource {
 	 * @return the databaseType
 	 */
 	public DatabaseType getDatabaseType() {
-		if(databaseType==null) {
-			Connection conn=null;
-			try {
-				conn=dataSource.getConnection();
-				String connClassName=conn.getClass().getName();
-				if(connClassName.contentEquals("com.mysql.cj.jdbc.ConnectionImpl")) {
-					databaseType=DatabaseType.MYSQL;
-				}
-				logger.info("getDatabaseType {} databaseType:{]",conn.getClass().getName(),databaseType);
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-			}finally {
-				if(conn!=null) {
-					try {
-						conn.close();
-					} catch (SQLException e) {
-						logger.error(e.getMessage(),e);
-					}
-				}
-			}
-		}
 		return databaseType;
 	}
 

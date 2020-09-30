@@ -105,15 +105,15 @@ public class QueryWhere {
 	 * 
 	 * @return
 	 */
-	public WhereStatment whereStatement(){
-		return whereStatement(false);
+	public WhereStatment whereStatement(SqlProvider selectProvider){
+		return whereStatement(selectProvider,false);
 	}
 	/**
 	 * 
 	 * @param needAliasAll
 	 * @return
 	 */
-	public WhereStatment whereStatement(boolean needAliasAll){
+	public WhereStatment whereStatement(SqlProvider selectProvider, boolean needAliasAll){
 		WhereStatment statment=new WhereStatment();
 		List<Object>values=new LinkedList<Object>();
 		StringBuilder sql=new StringBuilder();
@@ -121,7 +121,7 @@ public class QueryWhere {
 		int conditionCount=getConditionCount(where);
 		if(conditionCount>0) {
 			sql.append(" and ");
-			appendWhereSql(needAliasAll,sql,values,where);
+			appendWhereSql(selectProvider, needAliasAll,sql, values, where);
 		}
 		sql.append(" ");
 		if(forUpdate) {
@@ -132,8 +132,8 @@ public class QueryWhere {
 		return statment;
 	}
 	//
-	public Object[] whereValues() {
-		return whereStatement(true).values;
+	public Object[] whereValues(SqlProvider sqlProvider) {
+		return whereStatement(sqlProvider,true).values;
 	}
 	//
 	//获取下一级的查询条件的数量（只是children 非递归）如果没有查询条件则删除这个查询
@@ -155,7 +155,7 @@ public class QueryWhere {
 		return conditionCount;
 	}
 	//
-	private String getSqlKey(Where w,boolean needAliasAll) {
+	private String getSqlKey(SqlProvider sqlProvider, Where w, boolean needAliasAll) {
 		StringBuilder sql=new StringBuilder();
 		if(w.alias!=null) {
 			sql.append(w.alias).append(".");
@@ -164,11 +164,11 @@ public class QueryWhere {
 				sql.append(SqlProvider.MAIN_TABLE_ALIAS).append(".");
 			}
 		}
-		sql.append("`").append(w.key).append("` ");
+		sql.append(sqlProvider.identifier()).append(w.key).append(sqlProvider.identifier()+" ");
 		return sql.toString();
 	}
 	//
-	protected void appendWhereSql(boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
+	protected void appendWhereSql(SqlProvider sqlProvider, boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
 		List<Where> wheres=parent.children;
 		if(wheres==null||wheres.isEmpty()) {
 			return;
@@ -189,11 +189,11 @@ public class QueryWhere {
 				}
 			}
 			if(w.conditionType!=null) {
-				appendWhereSql(needAliasAll,sql,valueList,w);
+				appendWhereSql(sqlProvider, needAliasAll, sql, valueList, w);
 				continue;
 			}
 			if(w.key!=null){
-				String sqlKey=getSqlKey(w, needAliasAll);
+				String sqlKey=getSqlKey(sqlProvider, w, needAliasAll);
 				if(w.operator.equals(SqlOperator.JSONCONTAINS)||
 						w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
 					Object[] values=ArrayUtils.convert(w.value);
@@ -382,7 +382,7 @@ public class QueryWhere {
 	}
 	//
 	/**
-	 * `key` 等于
+	 * key 等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -392,7 +392,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` 等于
+	 * alias.key 等于
 	 * @param alias 表别名
 	 * @param key
 	 * @param value
@@ -403,7 +403,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` 不等于
+	 * key 不等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -413,7 +413,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` 不等于
+	 * alias.key 不等于
 	 * @param alias 表别名
 	 * @param key
 	 * @param value
@@ -424,7 +424,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` 小于
+	 * key 小于
 	 * @param key
 	 * @param value
 	 * @return
@@ -434,7 +434,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` 小于
+	 * alias.key 小于
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -445,7 +445,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` 小于等于
+	 * key 小于等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -455,7 +455,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` 小于等于
+	 * alias.key 小于等于
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -466,7 +466,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` 大于
+	 * key 大于
 	 * @param key
 	 * @param value
 	 * @return
@@ -476,7 +476,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` 大于
+	 * alias.key 大于
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -487,7 +487,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` 大于等于
+	 * key 大于等于
 	 * @param key
 	 * @param value
 	 * @return
@@ -497,7 +497,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key`大于等于
+	 * alias.key大于等于
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -508,7 +508,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` LIKE '%值%'
+	 * key LIKE '%值%'
 	 * @param key
 	 * @param value
 	 * @return
@@ -518,7 +518,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` LIKE '%值%'
+	 * alias.key LIKE '%值%'
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -529,7 +529,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` NOT LIKE '%值%'
+	 * key NOT LIKE '%值%'
 	 * @param key
 	 * @param value
 	 * @return
@@ -539,7 +539,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` NOT LIKE '%值%'
+	 * alias.key NOT LIKE '%值%'
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -550,7 +550,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` LIKE '%值'
+	 * key LIKE '%值'
 	 * @param key
 	 * @param value
 	 * @return
@@ -560,7 +560,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` LIKE '%值'
+	 * alias.key LIKE '%值'
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -571,7 +571,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` NOT LIKE '%值'
+	 * key NOT LIKE '%值'
 	 * @param key
 	 * @param value
 	 * @return
@@ -581,7 +581,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` NOT LIKE '%值'
+	 * alias.key NOT LIKE '%值'
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -592,7 +592,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` LIKE '值%'
+	 * key LIKE '值%'
 	 * @param key
 	 * @param value
 	 * @return
@@ -602,7 +602,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` LIKE '值%'
+	 * alias.key LIKE '值%'
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -613,7 +613,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` NOT LIKE '值%'
+	 * key NOT LIKE '值%'
 	 * @param key
 	 * @param value
 	 * @return
@@ -623,7 +623,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` NOT LIKE '值%'
+	 * alias.key NOT LIKE '值%'
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -633,7 +633,7 @@ public class QueryWhere {
 		return this.where(alias,key, SqlOperator.NOT_LIKE_RIGHT, value);
 	}
 	/**
-	 * `key` in (值1，值2...)
+	 * key in (值1，值2...)
 	 * @param key
 	 * @param value
 	 * @return
@@ -643,7 +643,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` in (值1，值2...)
+	 * alias.key in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -654,7 +654,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` not in (值1，值2...)
+	 * key not in (值1，值2...)
 	 * @param key
 	 * @param value
 	 * @return
@@ -664,7 +664,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` not in (值1，值2...)
+	 * alias.key not in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -675,7 +675,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` not in (值1，值2...)
+	 * key not in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -685,7 +685,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` not in (值1，值2...)
+	 * alias.key not in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -696,7 +696,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` in (值1，值2...)
+	 * key in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -706,7 +706,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` in (值1，值2...)
+	 * alias.key in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -717,7 +717,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` not in (值1，值2...)
+	 * key not in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -727,7 +727,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` not in (值1，值2...)
+	 * alias.key not in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -738,7 +738,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` in (值1，值2...)
+	 * key in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -748,7 +748,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` in (值1，值2...)
+	 * alias.key in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -759,7 +759,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` not in (值1，值2...)
+	 * key not in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -769,7 +769,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` not in (值1，值2...)
+	 * alias.key not in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -780,7 +780,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` in (值1，值2...)
+	 * key in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -790,7 +790,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` in (值1，值2...)
+	 * alias.key in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -801,7 +801,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` not in (值1，值2...)
+	 * key not in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -811,7 +811,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` not in (值1，值2...)
+	 * alias.key not in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -822,7 +822,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` in (值1，值2...)
+	 * key in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -832,7 +832,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` in (值1，值2...)
+	 * alias.key in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -843,7 +843,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` not in (值1，值2...)
+	 * key not in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -853,7 +853,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` not in (值1，值2...)
+	 * alias.key not in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -864,7 +864,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` in (值1，值2...)
+	 * key in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -874,7 +874,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` in (值1，值2...)
+	 * alias.key in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -885,7 +885,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` not in (值1，值2...)
+	 * key not in (值1，值2...)
 	 * @param key
 	 * @param values
 	 * @return
@@ -895,7 +895,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` not in (值1，值2...)
+	 * alias.key not in (值1，值2...)
 	 * @param alias
 	 * @param key
 	 * @param values
@@ -906,7 +906,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 *  JSON_CONTAINS (`key`,值1) or JSON_CONTAINS (`key`,值2)
+	 *  JSON_CONTAINS (key,值1) or JSON_CONTAINS (key,值2)
 	 * @param key
 	 * @param value
 	 * @return
@@ -916,7 +916,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * JSON_CONTAINS (`key`,值1) or JSON_CONTAINS (`key`,值2)
+	 * JSON_CONTAINS (key,值1) or JSON_CONTAINS (key,值2)
 	 * @param key
 	 * @param values
 	 * @return
@@ -926,7 +926,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * JSON_CONTAINS (alias.`key`,值1) or JSON_CONTAINS (alias.`key`,值2)
+	 * JSON_CONTAINS (alias.key,值1) or JSON_CONTAINS (alias.key,值2)
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -937,7 +937,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 *  JSON_CONTAINS (`key`,值1)=0 and JSON_CONTAINS (`key`,值2)=0
+	 *  JSON_CONTAINS (key,值1)=0 and JSON_CONTAINS (key,值2)=0
 	 * @param key
 	 * @param value
 	 * @return
@@ -947,7 +947,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * JSON_CONTAINS (alias.`key`,值1)=0 and JSON_CONTAINS (alias.`key`,值2)
+	 * JSON_CONTAINS (alias.key,值1)=0 and JSON_CONTAINS (alias.key,值2)
 	 * @param alias
 	 * @param key
 	 * @param value
@@ -957,7 +957,7 @@ public class QueryWhere {
 		return this.where(alias,key, SqlOperator.NOT_JSONCONTAINS, value);
 	}
 	/**
-	 * `key` IS NULL
+	 * key IS NULL
 	 * @param key
 	 * @return
 	 */
@@ -966,7 +966,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` IS NULL
+	 * alias.key IS NULL
 	 * @param alias
 	 * @param key
 	 * @return
@@ -976,7 +976,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * `key` IS NOT NULL
+	 * key IS NOT NULL
 	 * @param key
 	 * @return
 	 */
@@ -985,7 +985,7 @@ public class QueryWhere {
 	}
 	
 	/**
-	 * alias.`key` IS NOT NULL
+	 * alias.key IS NOT NULL
 	 * @param alias
 	 * @param key
 	 * @return

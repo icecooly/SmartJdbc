@@ -8,7 +8,7 @@ import java.util.Map;
  * @author skydu
  *
  */
-public class DataSourceManager {
+public class SmartDataSourceManager {
 	/**
 	 * 
 	 */

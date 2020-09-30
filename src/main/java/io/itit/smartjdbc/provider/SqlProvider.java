@@ -179,4 +179,12 @@ public abstract class SqlProvider {
 	 * @return
 	 */
 	public abstract SqlBean build();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String identifier() {
+		return "";
+	}
 }

@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import io.itit.smartjdbc.DataSourceManager;
+import io.itit.smartjdbc.SmartDataSourceManager;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.datasource.DriverManagerDataSource;
 import junit.framework.TestCase;
@@ -23,7 +23,9 @@ public abstract class BaseTestCase extends TestCase{
 	protected void setUp() throws Exception {
 		super.setUp();
 		smartDataSource=new SmartDataSource(createDriverManagerDataSource(),new DefaultTransactionManager());
-		DataSourceManager.registerDataSource(smartDataSource);
+		smartDataSource.init();
+		smartDataSource.start();
+		SmartDataSourceManager.registerDataSource(smartDataSource);
 	}
 	
 	@Override

@@ -23,11 +23,18 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.DataSourceManager;
+import io.itit.smartjdbc.SmartDataSourceManager;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.SqlParam;
+import io.itit.smartjdbc.provider.DeleteProvider;
+import io.itit.smartjdbc.provider.InsertProvider;
 import io.itit.smartjdbc.provider.SelectProvider;
+import io.itit.smartjdbc.provider.UpdateProvider;
+import io.itit.smartjdbc.provider.factory.DeleteProviderFactory;
+import io.itit.smartjdbc.provider.factory.InsertProviderFactory;
+import io.itit.smartjdbc.provider.factory.SelectProviderFactory;
+import io.itit.smartjdbc.provider.factory.UpdateProviderFactory;
 import io.itit.smartjdbc.util.IOUtil;
 import io.itit.smartjdbc.util.JSONUtil;
 import io.itit.smartjdbc.util.StringUtil;
@@ -251,7 +258,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	 * @return
 	 */
 	protected  String convertFieldName(String name) {
-		return DataSourceManager.getDatasource(datasourceIndex).convertFieldName(name);
+		return SmartDataSourceManager.getDatasource(datasourceIndex).convertFieldName(name);
 	}
 	
 	/**
@@ -389,5 +396,22 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	public final List<Date> queryForDates(String sql,Object ...parameters){
 		SqlBean sqlBean=parseSql(sql, parameters);
 		return  super.queryForDates(sqlBean.sql, sqlBean.parameters);
+	}
+	//
+	//
+	public InsertProvider insertProvider() {
+		return InsertProviderFactory.create(getSmartDataSource());
+	}
+	//
+	public UpdateProvider updateProvider() {
+		return UpdateProviderFactory.create(getSmartDataSource());
+	}
+	//
+	public DeleteProvider deleteProvider() {
+		return DeleteProviderFactory.create(getSmartDataSource());
+	}
+	//
+	public SelectProvider selectProvider() {
+		return SelectProviderFactory.create(getSmartDataSource());
 	}
 }

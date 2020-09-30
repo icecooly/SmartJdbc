@@ -862,13 +862,13 @@ public class SelectProvider extends SqlProvider{
 				sql.append(" distinct ");
 			}
 			if(StringUtil.isEmpty(field.statFunction)) {
-				sql.append(field.tableAlias).append(".`");
-				sql.append(convertFieldName(field.field)).append("`");
+				sql.append(field.tableAlias).append("."+identifier());
+				sql.append(convertFieldName(field.field)).append(identifier());
 			}else {
 				sql.append(field.statFunction);
 				sql.append("(");
-				sql.append(field.tableAlias).append(".`");
-				sql.append(convertFieldName(field.field)).append("`");
+				sql.append(field.tableAlias).append("."+identifier());
+				sql.append(convertFieldName(field.field)).append(identifier());
 				sql.append(")");
 			}
 			if(field.asField!=null) {
@@ -876,7 +876,7 @@ public class SelectProvider extends SqlProvider{
 				if(field.preAsField!=null) {
 					asField=field.preAsField+asField;
 				}
-				sql.append(" as `").append(asField).append("`");
+				sql.append(" as "+identifier()).append(asField).append(identifier());
 			}
 			sql.append(",");
 		}
@@ -906,8 +906,8 @@ public class SelectProvider extends SqlProvider{
 		sql.append(getTableName(join.table2)).append(" ").append(join.table2Alias);
 		sql.append(" on ");
 		for(int i=0;i<join.table1Fields.length;i++) {
-			sql.append(join.table1Alias).append(".`"+convertFieldName(join.table1Fields[i])+"`=").
-			append(join.table2Alias).append(".`").append(convertFieldName(join.table2Fields[i])).append("`");
+			sql.append(join.table1Alias).append("."+identifier()+convertFieldName(join.table1Fields[i])+identifier()+"=").
+			append(join.table2Alias).append("."+identifier()).append(convertFieldName(join.table2Fields[i])).append(identifier());
 			if(i<join.table1Fields.length-1) {
 				sql.append(" and ");
 			}
@@ -919,7 +919,7 @@ public class SelectProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		addWheres(query);
 		sql.append("where 1=1 ");
-		sql.append(qw.whereStatement(true).sql);
+		sql.append(qw.whereStatement(this,true).sql);
 		sql.append("\n");
 		return sql.toString();
 	}
@@ -992,7 +992,7 @@ public class SelectProvider extends SqlProvider{
 		bean.limitSql=getLimitSql();
 		bean.forUpdateSql=getForUpdateSql();
 		bean.sql=bean.toSql();
-		bean.parameters=qw.whereValues();
+		bean.parameters=qw.whereValues(this);
 		return bean;
 	}
 		

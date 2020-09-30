@@ -35,7 +35,7 @@ public abstract class DeleteProvider extends SqlProvider{
 		String tableName=getTableName(entityClass);
 		sql.append("delete from ").append(tableName).append(" ");
 		sql.append("where 1=1 ");
-		WhereStatment ws=queryWhere.whereStatement();
+		WhereStatment ws=queryWhere.whereStatement(this);
 		sql.append(ws.sql);
 		return createSqlBean(sql.toString(),ws.values);
 	}
