@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 
 import io.itit.smartjdbc.DataSourceManager;
 import io.itit.smartjdbc.SmartDataSource;
-import io.itit.smartjdbc.connection.DefaultTransactionManager;
 import io.itit.smartjdbc.datasource.DriverManagerDataSource;
 import junit.framework.TestCase;
 
