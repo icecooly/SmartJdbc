@@ -2,6 +2,7 @@ package io.itit.smartjdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -47,6 +48,9 @@ public class SmartDataSource {
 	public SmartDataSource(DataSource dataSource,TransactionManager transactionManager) {
 		this.dataSource=dataSource;
 		this.transactionManager=transactionManager;
+		this.databaseType=getDatabaseType();
+		this.sqlInterceptors=new ArrayList<>();
+		this.daoInterceptors=new ArrayList<>();
 	}
 	/**
 	 * @return the convertFieldNameFunc
@@ -157,8 +161,12 @@ public class SmartDataSource {
 		if(databaseType==null) {
 			Connection conn=null;
 			try {
-				conn=getConnection();
-				logger.error("connxxx {}",conn.getClass().getName());
+				conn=dataSource.getConnection();
+				String connClassName=conn.getClass().getName();
+				if(connClassName.contentEquals("com.mysql.cj.jdbc.ConnectionImpl")) {
+					databaseType=DatabaseType.MYSQL;
+				}
+				logger.info("getDatabaseType {} databaseType:{]",conn.getClass().getName(),databaseType);
 			} catch (Exception e) {
 				logger.error(e.getMessage(),e);
 			}finally {

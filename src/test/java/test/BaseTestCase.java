@@ -1,5 +1,8 @@
 package test;
 
+import java.io.FileInputStream;
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import io.itit.smartjdbc.DataSourceManager;
@@ -14,12 +17,6 @@ import junit.framework.TestCase;
  *
  */
 public abstract class BaseTestCase extends TestCase{
-	//
-	private static final String dbName="db_test";
-	private static final String dbHost="119.29.88.217";
-	private static final String dbPort="3306";
-	private static final String dbUser="db_test";
-	private static final String dbPwd="DBtest12345!@#";
 	//
 	private SmartDataSource smartDataSource;
 	//
@@ -36,16 +33,14 @@ public abstract class BaseTestCase extends TestCase{
 		smartDataSource.commit();
 	}
 	//
-	private String getJdbcUrl(String dbName) {
-		return "jdbc:mysql://"+dbHost+":"+dbPort+"/"+dbName;
-	}
-	//
 	private DataSource createDriverManagerDataSource() throws Exception{
+		Properties prop = new Properties();
+		prop.load(new FileInputStream("env"));
 		DriverManagerDataSource dataSource=new DriverManagerDataSource();
-		dataSource.setUrl(getJdbcUrl(dbName));
-		dataSource.setUsername(dbUser);
-		dataSource.setPassword(dbPwd);  
-		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl(prop.getProperty("dbUrl"));
+		dataSource.setUsername(prop.getProperty("dbUser"));
+		dataSource.setPassword(prop.getProperty("dbPassword"));
+		dataSource.setDriverClassName(prop.getProperty("dbDriverClassName"));
 		return dataSource;
 	}
 }
