@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.annotations.EntityField;
@@ -16,14 +17,22 @@ import io.itit.smartjdbc.util.JSONUtil;
  * @author skydu
  *
  */
-public class InsertProvider extends SqlProvider{
+public abstract class InsertProvider extends SqlProvider{
 	//
 	protected Object bean;
-	protected String[] excludeProperties;
+	protected String[] excludeFields;
 	//
-	public InsertProvider(Object bean,String ... excludeProperties) {
+	public InsertProvider(SmartDataSource smartDataSource) {
+		super(smartDataSource);
+	}
+	//
+	public InsertProvider object(Object bean){
 		this.bean=bean;
-		this.excludeProperties=excludeProperties;
+		return this;
+	}
+	public InsertProvider excludeFields(String[] excludeFields) {
+		this.excludeFields=excludeFields;
+		return this;
 	}
 	
 	@Override
@@ -33,7 +42,7 @@ public class InsertProvider extends SqlProvider{
 		String tableName=getTableName(type);
 		sql.append("insert into ").append(tableName).append("(");
 		Set<String> excludesNames = new TreeSet<String>();
-		for (String e : excludeProperties) {
+		for (String e : excludeFields) {
 			excludesNames.add(e);
 		}
 		List<Object>fieldList=new ArrayList<Object>();

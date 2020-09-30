@@ -23,7 +23,7 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.Config;
+import io.itit.smartjdbc.DataSourceManager;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.SqlParam;
@@ -251,7 +251,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	 * @return
 	 */
 	protected  String convertFieldName(String name) {
-		return Config.convertFieldName(name);
+		return DataSourceManager.getDatasource(datasourceIndex).convertFieldName(name);
 	}
 	
 	/**

@@ -14,17 +14,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.Config;
+import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.PrimaryKey;
 import io.itit.smartjdbc.cache.Caches;
 import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.DumpUtil;
-import io.itit.smartjdbc.util.StringUtil;
 
 /**
  * 
@@ -36,6 +34,12 @@ public abstract class SqlProvider {
 	private static Logger logger=LoggerFactory.getLogger(SqlProvider.class);
 	//
 	public static final String MAIN_TABLE_ALIAS="a";
+	//
+	protected SmartDataSource smartDataSource;
+	//
+	public SqlProvider(SmartDataSource smartDataSource) {
+		this.smartDataSource=smartDataSource;
+	}
 	//
 	protected static final HashSet<Class<?>> WRAP_TYPES=new HashSet<>();
 	static{
@@ -66,7 +70,7 @@ public abstract class SqlProvider {
 		WRAP_TYPES.add(double.class);
 	}
 	//
-	protected static SqlBean createSqlBean(String sql,Object[] parameters) {
+	protected SqlBean createSqlBean(String sql,Object[] parameters) {
 		SqlBean bean=new SqlBean(sql,parameters);	
 		if(logger.isDebugEnabled()) {
 			logger.debug("SqlBean {}",DumpUtil.dump(bean));
@@ -74,28 +78,14 @@ public abstract class SqlProvider {
 		return bean;
 	}
 	
-	/**
-	 * 
-	 * @param entityClass
-	 * @return
-	 */
-	public static String getTableName(Class<?> entityClass) {
-		Entity entity=entityClass.getAnnotation(Entity.class);
-		if (entity != null) {
-			if(!StringUtil.isEmpty(entity.tableName())) {//tableName first
-				return entity.tableName();
-			}
-		}
-		throw new SmartJdbcException("tableName not found "+entityClass);
-	}
 	
 	/**
 	 * 
 	 * @param name
 	 * @return
 	 */
-	public static String convertFieldName(String name) {
-		return Config.convertFieldName(name);
+	public String convertFieldName(String name) {
+		return smartDataSource.convertFieldName(name);
 	}
 	
 	/**
@@ -103,7 +93,7 @@ public abstract class SqlProvider {
 	 * @param clazz
 	 * @return
 	 */
-	public static List<Field> getPrimaryKey(Class<?> clazz){
+	public List<Field> getPrimaryKey(Class<?> clazz){
 		List<Field> primaryKey=new ArrayList<>();
 		List<Field> fields=getPersistentFields(clazz);
 		Field idField=null;
@@ -129,7 +119,7 @@ public abstract class SqlProvider {
 	 * @param field
 	 * @return
 	 */
-	public static boolean isPersistentField(Field field) {
+	public boolean isPersistentField(Field field) {
 		if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
 			return false;
 		}
@@ -144,7 +134,7 @@ public abstract class SqlProvider {
 	 * @param entityClass
 	 * @return
 	 */
-	public static List<Field> getPersistentFields(Class<?> entityClass){
+	public List<Field> getPersistentFields(Class<?> entityClass){
 		List<Field> fields=new ArrayList<>();
 		List<Field> fieldList=ClassUtils.getFieldList(entityClass);
 		for (Field field : fieldList) {
@@ -176,7 +166,14 @@ public abstract class SqlProvider {
 		}
 		return null;
 	}
-	
+	/**
+	 * 
+	 * @param entityClass
+	 * @return
+	 */
+	public String getTableName(Class<?> entityClass) {
+		return smartDataSource.getTableName(entityClass);
+	}
 	/**
 	 * 
 	 * @return

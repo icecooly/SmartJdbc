@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.Config;
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.Query.OrderBy;
 import io.itit.smartjdbc.QueryWhere;
+import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.Where;
@@ -39,7 +39,6 @@ import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.util.ClassUtils;
-import io.itit.smartjdbc.util.SqlUtil;
 import io.itit.smartjdbc.util.StringUtil;
 
 /**
@@ -97,8 +96,8 @@ public class SelectProvider extends SqlProvider{
 	protected QueryWhere qw;
 	protected List<GroupByField> groupBys;
 	//
-	public SelectProvider(Class<?> entityClass) {
-		this.entityClass=entityClass;
+	public SelectProvider(SmartDataSource smartDataSource) {
+		super(smartDataSource);
 		this.selectFields=new ArrayList<>();
 		this.includeFields=new LinkedHashSet<>();
 		this.excludeFields=new LinkedHashSet<>();
@@ -107,6 +106,11 @@ public class SelectProvider extends SqlProvider{
 		this.leftJoins=new ArrayList<>();
 		this.innerJoins=new ArrayList<>();
 		this.needOrderBy=true;
+	}
+	//
+	public SelectProvider entityClass(Class<?> entityClass) {
+		this.entityClass=entityClass;
+		return this;
 	}
 	//
 	public SelectProvider selectCount() {
@@ -666,9 +670,8 @@ public class SelectProvider extends SqlProvider{
 			if(fieldName==null) {
 				continue;
 			}
-			SqlUtil.checkColumnName(fieldName);
 			String orderBy=order.type;
-			String dbField=Config.convertFieldName(fieldName);
+			String dbField=convertFieldName(fieldName);
 			if(orderBy.equalsIgnoreCase(OrderByType.ASC.name())) {
 				orderByList.add(dbField+" asc");
 			}else if(orderBy.equalsIgnoreCase(OrderByType.DESC.name())) {
@@ -790,7 +793,7 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected String getSinglePrimaryKey(Class<?> clazz) {
-		List<Field> list=SqlProvider.getPrimaryKey(clazz);
+		List<Field> list=getPrimaryKey(clazz);
 		if(list.size()>1||list.size()==0) {
 			throw new SmartJdbcException(clazz.getName()+" primaryKey column can only be one.");
 		}

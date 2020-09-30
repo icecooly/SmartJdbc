@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import io.itit.smartjdbc.QueryWhere;
+import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
@@ -22,28 +23,44 @@ import io.itit.smartjdbc.util.JSONUtil;
  */
 public class UpdateProvider extends SqlProvider{
 	//
-	protected Object bean;
-	protected QueryWhere qw;
+	protected Object object;
+	protected QueryWhere queryWhere;
 	protected Set<String> includeFields;
 	protected String[] excludeFields;
 	protected boolean excludeNull;
 	//
-	public UpdateProvider(Object bean,boolean excludeNull,Set<String> includeFields,String ... excludeFields) {
-		this(bean, null, excludeNull, includeFields,excludeFields);
+	public UpdateProvider(SmartDataSource smartDataSource) {
+		super(smartDataSource);
 	}
 	//
-	public UpdateProvider(Object bean,QueryWhere qw,boolean excludeNull,Set<String> includeFields,String ... excludeFields) {
-		this.bean=bean;
-		this.qw=qw;
+	public UpdateProvider object(Object object) {
+		this.object=object;
+		return this;
+	}
+	//
+	public UpdateProvider excludeNull(boolean excludeNull) {
 		this.excludeNull=excludeNull;
-		this.includeFields=includeFields;
+		return this;
+	}
+	//
+	public UpdateProvider excludeFields(String[] excludeFields) {
 		this.excludeFields=excludeFields;
-	} 
+		return this;
+	}
+	public UpdateProvider queryWhere(QueryWhere queryWhere) {
+		this.queryWhere=queryWhere;
+		return this;
+	}
+	//
+	public UpdateProvider includeFields(Set<String> includeFields) {
+		this.includeFields=includeFields;
+		return this;
+	}
 	//
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
-		Class<?>type=bean.getClass();
+		Class<?>type=object.getClass();
 		String tableName=getTableName(type);
 		sql.append("update ").append(tableName).append(" ");
 		Set<String> excludesNames = new TreeSet<String>();
@@ -75,7 +92,7 @@ public class UpdateProvider extends SqlProvider{
 				if(!f.isAccessible()) {
 					f.setAccessible(true);
 				}
-				Object fieldValue=f.get(bean);
+				Object fieldValue=f.get(object);
 				if(excludeNull&&fieldValue==null){
 					continue;
 				}
@@ -92,14 +109,14 @@ public class UpdateProvider extends SqlProvider{
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(" where 1=1");
 		//
-		if(qw==null) {//默认where主键
-			qw=QueryWhere.create();
-			List<Field> primaryKey=getPrimaryKey(bean.getClass());
+		if(queryWhere==null) {//默认where主键
+			queryWhere=QueryWhere.create();
+			List<Field> primaryKey=getPrimaryKey(object.getClass());
 			for (Field field : primaryKey) {
-				qw.where(convertFieldName(field.getName()),getEntityFieldValue(bean, field.getName()));
+				queryWhere.where(convertFieldName(field.getName()),getEntityFieldValue(object, field.getName()));
 			}
 		}
-		WhereStatment ws=qw.whereStatement();
+		WhereStatment ws=queryWhere.whereStatement();
 		sql.append(ws.sql);
 		for(Object o:ws.values){
 			fieldList.add(o);

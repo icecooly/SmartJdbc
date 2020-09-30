@@ -11,10 +11,9 @@ public interface TransactionManager {
 
 	/**
 	 * 
-	 * @param datasourceIndex
 	 * @return
 	 */
-	Connection getConnecton(String datasourceIndex);
+	Connection getConnection();
 	
 	/**
 	 * 

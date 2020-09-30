@@ -3,12 +3,11 @@ package io.itit.smartjdbc.connection;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.Config;
+import io.itit.smartjdbc.DataSourceManager;
+import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.util.JdbcUtil;
 
@@ -73,21 +72,18 @@ public class DefaultTransactionManager implements TransactionManager{
 	 * @return
 	 * @throws SQLException
 	 */
-	public Connection openConnection(String dataSourceIndex) throws SQLException {
-		if(dataSourceIndex==null) {
-			dataSourceIndex=Config.DEFAULT_DATASOURCE_INDEX;
+	public Connection openConnection() throws SQLException {
+		SmartDataSource smartDataSource=DataSourceManager.getDatasource();
+		if(smartDataSource==null) {
+			throw new RuntimeException("DataSource not found");
 		}
-		DataSource dataSource=Config.getDataSources().get(dataSourceIndex);
-		if(dataSource==null) {
-			throw new RuntimeException("DataSource not found with index "+dataSourceIndex);
-		}
-		return dataSource.getConnection();
+		return smartDataSource.getDataSource().getConnection();
 	}
 
 	/**
 	 * 
 	 */
-	public Connection getConnecton(String datasourceIndex){
+	public Connection getConnection(){
 		Connection conn=null;
 		try {
 			ConnectionHolder holder = connectionHolder.get();
@@ -97,7 +93,7 @@ public class DefaultTransactionManager implements TransactionManager{
 			}
 			conn=holder.getConnection();
 			if(conn==null) {
-				conn=openConnection(datasourceIndex);
+				conn=openConnection();
 				if(holder.isUseTransaction()==conn.getAutoCommit()) {
 					conn.setAutoCommit(!holder.isUseTransaction());
 				}

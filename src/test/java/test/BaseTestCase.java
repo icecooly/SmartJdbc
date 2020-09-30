@@ -2,8 +2,9 @@ package test;
 
 import javax.sql.DataSource;
 
-import io.itit.smartjdbc.Config;
-import io.itit.smartjdbc.connection.ConnectionManager;
+import io.itit.smartjdbc.DataSourceManager;
+import io.itit.smartjdbc.SmartDataSource;
+import io.itit.smartjdbc.connection.DefaultTransactionManager;
 import io.itit.smartjdbc.datasource.DriverManagerDataSource;
 import junit.framework.TestCase;
 
@@ -20,23 +21,26 @@ public abstract class BaseTestCase extends TestCase{
 	private static final String dbUser="db_test";
 	private static final String dbPwd="DBtest12345!@#";
 	//
+	private SmartDataSource smartDataSource;
+	//
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Config.addDataSource(createDriverManagerDataSource(dbName));
+		smartDataSource=new SmartDataSource(createDriverManagerDataSource(),new DefaultTransactionManager());
+		DataSourceManager.registerDataSource(smartDataSource);
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		ConnectionManager.commit();
+		smartDataSource.commit();
 	}
 	//
 	private String getJdbcUrl(String dbName) {
 		return "jdbc:mysql://"+dbHost+":"+dbPort+"/"+dbName;
 	}
 	//
-	private DataSource createDriverManagerDataSource(String dbName) throws Exception{
+	private DataSource createDriverManagerDataSource() throws Exception{
 		DriverManagerDataSource dataSource=new DriverManagerDataSource();
 		dataSource.setUrl(getJdbcUrl(dbName));
 		dataSource.setUsername(dbUser);

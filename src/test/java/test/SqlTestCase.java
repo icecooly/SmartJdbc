@@ -3,7 +3,6 @@ package test;
 import org.junit.Test;
 
 import io.itit.smartjdbc.util.ClassUtils;
-import io.itit.smartjdbc.util.SqlUtil;
 import test.domain.query.UserComplexQuery;
 import test.domain.query.UserQuery;
 
@@ -28,13 +27,5 @@ public class SqlTestCase {
 		System.out.println(ClassUtils.getSuperClassGenricType(UserComplexQuery.class));
 		System.out.println(ClassUtils.getSuperClassGenricType(UserTestQuery.class));
 		System.out.println(ClassUtils.getSuperClassGenricType(TestQuery.class));
-	}
-
-	@Test
-	public void checkOrderByFieldValid() {
-		SqlUtil.checkColumnName("user_name");
-		SqlUtil.checkColumnName("a.user_name");
-		SqlUtil.checkColumnName("i1.user_name");
-		SqlUtil.checkColumnName("i1.`user_name`");
 	}
 }
