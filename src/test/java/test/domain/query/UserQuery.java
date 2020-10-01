@@ -59,9 +59,6 @@ public class UserQuery extends Query<User>{
 	@QueryField(operator = SqlOperator.NOT_JSONCONTAINS,field = "roleIdList")
 	private Integer[] notRoleIdList; 
 	
-	@QueryField(whereSql="a.status=#{orStatus} or json_contains(a.role_id_list,'${orRoleId}')")
-	private Boolean statusOrRoleId;
-	
 	@InnerJoin(table2 = User.class,table2Alias = "user",table1Fields ={"createUserId"},table2Fields ={"id"})
 	@QueryField(field = "name")
 	private String createUserName;

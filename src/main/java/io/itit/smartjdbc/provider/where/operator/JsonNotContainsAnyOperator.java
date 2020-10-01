@@ -43,9 +43,13 @@ public class JsonNotContainsAnyOperator extends FieldOperator {
 		if (type.equals(DatabaseType.POSTGRESQL)) {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
-				sql.append(getFieldSql(ctx)).append("::jsonb@>'[?]'");
+				Object v=values[i];
+				if(v instanceof String) {
+					sql.append(getFieldSql(ctx)).append("::jsonb@>'\""+values[i]+"\"'");
+				}else {
+					sql.append(getFieldSql(ctx)).append("::jsonb@>'"+values[i]+"'");
+				}
 				sql.append("='f' ");
-				ctx.addParameter(values[i]);
 				if (i != (values.length - 1)) {
 					sql.append(" and ");
 				}

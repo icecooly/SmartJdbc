@@ -42,8 +42,12 @@ public class JsonContainsAnyOperator extends FieldOperator {
 		if (type.equals(DatabaseType.POSTGRESQL)) {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
-				sql.append(getFieldSql(ctx)).append("::jsonb@>'[?]'");
-				ctx.addParameter(values[i]);
+				Object v=values[i];
+				if(v instanceof String) {
+					sql.append(getFieldSql(ctx)).append("::jsonb@>'\""+values[i]+"\"'");
+				}else {
+					sql.append(getFieldSql(ctx)).append("::jsonb@>'"+values[i]+"'");
+				}
 				if (i != (values.length - 1)) {
 					sql.append(" or ");
 				}

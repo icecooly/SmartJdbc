@@ -1,9 +1,7 @@
 package test;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.enums.ConditionType;
@@ -20,7 +18,6 @@ import test.domain.query.UserComplexQuery;
 import test.domain.query.UserComplexQuery.NameOrUserNameOrDeptName;
 import test.domain.query.UserComplexQuery.StatusAndMobile;
 import test.domain.query.UserQuery;
-import test.domain.vo.Test;
 import test.domain.vo.UserSimple;
 
 /**
@@ -283,7 +280,6 @@ public class QueryTestCase extends BaseTestCase{
 	
 	public void testQueryStatusOrRoleId() {
 		UserQuery query=new UserQuery();
-		query.setStatusOrRoleId(true);
 		query.param("orStatus",1);
 		query.param("orRoleId",1);
 		List<User> list=dao.getList(query);
@@ -301,7 +297,7 @@ public class QueryTestCase extends BaseTestCase{
 	/**当然写sql也是支持的*/
 	public void testQueryUsers() {
 		List<User> users=dao.queryList(User.class, 
-				"select * from t_user where name like concat('%'?,'%') and id=?", 
+				"select * from t_user where name like concat('%',?,'%') and id=?", 
 				"liu",
 				1);
 		System.out.println(DumpUtil.dump(users));
@@ -397,18 +393,6 @@ public class QueryTestCase extends BaseTestCase{
 		query.setCreateUserDepartmentName("技术");
 		query.setCreateUserDepartmentName2("技术");
 		List<Article> list=dao.getList(query);
-		System.out.println(DumpUtil.dump(list));
-	}
-	//
-	public void testQueryTest() {
-		Test test=new Test();
-		test.setArticleList(Arrays.asList(new Article("test1")));
-		Map<String,List<Article>> map=new HashMap<>();
-		map.put("testList",Arrays.asList(new Article("test2")));
-		test.setArticleMap(map);
-		int id=dao.insert(test);
-		String sql="select * from t_test where id=?";
-		List<Test> list=dao.queryList(Test.class, sql,id);
 		System.out.println(DumpUtil.dump(list));
 	}
 }

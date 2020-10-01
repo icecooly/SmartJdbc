@@ -92,13 +92,14 @@ public abstract class FieldOperator implements IOperator{
 	 */
 	protected String getFieldSql(OperatorContext ctx) {
 		StringBuilder sql=new StringBuilder();
+		SmartDataSource smartDataSource=ctx.getSmartDataSource();
+		String identifier=smartDataSource.identifier();
 		if(alias!=null) {
 			sql.append(alias).append(".");
 		}
-		SmartDataSource smartDataSource=ctx.getSmartDataSource();
-		sql.append(smartDataSource.identifier());
+		sql.append(identifier);
 		sql.append(column);
-		sql.append(smartDataSource.identifier());
+		sql.append(identifier);
 		return sql.toString();
 	}
 

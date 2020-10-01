@@ -188,7 +188,12 @@ public abstract class SqlProvider {
 		return smartDataSource.identifier();
 	}
 	//
-
+	public String getAlias(String alias) {
+		if(alias==null) {
+			return null;
+		}
+		return identifier()+alias+identifier();
+	}
 
 	/**
 	 * @return the smartDataSource
