@@ -20,11 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.Query.OrderBy;
-import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.Where;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
@@ -38,6 +36,8 @@ import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.provider.where.QueryWhere;
+import io.itit.smartjdbc.provider.where.Where;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.StringUtil;
 

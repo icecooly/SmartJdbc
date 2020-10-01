@@ -3,8 +3,8 @@ package test;
 import java.io.IOException;
 import java.util.Arrays;
 
-import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
+import io.itit.smartjdbc.provider.where.QueryWhere;
 import test.dao.BizDAO;
 import test.domain.entity.Article;
 import test.domain.entity.User;

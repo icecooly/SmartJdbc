@@ -65,7 +65,7 @@ public class SmartDataSource {
 			}else {
 				throw new SmartJdbcException("not support database "+driverClassName);
 			}
-			logger.info("init {} databaseType:{]",conn.getClass().getName(),databaseType);
+			logger.info("init driverClassName:{} databaseType:{}",driverClassName,databaseType);
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			throw e;
@@ -266,6 +266,16 @@ public class SmartDataSource {
 			}
 		}
 		throw new SmartJdbcException("tableName not found "+entityClass);
+	}
+	
+	public String identifier() {
+		if(databaseType.equals(DatabaseType.MYSQL)) {
+			return "`";
+		}
+		if(databaseType.equals(DatabaseType.POSTGRESQL)) {
+			return "\"";
+		}
+		return "";
 	}
 	
 }

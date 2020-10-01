@@ -1,4 +1,4 @@
-package io.itit.smartjdbc;
+package io.itit.smartjdbc.provider.where;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -9,7 +9,9 @@ import java.util.Set;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.SqlProvider;
-import io.itit.smartjdbc.util.ArrayUtils;
+import io.itit.smartjdbc.provider.where.operator.IOperator;
+import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
+import io.itit.smartjdbc.provider.where.operator.OperatorContext;
 
 /**
  * 
@@ -155,17 +157,13 @@ public class QueryWhere {
 		return conditionCount;
 	}
 	//
-	private String getSqlKey(SqlProvider sqlProvider, Where w, boolean needAliasAll) {
-		StringBuilder sql=new StringBuilder();
+	private String getAlias( Where w, boolean needAliasAll) {
 		if(w.alias!=null) {
-			sql.append(w.alias).append(".");
-		}else {
-			if(needAliasAll) {
-				sql.append(SqlProvider.MAIN_TABLE_ALIAS).append(".");
-			}
+			return w.alias;
+		}else if(needAliasAll) {
+			return SqlProvider.MAIN_TABLE_ALIAS;
 		}
-		sql.append(sqlProvider.identifier()).append(w.key).append(sqlProvider.identifier()+" ");
-		return sql.toString();
+		return "";
 	}
 	//
 	protected void appendWhereSql(SqlProvider sqlProvider, boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
@@ -180,6 +178,8 @@ public class QueryWhere {
 		boolean and=parent.conditionType==ConditionType.AND?true:false;
 		sql.append(" ( ");
 		int index=0;
+		OperatorContext ctx=new OperatorContext(sqlProvider.getSmartDataSource());
+		ctx.setParameters(valueList);
 		for (Where w : wheres) {
 			if(index>0) {
 				if(and) {
@@ -193,73 +193,9 @@ public class QueryWhere {
 				continue;
 			}
 			if(w.key!=null){
-				String sqlKey=getSqlKey(sqlProvider, w, needAliasAll);
-				if(w.operator.equals(SqlOperator.JSONCONTAINS)||
-						w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
-					Object[] values=ArrayUtils.convert(w.value);
-					if(values!=null&&values.length>0) {
-						sql.append("( ");
-						for (int i = 0; i < values.length; i++) {
-							sql.append(" json_contains(").append(sqlKey).append(",JSON_ARRAY(?)").append(") ");
-							if(w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
-								sql.append("=0 ");
-							}
-							valueList.add(values[i]);
-							if(i!=(values.length-1)) {
-								if(w.operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
-									sql.append(" and ");
-								}else {
-									sql.append(" or ");
-								}
-							}
-						}
-						sql.append(") ");
-					}
-				}else {
-					String value="?";
-					sql.append(sqlKey);
-					sql.append(getOperator(w.operator)).append(" ");
-					if(w.operator.equals(SqlOperator.LIKE)||
-							w.operator.equals(SqlOperator.NOT_LIKE)){
-						sql.append(" concat('%',"+value+",'%') ");
-						valueList.add(w.value);
-					}else if(w.operator.equals(SqlOperator.LIKE_LEFT)||
-							w.operator.equals(SqlOperator.NOT_LIKE_LEFT)){
-						sql.append(" concat('%',"+value+") ");
-						valueList.add(w.value);
-					}else if(w.operator.equals(SqlOperator.LIKE_RIGHT)||
-							w.operator.equals(SqlOperator.NOT_LIKE_RIGHT)){
-						sql.append(" concat("+value+",'%') ");
-						valueList.add(w.value);
-					}else if(w.operator.equals(SqlOperator.IS_NULL)){
-					}else if(w.operator.equals(SqlOperator.IS_NOT_NULL)){
-					}else if(w.operator.equals(SqlOperator.IN)) {
-						Object[] values=ArrayUtils.convert(w.value);
-						if(values!=null&&values.length>0) {
-							sql.append(" ( ");
-							for (int i = 0; i < values.length; i++) {
-								sql.append(" ?,");
-								valueList.add(values[i]);
-							}
-							sql.deleteCharAt(sql.length() - 1);
-							sql.append(" ) ");
-						}
-					}else if(w.operator.equals(SqlOperator.NOT_IN)) {
-						Object[] values=ArrayUtils.convert(w.value);
-						if(values!=null&&values.length>0) {
-							sql.append(" ( ");
-							for (int i = 0; i < values.length; i++) {
-								sql.append(" ?,");
-								valueList.add(values[i]);
-							}
-							sql.deleteCharAt(sql.length() - 1);
-							sql.append(" ) ");
-						}
-					}else{
-						sql.append("  "+value+" ");
-						valueList.add(w.value);
-					}
-				}
+				String alias=getAlias(w, needAliasAll);
+				IOperator operator=OperatorBuilder.build(w.operator, alias, w.key, w.value);
+				sql.append(operator.build(ctx));
 			}else{
 				sql.append(" "+ w.sql+" ");
 				if(w.sqlValues!=null&&w.sqlValues.size()>0) {
@@ -269,50 +205,6 @@ public class QueryWhere {
 			index++;
 		}//for
 		sql.append(")");
-	}
-	//
-	protected String getOperator(SqlOperator opr) {
-		if(opr.equals(SqlOperator.EQ)) {
-			return "=";
-		}
-		if(opr.equals(SqlOperator.NE)) {
-			return "<>";
-		}
-		if(opr.equals(SqlOperator.LT)) {
-			return "<";
-		}
-		if(opr.equals(SqlOperator.LE)) {
-			return "<=";
-		}
-		if(opr.equals(SqlOperator.GT)) {
-			return ">";
-		}
-		if(opr.equals(SqlOperator.GE)) {
-			return ">=";
-		}
-		if(opr.equals(SqlOperator.LIKE)||
-				opr.equals(SqlOperator.LIKE_LEFT)||
-				opr.equals(SqlOperator.LIKE_RIGHT)) {
-			return "like";
-		}
-		if(opr.equals(SqlOperator.NOT_LIKE)||
-				opr.equals(SqlOperator.NOT_LIKE_LEFT)||
-				opr.equals(SqlOperator.NOT_LIKE_RIGHT)) {
-			return "not like";
-		}
-		if(opr.equals(SqlOperator.IN)) {
-			return "in";
-		}
-		if(opr.equals(SqlOperator.NOT_IN)) {
-			return "not in";
-		}
-		if(opr.equals(SqlOperator.IS_NULL)) {
-			return "is null";
-		}
-		if(opr.equals(SqlOperator.IS_NOT_NULL)) {
-			return "is not null";
-		}
-		return null;
 	}
 	//
 	/**

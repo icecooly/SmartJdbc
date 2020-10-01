@@ -185,6 +185,24 @@ public abstract class SqlProvider {
 	 * @return
 	 */
 	public String identifier() {
-		return "";
+		return smartDataSource.identifier();
 	}
+	//
+
+
+	/**
+	 * @return the smartDataSource
+	 */
+	public SmartDataSource getSmartDataSource() {
+		return smartDataSource;
+	}
+
+
+	/**
+	 * @param smartDataSource the smartDataSource to set
+	 */
+	public void setSmartDataSource(SmartDataSource smartDataSource) {
+		this.smartDataSource = smartDataSource;
+	}
+	
 }

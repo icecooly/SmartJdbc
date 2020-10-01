@@ -26,7 +26,6 @@ public enum SqlOperator {
     LE,//小于等于
     IS_NULL,
     IS_NOT_NULL,
-    BETWEEN,
     JSONCONTAINS,
     NOT_JSONCONTAINS;
 }

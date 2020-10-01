@@ -1,4 +1,4 @@
-package io.itit.smartjdbc;
+package io.itit.smartjdbc.provider.where;
 
 import java.util.Collection;
 import java.util.LinkedList;

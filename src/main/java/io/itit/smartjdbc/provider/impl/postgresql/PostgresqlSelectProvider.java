@@ -16,11 +16,6 @@ public class PostgresqlSelectProvider extends SelectProvider{
 	}
 	
 	@Override
-	public String identifier() {
-		return "\"";
-	}
-	
-	@Override
 	protected String getLimitSql() {
 		if(isSelectCount) {
 			return "";

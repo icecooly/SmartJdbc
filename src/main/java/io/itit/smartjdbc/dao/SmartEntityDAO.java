@@ -8,10 +8,10 @@ import java.util.Set;
 
 import io.itit.smartjdbc.DAOInterceptor;
 import io.itit.smartjdbc.Query;
-import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.ResultSetHandler;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.provider.SelectProvider;
+import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.util.ArrayUtils;
 
 /**

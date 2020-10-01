@@ -1,9 +1,9 @@
 package io.itit.smartjdbc.provider;
 
-import io.itit.smartjdbc.QueryWhere;
-import io.itit.smartjdbc.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SqlBean;
+import io.itit.smartjdbc.provider.where.QueryWhere;
+import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 
 /**
  * 

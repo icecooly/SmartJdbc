@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SmartDataSource;
-import io.itit.smartjdbc.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.annotations.EntityField;
+import io.itit.smartjdbc.provider.where.QueryWhere;
+import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.JSONUtil;
 

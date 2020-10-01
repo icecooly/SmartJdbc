@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SqlParam;
-import io.itit.smartjdbc.Where;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.provider.where.QueryWhere;
+import io.itit.smartjdbc.provider.where.Where;
 import io.itit.smartjdbc.util.DumpUtil;
 import test.dao.BizDAO;
 import test.domain.entity.Article;

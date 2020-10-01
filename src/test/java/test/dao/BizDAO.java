@@ -6,9 +6,9 @@ import java.lang.reflect.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.QueryWhere;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.dao.SmartDAO;
+import io.itit.smartjdbc.provider.where.QueryWhere;
 
 /**
  * 

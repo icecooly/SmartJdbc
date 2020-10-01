@@ -1,5 +1,7 @@
 package io.itit.smartjdbc;
 
+import io.itit.smartjdbc.provider.where.QueryWhere;
+
 /**
  * 
  * @author skydu
