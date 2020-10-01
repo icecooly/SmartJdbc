@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.SmartDataSourceManager;
+import io.itit.smartjdbc.SmartJdbc;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.connection.ConnectionHolder;
@@ -75,7 +75,7 @@ public class DefaultTransactionManager implements TransactionManager{
 	 * @throws SQLException
 	 */
 	public Connection openConnection() throws SQLException {
-		SmartDataSource smartDataSource=SmartDataSourceManager.getDatasource();
+		SmartDataSource smartDataSource=SmartJdbc.getDatasource();
 		if(smartDataSource==null) {
 			throw new RuntimeException("DataSource not found");
 		}

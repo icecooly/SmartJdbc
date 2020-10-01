@@ -15,4 +15,24 @@ public class PostgresqlSelectProvider extends SelectProvider{
 		super(smartDataSource);
 	}
 	
+	@Override
+	public String identifier() {
+		return "\"";
+	}
+	
+	@Override
+	protected String getLimitSql() {
+		if(isSelectCount) {
+			return "";
+		}
+		if(!needPaging) {
+			return "";
+		}
+		StringBuilder sql=new StringBuilder();
+		addPaging(query);	
+		if(qw.getLimitEnd()!=-1) {
+			sql.append("limit ").append(qw.getLimitEnd()).append(" offset ").append(qw.getLimitStart()).append("\n");
+		}
+		return sql.toString();
+	}
 }

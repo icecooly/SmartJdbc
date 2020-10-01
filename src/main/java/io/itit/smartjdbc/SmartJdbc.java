@@ -8,7 +8,10 @@ import java.util.Map;
  * @author skydu
  *
  */
-public class SmartDataSourceManager {
+public class SmartJdbc {
+	//
+
+	public static final String DEFAULT_DATASOURCE_INDEX = "master";
 	/**
 	 * 
 	 */
@@ -19,7 +22,7 @@ public class SmartDataSourceManager {
 	 * @param dataSource
 	 */
 	public static void registerDataSource(SmartDataSource dataSource) {
-		registerDataSource(SmartDataSource.DEFAULT_DATASOURCE_INDEX, dataSource);
+		registerDataSource(DEFAULT_DATASOURCE_INDEX, dataSource);
 	}
 	
 	/**
@@ -36,7 +39,7 @@ public class SmartDataSourceManager {
 	 * @return
 	 */
 	public static SmartDataSource getDatasource() {
-		return getDatasource(SmartDataSource.DEFAULT_DATASOURCE_INDEX);
+		return getDatasource(DEFAULT_DATASOURCE_INDEX);
 	}
 	/**
 	 * 

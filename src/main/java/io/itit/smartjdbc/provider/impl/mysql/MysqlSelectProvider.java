@@ -16,5 +16,8 @@ public class MysqlSelectProvider extends SelectProvider{
 		super(smartDataSource);
 	}
 	
-	
+	@Override
+	public String identifier() {
+		return "`";
+	}
 }
