@@ -7,8 +7,12 @@ package io.itit.smartjdbc.provider.where.operator;
  */
 public class EqOperator extends FieldOperator{
 
+	public EqOperator(OperatorContext ctx) {
+		super(ctx);
+	}
+
 	@Override
-	public String getOperatorSql(OperatorContext ctx) {
+	public String getOperatorSql() {
 		return "=";
 	}
 

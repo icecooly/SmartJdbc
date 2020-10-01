@@ -7,80 +7,34 @@ import io.itit.smartjdbc.SmartDataSource;
  * @author skydu
  *
  */
-public abstract class FieldOperator implements IOperator{
-
-	private String alias;
+public abstract class FieldOperator extends Operator{
 	
-	private String column;
-	
-	private Object value;
+	public FieldOperator(OperatorContext ctx) {
+		super(ctx);
+	}
 	//
-
-	/**
-	 * @return the alias
-	 */
-	public String getAlias() {
-		return alias;
-	}
-
-	/**
-	 * @param alias the alias to set
-	 */
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-	
-	/**
-	 * @return the column
-	 */
-	public String getColumn() {
-		return column;
-	}
-
-	/**
-	 * @param column the column to set
-	 */
-	public void setColumn(String column) {
-		this.column = column;
-	}
-
-	/**
-	 * @return the value
-	 */
-	public Object getValue() {
-		return value;
-	}
-
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(Object value) {
-		this.value = value;
-	}
-	
 	/**
 	 * 
 	 * @return
 	 */
-	public abstract String getOperatorSql(OperatorContext ctx);
-	
+	public abstract String getOperatorSql();
 	/**
 	 * 
 	 */
 	@Override
-	public String build(OperatorContext ctx) {
-		if(column==null) {
+	public String build() {
+		if(where.key==null) {
 			return "";
 		}
 		StringBuilder sql=new StringBuilder();
-		sql.append(getFieldSql(ctx));
+		sql.append(getFieldSql());
 		sql.append(" ");
-		sql.append(getOperatorSql(ctx));
+		sql.append(getOperatorSql());
 		sql.append(" ");
-		sql.append(getValueSql(ctx));
+		sql.append(getValueSql());
 		sql.append(" ");
-		if(value!=null) {
-			ctx.addParameter(value);
+		if(where.value!=null) {
+			ctx.addParameter(where.value);
 		}
 		return sql.toString();
 	}
@@ -90,15 +44,15 @@ public abstract class FieldOperator implements IOperator{
 	 * @param ctx
 	 * @return
 	 */
-	protected String getFieldSql(OperatorContext ctx) {
+	protected String getFieldSql() {
 		StringBuilder sql=new StringBuilder();
 		SmartDataSource smartDataSource=ctx.getSmartDataSource();
 		String identifier=smartDataSource.identifier();
-		if(alias!=null) {
-			sql.append(alias).append(".");
+		if(where.alias!=null) {
+			sql.append(where.alias).append(".");
 		}
 		sql.append(identifier);
-		sql.append(column);
+		sql.append(where.key);
 		sql.append(identifier);
 		return sql.toString();
 	}
@@ -108,7 +62,7 @@ public abstract class FieldOperator implements IOperator{
 	 * @param ctx
 	 * @return
 	 */
-	protected String getValueSql(OperatorContext ctx) {
+	protected String getValueSql() {
 		return "?";
 	}
 }

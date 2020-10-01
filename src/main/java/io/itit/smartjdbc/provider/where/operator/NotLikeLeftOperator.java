@@ -7,13 +7,17 @@ package io.itit.smartjdbc.provider.where.operator;
  */
 public class NotLikeLeftOperator extends FieldOperator{
 
+	public NotLikeLeftOperator(OperatorContext ctx) {
+		super(ctx);
+	}
+
 	@Override
-	public String getOperatorSql(OperatorContext ctx) {
+	public String getOperatorSql() {
 		return "not like";
 	}
 
 	@Override
-	protected String getValueSql(OperatorContext ctx) {
+	protected String getValueSql() {
 		return "concat('%',?)";
 	}
 }

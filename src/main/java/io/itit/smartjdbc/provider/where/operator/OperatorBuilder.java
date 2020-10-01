@@ -1,6 +1,14 @@
 package io.itit.smartjdbc.provider.where.operator;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.provider.where.Where;
 
 /**
  * 
@@ -8,69 +16,100 @@ import io.itit.smartjdbc.enums.SqlOperator;
  *
  */
 public class OperatorBuilder {
+	//
+	private static Map<String, Operator> customOperators=new ConcurrentHashMap<>();
+	//
+	private static Logger logger=LoggerFactory.getLogger(OperatorBuilder.class);
 
-	/*
+	
+	/**
 	 * 
+	 * @param w
+	 * @return
 	 */
-	public static IOperator build(SqlOperator operator, String alias, String column, Object value) {
-		FieldOperator opt=null;
+	public static Operator build(OperatorContext ctx) {
+		Operator opt=null;
+		Where w=ctx.getWhere();
+		SqlOperator operator=w.operator;
+		if(operator.equals(SqlOperator.CUSTOM)) {
+			opt=getCustomOperator(w);
+		}
 		if(operator.equals(SqlOperator.EQ)) {
-			opt=new EqOperator();
+			opt=new EqOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.NE)) {
-			opt=new NeOperator();
+			opt=new NeOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.IN)) {
-			opt=new InOperator();
+			opt=new InOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.NOT_IN)) {
-			opt=new NotInOperator();
+			opt=new NotInOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.LIKE)) {
-			opt=new LikeOperator();
+			opt=new LikeOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.NOT_LIKE)) {
-			opt=new NotLikeOperator();
+			opt=new NotLikeOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.LIKE_LEFT)) {
-			opt=new LikeLeftOperator();
+			opt=new LikeLeftOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.LIKE_RIGHT)) {
-			opt=new LikeRightOperator();
+			opt=new LikeRightOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.NOT_LIKE_LEFT)) {
-			opt=new NotLikeLeftOperator();
+			opt=new NotLikeLeftOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.NOT_LIKE_RIGHT)) {
-			opt=new NotLikeRightOperator();
+			opt=new NotLikeRightOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.GT)) {
-			opt=new GtOperator();
+			opt=new GtOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.GE)) {
-			opt=new GeOperator();
+			opt=new GeOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.LT)) {
-			opt=new LtOperator();
+			opt=new LtOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.LE)) {
-			opt=new LeOperator();
+			opt=new LeOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.IS_NULL)) {
-			opt=new IsNullOperator();
+			opt=new IsNullOperator(ctx);
 		}
 		if(operator.equals(SqlOperator.IS_NOT_NULL)) {
-			opt=new IsNotNullOperator();
+			opt=new IsNotNullOperator(ctx);
 		}
-		if(operator.equals(SqlOperator.JSONCONTAINS)) {
-			opt=new JsonContainsAnyOperator();
+		if(operator.equals(SqlOperator.JSON_CONTAINS_ANY)) {
+			opt=new JsonContainsAnyOperator(ctx);
 		}
-		if(operator.equals(SqlOperator.NOT_JSONCONTAINS)) {
-			opt=new JsonNotContainsAnyOperator();
+		if(operator.equals(SqlOperator.JSON_NOT_CONTAINS_ANY)) {
+			opt=new JsonNotContainsAnyOperator(ctx);
 		}
-		opt.setAlias(alias);
-		opt.setColumn(column);
-		opt.setValue(value);
+		if(operator.equals(SqlOperator.JSON_CONTAINS_ALL)) {
+			opt=new JsonContainsAllOperator(ctx);
+		}
 		return opt;
+	}
+	//
+	private static Operator getCustomOperator(Where w) {
+		if(w.customOperator==null) {
+			throw new SmartJdbcException("no custom operator found ");
+		}
+		Operator operator=customOperators.get(w.customOperator);
+		if(operator==null) {
+			throw new SmartJdbcException("no custom operator found "+w.customOperator);
+		}
+		return operator;
+	}
+	//
+	public static void registerCustomOperator(String customOperator, Operator operator) {
+		if(customOperator==null||operator==null) {
+			throw new IllegalArgumentException();
+		}
+		customOperators.put(customOperator, operator);
+		logger.info("registerCustomOperator {}",customOperator);
 	}
 }

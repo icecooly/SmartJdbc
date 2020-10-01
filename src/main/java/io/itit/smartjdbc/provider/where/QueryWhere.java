@@ -9,7 +9,7 @@ import java.util.Set;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.SqlProvider;
-import io.itit.smartjdbc.provider.where.operator.IOperator;
+import io.itit.smartjdbc.provider.where.operator.Operator;
 import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
 import io.itit.smartjdbc.provider.where.operator.OperatorContext;
 
@@ -193,9 +193,10 @@ public class QueryWhere {
 				continue;
 			}
 			if(w.key!=null){
-				String alias=getAlias(w, needAliasAll);
-				IOperator operator=OperatorBuilder.build(w.operator, alias, w.key, w.value);
-				sql.append(operator.build(ctx));
+				w.alias=getAlias(w, needAliasAll);
+				ctx.setWhere(w);
+				Operator operator=OperatorBuilder.build(ctx);
+				sql.append(operator.build());
 			}else{
 				sql.append(" "+ w.sql+" ");
 				if(w.sqlValues!=null&&w.sqlValues.size()>0) {
@@ -804,7 +805,7 @@ public class QueryWhere {
 	 * @return
 	 */
 	public QueryWhere jsonContains(String key,Object value) {
-		return this.where(key, SqlOperator.JSONCONTAINS, value);
+		return this.where(key, SqlOperator.JSON_CONTAINS_ANY, value);
 	}
 	
 	/**
@@ -814,7 +815,7 @@ public class QueryWhere {
 	 * @return
 	 */
 	public QueryWhere jsonContains(String key,Collection<?> values) {
-		return this.where(key, SqlOperator.JSONCONTAINS, values);
+		return this.where(key, SqlOperator.JSON_CONTAINS_ANY, values);
 	}
 	
 	/**
@@ -825,7 +826,7 @@ public class QueryWhere {
 	 * @return
 	 */
 	public QueryWhere jsonContains(String alias,String key,Object value) {
-		return this.where(alias,key, SqlOperator.JSONCONTAINS, value);
+		return this.where(alias,key, SqlOperator.JSON_CONTAINS_ANY, value);
 	}
 	
 	/**
@@ -835,7 +836,7 @@ public class QueryWhere {
 	 * @return
 	 */
 	public QueryWhere notJsonContains(String key,Object value) {
-		return this.where(key, SqlOperator.NOT_JSONCONTAINS, value);
+		return this.where(key, SqlOperator.JSON_NOT_CONTAINS_ANY, value);
 	}
 	
 	/**
@@ -846,7 +847,7 @@ public class QueryWhere {
 	 * @return
 	 */
 	public QueryWhere notJsonContains(String alias,String key,Object value) {
-		return this.where(alias,key, SqlOperator.NOT_JSONCONTAINS, value);
+		return this.where(alias,key, SqlOperator.JSON_NOT_CONTAINS_ANY, value);
 	}
 	/**
 	 * key IS NULL

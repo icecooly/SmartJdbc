@@ -8,9 +8,9 @@ import io.itit.smartjdbc.util.ArrayUtils;
  * @author skydu
  *
  */
-public class JsonNotContainsAnyOperator extends FieldOperator {
+public class JsonContainsAllOperator extends FieldOperator {
 
-	public JsonNotContainsAnyOperator(OperatorContext ctx) {
+	public JsonContainsAllOperator(OperatorContext ctx) {
 		super(ctx);
 	}
 
@@ -28,7 +28,7 @@ public class JsonNotContainsAnyOperator extends FieldOperator {
 			return "";
 		}
 		Object[] values = ArrayUtils.convert(value);
-		if (values == null || values.length == 0) {
+		if(values==null||values.length==0) {
 			return "";
 		}
 		StringBuilder sql = new StringBuilder();
@@ -36,7 +36,6 @@ public class JsonNotContainsAnyOperator extends FieldOperator {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
 				sql.append(" json_contains(").append(getFieldSql()).append(",JSON_ARRAY(?)").append(") ");
-				sql.append("=0 ");
 				ctx.addParameter(values[i]);
 				if (i != (values.length - 1)) {
 					sql.append(" and ");
@@ -53,7 +52,6 @@ public class JsonNotContainsAnyOperator extends FieldOperator {
 				}else {
 					sql.append(getFieldSql()).append("::jsonb@>'"+values[i]+"'");
 				}
-				sql.append("='f' ");
 				if (i != (values.length - 1)) {
 					sql.append(" and ");
 				}

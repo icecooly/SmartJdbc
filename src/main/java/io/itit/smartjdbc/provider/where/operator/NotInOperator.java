@@ -8,16 +8,20 @@ import io.itit.smartjdbc.util.ArrayUtils;
  *
  */
 public class NotInOperator extends FieldOperator{
+	//
+	public NotInOperator(OperatorContext ctx) {
+		super(ctx);
+	}
 
 	@Override
-	public String getOperatorSql(OperatorContext ctx) {
+	public String getOperatorSql() {
 		return "not in";
 	}
 
 	@Override
-	public String build(OperatorContext ctx) {
-		String column=getColumn();
-		Object value=getValue();
+	public String build() {
+		String column=where.key;
+		Object value=where.value;
 		if(column==null||value==null) {
 			return "";
 		}
@@ -26,9 +30,9 @@ public class NotInOperator extends FieldOperator{
 			return "";
 		}
 		StringBuilder sql=new StringBuilder();
-		sql.append(getFieldSql(ctx));
+		sql.append(getFieldSql());
 		sql.append(" ");
-		sql.append(getOperatorSql(ctx));
+		sql.append(getOperatorSql());
 		sql.append("( ");
 		for (int i = 0; i < values.length; i++) {
 			sql.append(" ?,");

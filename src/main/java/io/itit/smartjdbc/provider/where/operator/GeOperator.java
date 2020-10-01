@@ -7,9 +7,12 @@ package io.itit.smartjdbc.provider.where.operator;
  */
 public class GeOperator extends FieldOperator{
 
-	@Override
-	public String getOperatorSql(OperatorContext ctx) {
-		return ">=";
+	public GeOperator(OperatorContext ctx) {
+		super(ctx);
 	}
 
+	@Override
+	public String getOperatorSql() {
+		return ">=";
+	}
 }

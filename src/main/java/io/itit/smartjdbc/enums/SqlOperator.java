@@ -10,6 +10,7 @@ package io.itit.smartjdbc.enums;
  *
  */
 public enum SqlOperator {
+	CUSTOM,
     IN,
     NOT_IN,
     LIKE,
@@ -26,6 +27,7 @@ public enum SqlOperator {
     LE,//小于等于
     IS_NULL,
     IS_NOT_NULL,
-    JSONCONTAINS,
-    NOT_JSONCONTAINS;
+    JSON_CONTAINS_ANY,
+    JSON_NOT_CONTAINS_ANY,
+	JSON_CONTAINS_ALL;//全部包含
 }

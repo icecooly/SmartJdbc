@@ -7,13 +7,17 @@ package io.itit.smartjdbc.provider.where.operator;
  */
 public class LikeRightOperator extends FieldOperator{
 
+	public LikeRightOperator(OperatorContext ctx) {
+		super(ctx);
+	}
+
 	@Override
-	public String getOperatorSql(OperatorContext ctx) {
+	public String getOperatorSql() {
 		return "like";
 	}
 
 	@Override
-	protected String getValueSql(OperatorContext ctx) {
+	protected String getValueSql() {
 		return "concat(?,'%')";
 	}
 }

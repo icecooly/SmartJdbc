@@ -10,16 +10,20 @@ import io.itit.smartjdbc.util.ArrayUtils;
  */
 public class JsonContainsAnyOperator extends FieldOperator {
 
+	public JsonContainsAnyOperator(OperatorContext ctx) {
+		super(ctx);
+	}
+
 	@Override
-	public String getOperatorSql(OperatorContext ctx) {
+	public String getOperatorSql() {
 		return "";
 	}
 
 	@Override
-	public String build(OperatorContext ctx) {
+	public String build() {
 		DatabaseType type = ctx.getSmartDataSource().getDatabaseType();
-		String column = getColumn();
-		Object value = getValue();
+		String column = where.key;
+		Object value = where.value;
 		if (column == null || value == null) {
 			return "";
 		}
@@ -31,7 +35,7 @@ public class JsonContainsAnyOperator extends FieldOperator {
 		if (type.equals(DatabaseType.MYSQL)) {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
-				sql.append(" json_contains(").append(getFieldSql(ctx)).append(",JSON_ARRAY(?)").append(") ");
+				sql.append(" json_contains(").append(getFieldSql()).append(",JSON_ARRAY(?)").append(") ");
 				ctx.addParameter(values[i]);
 				if (i != (values.length - 1)) {
 					sql.append(" or ");
@@ -44,9 +48,9 @@ public class JsonContainsAnyOperator extends FieldOperator {
 			for (int i = 0; i < values.length; i++) {
 				Object v=values[i];
 				if(v instanceof String) {
-					sql.append(getFieldSql(ctx)).append("::jsonb@>'\""+values[i]+"\"'");
+					sql.append(getFieldSql()).append("::jsonb@>'\""+values[i]+"\"'");
 				}else {
-					sql.append(getFieldSql(ctx)).append("::jsonb@>'"+values[i]+"'");
+					sql.append(getFieldSql()).append("::jsonb@>'"+values[i]+"'");
 				}
 				if (i != (values.length - 1)) {
 					sql.append(" or ");

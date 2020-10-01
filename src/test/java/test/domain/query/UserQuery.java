@@ -47,16 +47,16 @@ public class UserQuery extends Query<User>{
 	private Integer[] statusInList2;
 	
 	
-	@QueryField(operator = SqlOperator.JSONCONTAINS,field = "roleIdList")
+	@QueryField(operator = SqlOperator.JSON_CONTAINS_ANY,field = "roleIdList")
 	private Integer roleId; 
 	
-	@QueryField(operator = SqlOperator.JSONCONTAINS)
+	@QueryField(operator = SqlOperator.JSON_CONTAINS_ANY)
 	private Integer[] roleIdList; 
 	
-	@QueryField(operator = SqlOperator.NOT_JSONCONTAINS,field = "roleIdList")
+	@QueryField(operator = SqlOperator.JSON_NOT_CONTAINS_ANY,field = "roleIdList")
 	private Integer notRoleId; 
 	
-	@QueryField(operator = SqlOperator.NOT_JSONCONTAINS,field = "roleIdList")
+	@QueryField(operator = SqlOperator.JSON_NOT_CONTAINS_ANY,field = "roleIdList")
 	private Integer[] notRoleIdList; 
 	
 	@InnerJoin(table2 = User.class,table2Alias = "user",table1Fields ={"createUserId"},table2Fields ={"id"})

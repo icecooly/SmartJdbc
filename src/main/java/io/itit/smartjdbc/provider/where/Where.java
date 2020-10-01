@@ -19,6 +19,7 @@ public class Where {
 	public String key;
 	public Object value;
 	public SqlOperator operator;
+	public String customOperator;
 	public String sql;
 	public LinkedList<Object> sqlValues;
 	public List<Where> children;
