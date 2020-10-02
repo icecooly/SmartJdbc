@@ -169,7 +169,7 @@ public class QueryWhere {
 		}else if(needAliasAll) {
 			return SqlProvider.MAIN_TABLE_ALIAS;
 		}
-		return "";
+		return null;
 	}
 	//
 	protected void appendWhereSql(SqlProvider sqlProvider, boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
