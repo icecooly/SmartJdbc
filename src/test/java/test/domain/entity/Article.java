@@ -1,5 +1,7 @@
 package test.domain.entity;
 
+import java.util.List;
+
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
@@ -46,6 +48,8 @@ public class Article extends BaseEntity{
 	/***/
 	@EntityField(foreignKeyFields="updateUserId",persistent = false)
 	private User updateUser;
+	
+	private List<User> favoriteUserList;
 	
 	//
 	public Article() {

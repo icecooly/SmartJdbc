@@ -9,6 +9,7 @@ import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.provider.where.Where;
+import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.util.DumpUtil;
 import test.dao.BizDAO;
 import test.domain.entity.Article;
@@ -107,10 +108,10 @@ public class QueryTestCase extends BaseTestCase{
 	}
 	
 	public void testJsonContains() {
-		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",Arrays.asList(1,2,3)));
-		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",new int[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",new byte[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().jsonContains("role_id_list",new long[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",Arrays.asList(1,2,3)));
+		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new int[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new byte[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new long[] {1,2}));
 		//
 		UserQuery query=new UserQuery();
 		query.setRoleId(1);
@@ -122,11 +123,21 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getList(query);
 	}
 	
+	public void testJsonContainsObjectArray() {
+		JsonContain jsonContain=new JsonContain();
+		jsonContain.objectField="id";
+		dao.getEntity(Article.class,QueryWhere.create().jsonContainsAny(null,"favorite_user_list",new int[] {1,2},jsonContain));
+		//
+		jsonContain=new JsonContain();
+		jsonContain.objectField="userName";
+		dao.getEntity(Article.class,QueryWhere.create().jsonContainsAny(null,"favorite_user_list",new String[] {"liubei","guanyu"},jsonContain));
+	}
+	
 	public void testNotJsonContains() {
-		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",Arrays.asList(1,2,3)));
-		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",new int[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",new byte[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().notJsonContains("role_id_list",new long[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonNotContainsAny("role_id_list",Arrays.asList(1,2,3)));
+		dao.getEntity(User.class,QueryWhere.create().jsonNotContainsAny("role_id_list",new int[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonNotContainsAny("role_id_list",new byte[] {1,2}));
+		dao.getEntity(User.class,QueryWhere.create().jsonNotContainsAny("role_id_list",new long[] {1,2}));
 		//
 		UserQuery query=new UserQuery();
 		query.setNotRoleId(1);

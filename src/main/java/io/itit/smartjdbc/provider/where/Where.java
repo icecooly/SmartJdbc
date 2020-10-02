@@ -23,6 +23,11 @@ public class Where {
 	public String sql;
 	public LinkedList<Object> sqlValues;
 	public List<Where> children;
+	public JsonContain jsonContain;;
+	//
+	public static class JsonContain{
+		public String objectField;
+	}
 
 	public Where() {
 		this.children = new LinkedList<>();
@@ -43,11 +48,16 @@ public class Where {
 	}
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value) {
+		return where(alias, key, op, value, null);
+	}
+	//
+	public Where where(String alias, String key, SqlOperator op, Object value, JsonContain jsonContain) {
 		Where w = new Where();
 		w.alias = alias;
 		w.key = key;
 		w.operator = op;
 		w.value = value;
+		w.jsonContain=jsonContain;
 		children.add(w);
 		return this;
 	}

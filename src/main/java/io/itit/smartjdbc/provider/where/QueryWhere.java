@@ -9,6 +9,7 @@ import java.util.Set;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.SqlProvider;
+import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.provider.where.operator.Operator;
 import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
 import io.itit.smartjdbc.provider.where.operator.OperatorContext;
@@ -55,6 +56,11 @@ public class QueryWhere {
 	//
 	public QueryWhere where(String alias,String key,SqlOperator op,Object value){
 		where.where(alias, key, op, value);
+		return this;
+	}
+	//
+	public QueryWhere where(String alias,String key,SqlOperator op,Object value,JsonContain jsonContain){
+		where.where(alias, key, op, value, jsonContain);
 		return this;
 	}
 	//
@@ -804,7 +810,7 @@ public class QueryWhere {
 	 * @param value
 	 * @return
 	 */
-	public QueryWhere jsonContains(String key,Object value) {
+	public QueryWhere jsonContainsAny(String key,Object value) {
 		return this.where(key, SqlOperator.JSON_CONTAINS_ANY, value);
 	}
 	
@@ -814,7 +820,7 @@ public class QueryWhere {
 	 * @param values
 	 * @return
 	 */
-	public QueryWhere jsonContains(String key,Collection<?> values) {
+	public QueryWhere jsonContainsAny(String key,Collection<?> values) {
 		return this.where(key, SqlOperator.JSON_CONTAINS_ANY, values);
 	}
 	
@@ -825,8 +831,20 @@ public class QueryWhere {
 	 * @param value
 	 * @return
 	 */
-	public QueryWhere jsonContains(String alias,String key,Object value) {
+	public QueryWhere jsonContainsAny(String alias,String key,Object value) {
 		return this.where(alias,key, SqlOperator.JSON_CONTAINS_ANY, value);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param values
+	 * @param jsonContain
+	 * @return
+	 */
+	public QueryWhere jsonContainsAny(String alias,String key,Object values,JsonContain jsonContain) {
+		return this.where(alias, key, SqlOperator.JSON_CONTAINS_ANY, values, jsonContain);
 	}
 	
 	/**
@@ -835,7 +853,7 @@ public class QueryWhere {
 	 * @param value
 	 * @return
 	 */
-	public QueryWhere notJsonContains(String key,Object value) {
+	public QueryWhere jsonNotContainsAny(String key,Object value) {
 		return this.where(key, SqlOperator.JSON_NOT_CONTAINS_ANY, value);
 	}
 	
@@ -846,8 +864,43 @@ public class QueryWhere {
 	 * @param value
 	 * @return
 	 */
-	public QueryWhere notJsonContains(String alias,String key,Object value) {
+	public QueryWhere jsonNotContainsAny(String alias,String key,Object value) {
 		return this.where(alias,key, SqlOperator.JSON_NOT_CONTAINS_ANY, value);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param values
+	 * @param jsonContain
+	 * @return
+	 */
+	public QueryWhere jsonNotContainsAny(String alias,String key,Collection<?> values,JsonContain jsonContain) {
+		return this.where(alias, key, SqlOperator.JSON_NOT_CONTAINS_ANY, values, jsonContain);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContainsAnyAll(String alias,String key,Object value) {
+		return this.where(alias,key, SqlOperator.JSON_CONTAINS_ALL, value);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param values
+	 * @param jsonContain
+	 * @return
+	 */
+	public QueryWhere jsonContainsAnyAll(String alias,String key,Collection<?> values,JsonContain jsonContain) {
+		return this.where(alias, key, SqlOperator.JSON_CONTAINS_ALL, values, jsonContain);
 	}
 	/**
 	 * key IS NULL

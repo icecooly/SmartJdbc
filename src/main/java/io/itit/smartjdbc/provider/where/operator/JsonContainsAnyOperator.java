@@ -1,6 +1,7 @@
 package io.itit.smartjdbc.provider.where.operator;
 
 import io.itit.smartjdbc.enums.DatabaseType;
+import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.util.ArrayUtils;
 
 /**
@@ -31,11 +32,16 @@ public class JsonContainsAnyOperator extends FieldOperator {
 		if(values==null||values.length==0) {
 			return "";
 		}
+		JsonContain jsonContain=where.jsonContain;
 		StringBuilder sql = new StringBuilder();
 		if (type.equals(DatabaseType.MYSQL)) {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
-				sql.append(" json_contains(").append(getFieldSql()).append(",JSON_ARRAY(?)").append(") ");
+				if(jsonContain==null||jsonContain.objectField==null) {
+					sql.append(" json_contains(").append(getFieldSql()).append(",JSON_ARRAY(?)").append(") ");
+				}else {
+					sql.append(" json_contains(").append(getFieldSql()).append(",JSON_OBJECT('"+jsonContain.objectField+"',?)").append(") ");
+				}
 				ctx.addParameter(values[i]);
 				if (i != (values.length - 1)) {
 					sql.append(" or ");
@@ -47,10 +53,14 @@ public class JsonContainsAnyOperator extends FieldOperator {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
 				Object v=values[i];
-				if(v instanceof String) {
-					sql.append(getFieldSql()).append("::jsonb@>'\""+values[i]+"\"'");
+				if(jsonContain==null||jsonContain.objectField==null) {
+					if(v instanceof String) {
+						sql.append(getFieldSql()).append("::jsonb@>'\""+values[i]+"\"'");
+					}else {
+						sql.append(getFieldSql()).append("::jsonb@>'"+values[i]+"'");
+					}
 				}else {
-					sql.append(getFieldSql()).append("::jsonb@>'"+values[i]+"'");
+					sql.append(getFieldSql()).append("::jsonb@>'[{\""+jsonContain.objectField+"\":\""+values[i]+"\"}]'");
 				}
 				if (i != (values.length - 1)) {
 					sql.append(" or ");
