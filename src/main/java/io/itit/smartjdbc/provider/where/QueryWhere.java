@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.SqlProvider;
@@ -113,15 +114,15 @@ public class QueryWhere {
 	 * 
 	 * @return
 	 */
-	public WhereStatment whereStatement(SqlProvider selectProvider){
-		return whereStatement(selectProvider,false);
+	public WhereStatment whereStatement(SmartDataSource smartDataSource){
+		return whereStatement(smartDataSource, false);
 	}
 	/**
 	 * 
 	 * @param needAliasAll
 	 * @return
 	 */
-	public WhereStatment whereStatement(SqlProvider selectProvider, boolean needAliasAll){
+	public WhereStatment whereStatement(SmartDataSource smartDataSource, boolean needAliasAll){
 		WhereStatment statment=new WhereStatment();
 		List<Object>values=new LinkedList<Object>();
 		StringBuilder sql=new StringBuilder();
@@ -129,7 +130,7 @@ public class QueryWhere {
 		int conditionCount=getConditionCount(where);
 		if(conditionCount>0) {
 			sql.append(" and ");
-			appendWhereSql(selectProvider, needAliasAll,sql, values, where);
+			appendWhereSql(smartDataSource, needAliasAll,sql, values, where);
 		}
 		sql.append(" ");
 		if(forUpdate) {
@@ -140,8 +141,8 @@ public class QueryWhere {
 		return statment;
 	}
 	//
-	public Object[] whereValues(SqlProvider sqlProvider) {
-		return whereStatement(sqlProvider,true).values;
+	public Object[] whereValues(SmartDataSource smartDataSource) {
+		return whereStatement(smartDataSource,true).values;
 	}
 	//
 	//获取下一级的查询条件的数量（只是children 非递归）如果没有查询条件则删除这个查询
@@ -172,7 +173,7 @@ public class QueryWhere {
 		return null;
 	}
 	//
-	protected void appendWhereSql(SqlProvider sqlProvider, boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
+	protected void appendWhereSql(SmartDataSource smartDataSource, boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
 		List<Where> wheres=parent.children;
 		if(wheres==null||wheres.isEmpty()) {
 			return;
@@ -184,7 +185,7 @@ public class QueryWhere {
 		boolean and=parent.conditionType==ConditionType.AND?true:false;
 		sql.append(" ( ");
 		int index=0;
-		OperatorContext ctx=new OperatorContext(sqlProvider.getSmartDataSource());
+		OperatorContext ctx=new OperatorContext(smartDataSource);
 		ctx.setParameters(valueList);
 		for (Where w : wheres) {
 			if(index>0) {
@@ -195,7 +196,7 @@ public class QueryWhere {
 				}
 			}
 			if(w.conditionType!=null) {
-				appendWhereSql(sqlProvider, needAliasAll, sql, valueList, w);
+				appendWhereSql(smartDataSource, needAliasAll, sql, valueList, w);
 				continue;
 			}
 			if(w.key!=null){

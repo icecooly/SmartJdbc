@@ -8,8 +8,8 @@ import java.util.TreeSet;
 
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
-import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.annotations.EntityField;
+import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.util.JSONUtil;
 
 /**
@@ -40,7 +40,7 @@ public abstract class InsertProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		Class<?>type=bean.getClass();
 		String tableName=getTableName(type);
-		sql.append("insert into ").append(tableName).append("(");
+		sql.append("insert into ").append(identifier()).append(tableName).append(identifier()).append("(");
 		Set<String> excludesNames = new TreeSet<String>();
 		for (String e : excludeFields) {
 			excludesNames.add(e);
@@ -84,7 +84,7 @@ public abstract class InsertProvider extends SqlProvider{
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(")");
 		//
-		return createSqlBean(sql.toString(),fieldList.toArray(new Object[fieldList.size()]));
+		return SqlBean.build(sql.toString(),fieldList.toArray(new Object[fieldList.size()]));
 	}
 
 }

@@ -9,8 +9,8 @@ import java.util.TreeSet;
 
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
-import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.annotations.EntityField;
+import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.util.ClassUtils;
@@ -62,7 +62,7 @@ public class UpdateProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		Class<?>type=object.getClass();
 		String tableName=getTableName(type);
-		sql.append("update ").append(tableName).append(" ");
+		sql.append("update ").append(identifier()).append(tableName).append(identifier()).append(" ");
 		Set<String> excludesNames = new TreeSet<String>();
 		for (String e : excludeFields) {
 			excludesNames.add(e);
@@ -116,11 +116,11 @@ public class UpdateProvider extends SqlProvider{
 				queryWhere.where(convertFieldName(field.getName()),getEntityFieldValue(object, field.getName()));
 			}
 		}
-		WhereStatment ws=queryWhere.whereStatement(this);
+		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
 		sql.append(ws.sql);
 		for(Object o:ws.values){
 			fieldList.add(o);
 		}
-		return createSqlBean(sql.toString(), fieldList.toArray(new Object[fieldList.size()]));
+		return SqlBean.build(sql.toString(), fieldList.toArray(new Object[fieldList.size()]));
 	}
 }

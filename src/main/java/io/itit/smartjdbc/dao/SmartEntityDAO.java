@@ -9,8 +9,8 @@ import java.util.Set;
 import io.itit.smartjdbc.DAOInterceptor;
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.ResultSetHandler;
-import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.provider.SelectProvider;
+import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.util.ArrayUtils;
 
@@ -559,7 +559,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 			String sql,
 			ResultSetHandler<T> rowHandler, 
 			Object... parameters) {
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return queryForList(sqlBean.sql, rowHandler, sqlBean.parameters);
 	}
 	
@@ -571,7 +571,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	 */
 	public List<T> queryList(String sql,Object... parameters) {
 		Class<T> entityClass=(Class<T>) getEntityClass();
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return queryForList(sqlBean.sql, new ResultSetHandler<T>() {
 			@Override
 			public T handleRow(ResultSet row) throws Exception {
@@ -588,7 +588,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	public int queryCount(
 			String sql,
 			Object... parameters) {
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return queryForInteger(sqlBean.sql, sqlBean.parameters);
 	}
 	/**
@@ -599,7 +599,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	 */
 	public T queryObject(String sql,Object... parameters) {
 		Class<T> entityClass=(Class<T>) getEntityClass();
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return queryForObject(sqlBean.sql, new ResultSetHandler<T>() {
 			@Override
 			public T handleRow(ResultSet row) throws Exception {
@@ -618,7 +618,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 			String sql,
 			ResultSetHandler<T> rowHandler, 
 			Object... parameters) {
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return queryForObject(sqlBean.sql, rowHandler, sqlBean.parameters);
 	}
 	

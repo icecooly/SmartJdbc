@@ -13,7 +13,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,19 +24,17 @@ import org.slf4j.LoggerFactory;
 
 import io.itit.smartjdbc.SmartJdbc;
 import io.itit.smartjdbc.SmartJdbcException;
-import io.itit.smartjdbc.SqlBean;
-import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.provider.DeleteProvider;
 import io.itit.smartjdbc.provider.InsertProvider;
 import io.itit.smartjdbc.provider.SelectProvider;
 import io.itit.smartjdbc.provider.UpdateProvider;
+import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.factory.DeleteProviderFactory;
 import io.itit.smartjdbc.provider.factory.InsertProviderFactory;
 import io.itit.smartjdbc.provider.factory.SelectProviderFactory;
 import io.itit.smartjdbc.provider.factory.UpdateProviderFactory;
 import io.itit.smartjdbc.util.IOUtil;
 import io.itit.smartjdbc.util.JSONUtil;
-import io.itit.smartjdbc.util.StringUtil;
 
 /**
  * 
@@ -260,32 +257,6 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	protected  String convertFieldName(String name) {
 		return SmartJdbc.getDatasource(datasourceIndex).convertFieldName(name);
 	}
-	
-	/**
-	 * 
-	 * @param sql
-	 * @param parameters
-	 * @return
-	 */
-	public SqlBean parseSql(String sql,Object... parameters) {
-		if(!SelectProvider.preParseSql(sql)) {
-			return new SqlBean(sql, parameters);
-		}
-		Map<String,Object> paraMap=new HashMap<>();
-		if(parameters!=null) {
-			for (Object para : parameters) {
-				if(para instanceof SqlParam) {
-					SqlParam p=(SqlParam) para;
-					if(StringUtil.isEmpty(p.name)){
-						throw new SmartJdbcException("Param name cann't be null");
-					}
-					paraMap.put(p.name, p.value);
-				}
-			}
-		}
-		return SelectProvider.parseSql(sql, paraMap);//#
-	}
-	
 	//
 	/**
 	 * 
@@ -294,107 +265,107 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	 * @return
 	 */
 	public final int executeUpdate(String sql,Object... parameters) {
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return super.executeUpdate(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final Boolean queryForBoolean(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForBoolean(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final String queryForString(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForString(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final Double queryForDouble(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForDouble(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final Float queryForFloat(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForFloat(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final Integer queryForInteger(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForInteger(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final Long queryForLong(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForLong(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final Short queryForShort(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForShort(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final BigDecimal queryForBigDecimal(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForBigDecimal(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final Byte queryForByte(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForByte(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final  Date queryForDate(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForDate(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Boolean> queryForBooleans(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForBooleans(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<String> queryForStrings(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForStrings(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Double> queryForDoubles(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForDoubles(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Float> queryForFloats(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForFloats(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Integer> queryForIntegers(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForIntegers(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Long> queryForLongs(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForLongs(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Short> queryForShorts(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForShorts(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<BigDecimal> queryForBigDecimals(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForBigDecimals(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Byte> queryForBytes(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForBytes(sqlBean.sql, sqlBean.parameters);
 	}
 	//
 	public final List<Date> queryForDates(String sql,Object ...parameters){
-		SqlBean sqlBean=parseSql(sql, parameters);
+		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return  super.queryForDates(sqlBean.sql, sqlBean.parameters);
 	}
 	//

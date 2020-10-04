@@ -5,15 +5,12 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,6 @@ import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.Query.OrderBy;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
-import io.itit.smartjdbc.SqlBean;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
@@ -36,6 +32,8 @@ import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.provider.entity.SelectSql;
+import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.provider.where.Where;
 import io.itit.smartjdbc.util.ClassUtils;
@@ -513,7 +511,7 @@ public class SelectProvider extends SqlProvider{
 				//
 				if(queryField!=null&&!StringUtil.isEmpty(queryField.whereSql())) {//whereSql check first
 					String whereSql=queryField.whereSql();
-					SqlBean sqlBean=parseSql(whereSql, paraMap);//eg:userName like #{userName}
+					SqlBean sqlBean=SqlBean.build(whereSql, SqlBean.convertParameters(paraMap));//eg:userName like #{userName}
 					w.whereSql(sqlBean.sql,sqlBean.parameters);
 				}else {
 					String dbFieldName=convertFieldName(field.getName());
@@ -548,88 +546,6 @@ public class SelectProvider extends SqlProvider{
 			logger.error(e.getMessage(),e);
 			throw new IllegalArgumentException(e.getMessage());
 		}
-	}
-	//
-	public static boolean preParseSql(String sql) {
-		String[] regexs= {"\\#\\{[a-zA-Z_$][a-zA-Z0-9_$]*\\}","\\$\\{[a-zA-Z_$][a-zA-Z0-9_$]*\\}"};
-		for (String regex : regexs) {
-			Pattern p=Pattern.compile(regex);
-			Matcher m = p.matcher(sql);
-			if(m.find()) { 
-			    return true;
-			}
-		}
-		return false;
-	}
-	//
-	/**
-	 * 
-	 * @param data
-	 * @param regex
-	 * @return
-	 */
-	public static List<String> matchs(String data, String regex) {
-		List<String> result = new ArrayList<>();
-		if (data == null || regex == null) {
-			return result;
-		}
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(data);
-		while (matcher.find()) {
-			result.add(matcher.group(1));
-		}
-		return result;
-	}
-	public static SqlBean parseSql(String sql,Map<String,Object> paraMap) {
-		Pattern p=Pattern.compile("\\#\\{([a-zA-Z_][a-zA-Z0-9_]*)\\}");
-		Matcher m = p.matcher(sql);
-		Pattern $p=Pattern.compile("\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)\\}");
-		Matcher $m = $p.matcher(sql);
-		String newSql=sql;
-		Object[] values=null;
-		List<String> groups=new ArrayList<>();
-		while(m.find()) { 
-		    groups.add(m.group(1));
-		}
-		newSql=m.replaceAll("?");
-		values=new Object[groups.size()];
-		int i=0;
-		for (String group : groups) {
-			Object value=paraMap.get(group);
-			if(value==null) {
-				throw new SmartJdbcException("paraMap "+group+" not found.\nsql:"+sql+
-						"\nall can choose paras is:"+paraMap.keySet()); 
-			}
-			values[i++]=value;
-		}
-		//
-		while($m.find()) { 
-			String group=$m.group(1);
-			String replaceGroup="\\$\\{"+group+"\\}";
-			Object value=paraMap.get(group);
-			if(value==null) {
-				throw new SmartJdbcException(group+" not found.\nsql:"+sql+
-						"\nall can choose paras is:"+paraMap.keySet()); 
-			}
-			if(value instanceof String) {
-				newSql=newSql.replaceAll(replaceGroup,"'"+value.toString()+"'");
-			}else if(value instanceof Collection<?>){
-				StringBuilder in=new StringBuilder();
-				Collection<?> array=(Collection<?>)value;
-				in.append("(");
-				for (Object v : array.toArray()) {
-					in.append(v).append(",");
-				}
-				if(in.length()>1) {
-					in.deleteCharAt(in.length()-1);
-				}
-				in.append(")");
-				newSql=newSql.replaceAll(replaceGroup,in.toString());
-			}else {
-				newSql=newSql.replaceAll(replaceGroup,value.toString());
-			}
-		}
-		return new SqlBean(newSql,values);
 	}
 	//
 	protected int getSortFieldOrder(String[] sortFields,String fieldName) {
@@ -887,7 +803,9 @@ public class SelectProvider extends SqlProvider{
 	//
 	protected String getFromSql() {
 		StringBuilder sql=new StringBuilder();
-		sql.append("from ").append(getTableName(entityClass)).append(" ").append(MAIN_TABLE_ALIAS).append(" \n");
+		sql.append("from ").append(identifier()).append(getTableName(entityClass)).
+				append(identifier()).append(" ").
+				append(MAIN_TABLE_ALIAS).append(" \n");
 		//inner join
 		this.innerJoinMap=getInnerJoins(query);
 		for (Join join : innerJoins) {
@@ -903,7 +821,7 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected void addJoin(StringBuilder sql,Join join) {
-		sql.append(getTableName(join.table2)).append(" ").append(join.table2Alias);
+		sql.append(identifier()).append(getTableName(join.table2)).append(identifier()).append(" ").append(join.table2Alias);
 		sql.append(" on ");
 		for(int i=0;i<join.table1Fields.length;i++) {
 			sql.append(join.table1Alias).append("."+identifier()+convertFieldName(join.table1Fields[i])+identifier()+"=").
@@ -919,7 +837,7 @@ public class SelectProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		addWheres(query);
 		sql.append("where 1=1 ");
-		sql.append(qw.whereStatement(this,true).sql);
+		sql.append(qw.whereStatement(getSmartDataSource(),true).sql);
 		sql.append("\n");
 		return sql.toString();
 	}
@@ -981,31 +899,9 @@ public class SelectProvider extends SqlProvider{
 		}
 		return "";
 	}
-	//
-	protected SqlBean build(StringBuilder selectSql) {
-		SqlBean bean=new SqlBean();
-		bean.selectSql=selectSql.toString();
-		bean.fromSql=getFromSql();
-		bean.whereSql=getWhereSql();
-		bean.groupBySql=getGroupBySql();
-		bean.orderBySql=getOrderBySql();
-		bean.limitSql=getLimitSql();
-		bean.forUpdateSql=getForUpdateSql();
-		bean.sql=bean.toSql();
-		bean.parameters=qw.whereValues(this);
-		return bean;
-	}
-		
+	
 	public Class<?> getEntityClass() {
 		return entityClass;
-	}
-
-	@Override
-	public SqlBean build() {
-		if(isSelectCount) {
-			return queryCount();
-		}
-		return query();
 	}
 	
 	public List<SelectField> getSelectFields() {
@@ -1014,5 +910,28 @@ public class SelectProvider extends SqlProvider{
 	
 	public void setSelectFields(List<SelectField> selectFields) {
 		this.selectFields = selectFields;
+	}
+	
+	//
+	protected SqlBean build(StringBuilder selectSql) {
+		SelectSql bean=new SelectSql();
+		bean.selectSql=selectSql.toString();
+		bean.fromSql=getFromSql();
+		bean.whereSql=getWhereSql();
+		bean.groupBySql=getGroupBySql();
+		bean.orderBySql=getOrderBySql();
+		bean.limitSql=getLimitSql();
+		bean.forUpdateSql=getForUpdateSql();
+		bean.sql=bean.toSql();
+		bean.parameters=qw.whereValues(getSmartDataSource());
+		return bean;
+	}
+		
+	@Override
+	public SqlBean build() {
+		if(isSelectCount) {
+			return queryCount();
+		}
+		return query();
 	}
 }
