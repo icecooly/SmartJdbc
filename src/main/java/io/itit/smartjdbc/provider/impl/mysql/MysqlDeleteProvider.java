@@ -2,6 +2,8 @@ package io.itit.smartjdbc.provider.impl.mysql;
 
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.provider.DeleteProvider;
+import io.itit.smartjdbc.provider.entity.SqlBean;
+import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 
 /**
  * 
@@ -12,5 +14,16 @@ public class MysqlDeleteProvider extends DeleteProvider{
 
 	public MysqlDeleteProvider(SmartDataSource smartDataSource) {
 		super(smartDataSource);
+	}
+	
+	@Override
+	public SqlBean build() {
+		StringBuilder sql=new StringBuilder();
+		String tableName=getTableNameWithIdentifier(entityClass);
+		sql.append("delete "+MAIN_TABLE_ALIAS+" from ").append(tableName).append(" ").append(MAIN_TABLE_ALIAS).append(" ");
+		sql.append("where 1=1 ");
+		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
+		sql.append(ws.sql);
+		return SqlBean.build(sql.toString(),ws.values);
 	}
 }
