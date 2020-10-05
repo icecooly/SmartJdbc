@@ -59,7 +59,7 @@ public class UserQuery extends Query<User>{
 	@QueryField(operator = SqlOperator.JSON_NOT_CONTAINS_ANY,field = "roleIdList")
 	private Integer[] notRoleIdList; 
 	
-	@InnerJoin(table2 = User.class,table2Alias = "user",table1Fields ={"createUserId"},table2Fields ={"id"})
+	@InnerJoin(table2 = User.class,table2Alias = "b1",table1Fields ={"createUserId"},table2Fields ={"id"})
 	@QueryField(field = "name")
 	private String createUserName;
 	
