@@ -67,4 +67,10 @@ public class User extends BaseEntity{
 	/**所属部门名称*/
 	@EntityField(foreignKeyFields="departmentId",field="name",persistent = false)
 	private String departmentName;
+	
+	private Double height;
+	
+	private Long no;
+	
+	private Boolean isStudent;
 }

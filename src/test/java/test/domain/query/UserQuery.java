@@ -68,4 +68,16 @@ public class UserQuery extends Query<User>{
 	
 	@QueryField(foreignKeyFields = "departmentId",field = "name",operator = SqlOperator.LIKE)
 	private String likeDepartmentName;
+	
+	@QueryField(field = "height",operator = SqlOperator.GE)
+	private Double heightStart;
+	
+	@QueryField(field = "height",operator = SqlOperator.LE)
+	private Double heightEnd;
+	
+	@QueryField
+	private Boolean isStudent;
+	
+	@QueryField
+	private Long no;
 }

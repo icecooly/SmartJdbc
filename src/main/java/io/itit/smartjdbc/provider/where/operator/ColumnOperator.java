@@ -58,6 +58,9 @@ public abstract class ColumnOperator extends Operator{
 			sql.append(identifier);
 			sql.append(c.key);
 			sql.append(identifier);
+			if(c.keyCast!=null) {
+				sql.append(c.keyCast);
+			}
 		}else {
 			sql.append(c.key);
 		}

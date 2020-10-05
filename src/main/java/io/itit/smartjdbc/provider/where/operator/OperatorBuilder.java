@@ -31,6 +31,9 @@ public class OperatorBuilder {
 		Operator opt=null;
 		Condition w=ctx.getCondition();
 		SqlOperator operator=w.operator;
+		if(operator==null) {
+			operator=SqlOperator.EQ;//default
+		}
 		if(operator.equals(SqlOperator.CUSTOM)) {
 			opt=getCustomOperator(w);
 		}

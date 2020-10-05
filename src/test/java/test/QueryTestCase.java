@@ -9,6 +9,7 @@ import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.provider.where.Where;
+import io.itit.smartjdbc.provider.where.Where.Condition;
 import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.util.DumpUtil;
 import test.dao.BizDAO;
@@ -404,6 +405,30 @@ public class QueryTestCase extends BaseTestCase{
 		query.setCreateUserDepartmentName("技术");
 		query.setCreateUserDepartmentName2("技术");
 		List<Article> list=dao.getList(query);
+		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testQueryDouble() {
+		UserQuery query=new UserQuery();
+		query.setHeightStart(1.65);
+		List<User> list=dao.getList(query);
+		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testQueryLong() {
+		UserQuery query=new UserQuery();
+		query.setNo(5L);
+		List<User> list=dao.getList(query);
+		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testQueryBoolean() {
+		Condition c=new Condition();
+		c.key="is_student";
+		c.keyCast="::int::bool";
+		c.operator=SqlOperator.EQ;
+		c.value=true;
+		List<User> list=dao.getList(User.class, QueryWhere.create().where(c));
 		System.out.println(DumpUtil.dump(list));
 	}
 }

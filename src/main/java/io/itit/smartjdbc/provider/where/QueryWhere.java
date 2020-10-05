@@ -63,12 +63,23 @@ public class QueryWhere {
 	}
 	//
 	public QueryWhere where(String alias,String key,SqlOperator op,Object value,boolean isColumn){
-		where.where(alias, key, op, value, isColumn, null);
+		where.where(alias, key, op, value, isColumn, null, null);
 		return this;
 	}
 	//
 	public QueryWhere where(String alias,String key,SqlOperator op,Object value, JsonContain jsonContain){
-		where.where(alias, key, op, value, true, jsonContain);
+		where.where(alias, key, op, value, true, jsonContain, null);
+		return this;
+	}
+	//
+	public QueryWhere where(String alias,String key,SqlOperator op,Object value,
+			boolean isColumn, JsonContain jsonContain, String keyCast){
+		where.where(alias, key, op, value, true, jsonContain, keyCast);
+		return this;
+	}
+	//
+	public QueryWhere where(Condition c){
+		where.where(c);
 		return this;
 	}
 	//
