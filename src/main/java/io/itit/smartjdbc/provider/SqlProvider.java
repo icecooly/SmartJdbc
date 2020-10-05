@@ -164,6 +164,25 @@ public abstract class SqlProvider {
 	public String getTableName(Class<?> entityClass) {
 		return smartDataSource.getTableName(entityClass);
 	}
+	
+	/**
+	 * 
+	 * @param entityClass
+	 * @return
+	 */
+	public String getTableNameWithIdentifier(Class<?> entityClass) {
+		return identifier()+getTableName(entityClass)+identifier();
+	}
+	
+	/**
+	 * 
+	 * @param column
+	 * @return
+	 */
+	public String getColumnWithIdentifier(String column) {
+		 return identifier()+column+identifier();
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -199,6 +218,5 @@ public abstract class SqlProvider {
 	public void setSmartDataSource(SmartDataSource smartDataSource) {
 		this.smartDataSource = smartDataSource;
 	}
-	
 	
 }

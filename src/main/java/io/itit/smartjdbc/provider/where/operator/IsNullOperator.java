@@ -1,5 +1,7 @@
 package io.itit.smartjdbc.provider.where.operator;
 
+import io.itit.smartjdbc.provider.where.Where.Condition;
+
 /**
  * 
  * @author skydu
@@ -18,7 +20,8 @@ public class IsNullOperator extends FieldOperator{
 	
 	@Override
 	public String build() {
-		String column=where.key;
+		Condition c=getCtx().getCondition();
+		String column=c.key;
 		if(column==null) {
 			return "";
 		}

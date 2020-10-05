@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.enums.SqlOperator;
-import io.itit.smartjdbc.provider.where.Where;
+import io.itit.smartjdbc.provider.where.Where.Condition;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class OperatorBuilder {
 	 */
 	public static Operator build(OperatorContext ctx) {
 		Operator opt=null;
-		Where w=ctx.getWhere();
+		Condition w=ctx.getCondition();
 		SqlOperator operator=w.operator;
 		if(operator.equals(SqlOperator.CUSTOM)) {
 			opt=getCustomOperator(w);
@@ -94,7 +94,7 @@ public class OperatorBuilder {
 		return opt;
 	}
 	//
-	private static Operator getCustomOperator(Where w) {
+	private static Operator getCustomOperator(Condition w) {
 		if(w.customOperator==null) {
 			throw new SmartJdbcException("no custom operator found ");
 		}

@@ -2,6 +2,7 @@ package test;
 
 import java.util.Date;
 
+import io.itit.smartjdbc.provider.where.QueryWhere;
 import test.dao.BizDAO;
 import test.domain.entity.User;
 
@@ -10,27 +11,26 @@ import test.domain.entity.User;
  * @author skydu
  *
  */
-public class InsertTestCase extends BaseTestCase{
+public class UpdateTestCase extends BaseTestCase{
 	static {
 	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 	}
 	//
 	BizDAO dao;
 	//
-	public InsertTestCase() {
+	public UpdateTestCase() {
 		dao=new BizDAO();
 	}
 	//
 	/**
 	 * 
 	 */
-	public void testAddUser() {
+	public void testUpdateUser() {
 		User user=new User();
-		user.setUserName("test12345");
-		user.setName("test12345");
+		user.setName("test1");
 		user.setCreateTime(new Date());
 		user.setUpdateTime(new Date());
-		dao.insert(user);
+		dao.update(user, QueryWhere.create().where("id", 5));
 	}
 	
 }

@@ -30,6 +30,7 @@ import io.itit.smartjdbc.cache.EntityFieldInfo;
 import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
+import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.entity.SelectSql;
@@ -447,19 +448,19 @@ public class SelectProvider extends SqlProvider{
 	}
 	/**
 	 * 
-	 * @param q
+	 * @param query
 	 */
-	protected void addWheres(Query<?> q) {
-		if(q==null) {
+	protected void addWheres(Query<?> query) {
+		if(query==null) {
 			return;
 		}
-		QueryInfo queryInfo=createQueryInfo(q);
+		QueryInfo queryInfo=createQueryInfo(query);
 		Map<String,Object> paraMap=new HashMap<>();
-		if(!q.getParams().isEmpty()) {
-			paraMap.putAll(q.getParams());
+		if(!query.getParams().isEmpty()) {
+			paraMap.putAll(query.getParams());
 		}
-		createParaMap(paraMap, q, queryInfo);
-		addWheres(qw.getWhere(), paraMap, q, queryInfo);
+		createParaMap(paraMap, query, queryInfo);
+		addWheres(qw.getWhere(), paraMap, query, queryInfo);
 	}
 	//
 	private void createParaMap(Map<String,Object> paraMap,Object obj,QueryInfo queryInfo) {
@@ -531,16 +532,13 @@ public class SelectProvider extends SqlProvider{
 				if(childObj==null) {
 					continue;
 				}
-				if(w.children.isEmpty()) {
-					w.conditionType=child.conditionType;
-					addWheres(w, paraMap, childObj, child);
+				Where wc=new Where();
+				if(child.conditionType.equals(ConditionType.AND)) {
+					w.and(wc);
 				}else {
-					Where childWhere=new Where(child.conditionType);
-					w.children.add(childWhere);
-					addWheres(childWhere, paraMap, childObj, child);
+					w.or(wc);
 				}
-				
-				
+				addWheres(wc, paraMap, childObj, child);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
@@ -821,11 +819,11 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected void addJoin(StringBuilder sql,Join join) {
-		sql.append(identifier()).append(getTableName(join.table2)).append(identifier()).append(" ").append(join.table2Alias);
+		sql.append(getTableNameWithIdentifier(join.table2)).append(" ").append(join.table2Alias);
 		sql.append(" on ");
 		for(int i=0;i<join.table1Fields.length;i++) {
-			sql.append(join.table1Alias).append("."+identifier()+convertFieldName(join.table1Fields[i])+identifier()+"=").
-			append(join.table2Alias).append("."+identifier()).append(convertFieldName(join.table2Fields[i])).append(identifier());
+			sql.append(join.table1Alias).append("."+convertFieldName(join.table1Fields[i])+"=").
+			append(join.table2Alias).append(".").append(convertFieldName(join.table2Fields[i]));
 			if(i<join.table1Fields.length-1) {
 				sql.append(" and ");
 			}
@@ -837,7 +835,7 @@ public class SelectProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		addWheres(query);
 		sql.append("where 1=1 ");
-		sql.append(qw.whereStatement(getSmartDataSource(),true).sql);
+		sql.append(qw.whereStatement(getSmartDataSource()).sql);
 		sql.append("\n");
 		return sql.toString();
 	}

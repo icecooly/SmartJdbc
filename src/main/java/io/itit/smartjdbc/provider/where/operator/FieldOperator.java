@@ -1,6 +1,7 @@
 package io.itit.smartjdbc.provider.where.operator;
 
 import io.itit.smartjdbc.SmartDataSource;
+import io.itit.smartjdbc.provider.where.Where.Condition;
 
 /**
  * 
@@ -23,7 +24,8 @@ public abstract class FieldOperator extends Operator{
 	 */
 	@Override
 	public String build() {
-		if(where.key==null) {
+		Condition c=getCtx().getCondition();
+		if(c.key==null) {
 			return "";
 		}
 		StringBuilder sql=new StringBuilder();
@@ -33,8 +35,8 @@ public abstract class FieldOperator extends Operator{
 		sql.append(" ");
 		sql.append(getValueSql());
 		sql.append(" ");
-		if(where.value!=null) {
-			ctx.addParameter(where.value);
+		if(c.value!=null) {
+			ctx.addParameter(c.value);
 		}
 		return sql.toString();
 	}
@@ -48,12 +50,17 @@ public abstract class FieldOperator extends Operator{
 		StringBuilder sql=new StringBuilder();
 		SmartDataSource smartDataSource=ctx.getSmartDataSource();
 		String identifier=smartDataSource.identifier();
-		if(where.alias!=null) {
-			sql.append(where.alias).append(".");
+		Condition c=getCtx().getCondition();
+		if(c.alias!=null) {
+			sql.append(c.alias).append(".");
 		}
-		sql.append(identifier);
-		sql.append(where.key);
-		sql.append(identifier);
+		if(c.isField) {
+			sql.append(identifier);
+			sql.append(c.key);
+			sql.append(identifier);
+		}else {
+			sql.append(c.key);
+		}
 		return sql.toString();
 	}
 

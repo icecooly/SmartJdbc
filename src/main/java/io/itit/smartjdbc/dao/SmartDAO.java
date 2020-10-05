@@ -219,8 +219,8 @@ public class SmartDAO extends BaseEntityDAO{
 				object(bean).
 				excludeNull(excludeNull).
 				includeFields(includeFields).
-				excludeFields(excludeFields)
-				.build();
+				excludeFields(excludeFields).
+				build();
 		int result=executeUpdate(sqlBean.sql,sqlBean.parameters);
 		afterUpdate(result,bean,excludeNull,excludeFields);
 		return result;

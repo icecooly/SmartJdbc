@@ -60,16 +60,16 @@ public class UpdateProvider extends SqlProvider{
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
-		Class<?>type=object.getClass();
-		String tableName=getTableName(type);
-		sql.append("update ").append(identifier()).append(tableName).append(identifier()).append(" ");
+		Class<?>entityClass=object.getClass();
+		String tableName=getTableNameWithIdentifier(entityClass);
+		sql.append("update ").append(tableName).append(" ").append(MAIN_TABLE_ALIAS).append(" ");
 		Set<String> excludesNames = new TreeSet<String>();
 		for (String e : excludeFields) {
 			excludesNames.add(e);
 		}
 		List<Object>fieldList=new ArrayList<Object>();
 		sql.append("set ");
-		List<Field> fields=ClassUtils.getFieldList(type);
+		List<Field> fields=ClassUtils.getFieldList(entityClass);
 		for (Field f : fields) {
 			if(includeFields!=null&&!includeFields.isEmpty()&&(!includeFields.contains(f.getName()))){
 				continue;
@@ -84,7 +84,7 @@ public class UpdateProvider extends SqlProvider{
 			if(entityField!=null&&entityField.autoIncrement()) {
 				continue;
 			}
-			String fieldName = convertFieldName(f.getName());
+			String column = convertFieldName(f.getName());
 			if (Modifier.isStatic(f.getModifiers())) {
 				continue;
 			}
@@ -104,7 +104,7 @@ public class UpdateProvider extends SqlProvider{
 			} catch (Exception e) {
 				throw new SmartJdbcException(e);
 			}
-			sql.append(" "+identifier()).append(fieldName).append(identifier()+"=?,");
+			sql.append(" ").append(getColumnWithIdentifier(column)).append("=?,");
 		}
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(" where 1=1");

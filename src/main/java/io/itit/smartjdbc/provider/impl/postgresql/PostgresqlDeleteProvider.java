@@ -13,5 +13,4 @@ public class PostgresqlDeleteProvider extends DeleteProvider{
 	public PostgresqlDeleteProvider(SmartDataSource smartDataSource) {
 		super(smartDataSource);
 	}
-	//
 }

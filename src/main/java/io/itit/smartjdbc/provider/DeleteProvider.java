@@ -28,12 +28,12 @@ public abstract class DeleteProvider extends SqlProvider{
 		this.queryWhere=queryWhere;
 		return this;
 	}
-	
+	//
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
-		String tableName=getTableName(entityClass);
-		sql.append("delete from ").append(identifier()).append(tableName).append(identifier()).append(" ");
+		String tableName=getTableNameWithIdentifier(entityClass);
+		sql.append("delete "+MAIN_TABLE_ALIAS+" from ").append(tableName).append(" ").append(MAIN_TABLE_ALIAS).append(" ");
 		sql.append("where 1=1 ");
 		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
 		sql.append(ws.sql);

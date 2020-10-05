@@ -41,7 +41,7 @@ public class QueryTestCase extends BaseTestCase{
 	 * 
 	 */
 	public void testGetById() {
-		for(int i=0;i<10;i++) {
+		for(int i=0;i<1;i++) {
 			dao.getById(User.class, 1);
 		}
 	}

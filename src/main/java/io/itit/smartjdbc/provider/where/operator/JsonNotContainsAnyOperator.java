@@ -1,6 +1,7 @@
 package io.itit.smartjdbc.provider.where.operator;
 
 import io.itit.smartjdbc.enums.DatabaseType;
+import io.itit.smartjdbc.provider.where.Where.Condition;
 import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.util.ArrayUtils;
 
@@ -22,9 +23,10 @@ public class JsonNotContainsAnyOperator extends FieldOperator {
 
 	@Override
 	public String build() {
+		Condition c=getCtx().getCondition();
 		DatabaseType type = ctx.getSmartDataSource().getDatabaseType();
-		String column = where.key;
-		Object value = where.value;
+		String column = c.key;
+		Object value = c.value;
 		if (column == null || value == null) {
 			return "";
 		}
@@ -32,7 +34,7 @@ public class JsonNotContainsAnyOperator extends FieldOperator {
 		if (values == null || values.length == 0) {
 			return "";
 		}
-		JsonContain jsonContain=where.jsonContain;
+		JsonContain jsonContain=c.jsonContain;
 		StringBuilder sql = new StringBuilder();
 		if (type.equals(DatabaseType.MYSQL)) {
 			sql.append("( ");

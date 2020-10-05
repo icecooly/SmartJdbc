@@ -1,5 +1,6 @@
 package io.itit.smartjdbc.provider.where;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.SqlProvider;
+import io.itit.smartjdbc.provider.where.Where.Condition;
 import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.provider.where.operator.Operator;
 import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
@@ -46,12 +48,12 @@ public class QueryWhere {
 		return new QueryWhere(conditionType);
 	}
 	//
-	public QueryWhere where(String key,Object value){
+	public QueryWhere where(String key, Object value){
 		return this.where(key, SqlOperator.EQ, value);
 	}
 	//
-	public QueryWhere where(String key,SqlOperator op,Object value){
-		this.where(null, key, op, value);
+	public QueryWhere where(String key, SqlOperator op, Object value){
+		this.where(SqlProvider.MAIN_TABLE_ALIAS, key, op, value);
 		return this;
 	}
 	//
@@ -109,29 +111,18 @@ public class QueryWhere {
 		forUpdate=true;
 		return this;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public WhereStatment whereStatement(SmartDataSource smartDataSource){
-		return whereStatement(smartDataSource, false);
-	}
+
 	/**
 	 * 
 	 * @param needAliasAll
 	 * @return
 	 */
-	public WhereStatment whereStatement(SmartDataSource smartDataSource, boolean needAliasAll){
+	public WhereStatment whereStatement(SmartDataSource smartDataSource){
 		WhereStatment statment=new WhereStatment();
 		List<Object>values=new LinkedList<Object>();
 		StringBuilder sql=new StringBuilder();
 		sql.append(" ");
-		int conditionCount=getConditionCount(where);
-		if(conditionCount>0) {
-			sql.append(" and ");
-			appendWhereSql(smartDataSource, needAliasAll,sql, values, where);
-		}
+		appendWhereSql(smartDataSource, sql, values, where);
 		sql.append(" ");
 		if(forUpdate) {
 			sql.append(" for update ");
@@ -142,40 +133,21 @@ public class QueryWhere {
 	}
 	//
 	public Object[] whereValues(SmartDataSource smartDataSource) {
-		return whereStatement(smartDataSource,true).values;
+		return whereStatement(smartDataSource).values;
 	}
 	//
 	//获取下一级的查询条件的数量（只是children 非递归）如果没有查询条件则删除这个查询
 	protected int getConditionCount(Where w) {
-		if(w==null) {
+		if(w==null||w.conditionList==null) {
 			return 0;
 		}
-		if(w.conditionType==null) {
-			return 1;
-		}
-		int conditionCount=0;
-		if(w.children!=null) {
-			for (Where child : w.children) {
-				if(child.conditionType==null) {
-					conditionCount++;
-				}
-			}
-		}
-		return conditionCount;
+		return w.conditionList.size();
 	}
 	//
-	private String getAlias( Where w, boolean needAliasAll) {
-		if(w.alias!=null) {
-			return w.alias;
-		}else if(needAliasAll) {
-			return SqlProvider.MAIN_TABLE_ALIAS;
-		}
-		return null;
-	}
-	//
-	protected void appendWhereSql(SmartDataSource smartDataSource, boolean needAliasAll,StringBuilder sql,List<Object> valueList,Where parent) {
-		List<Where> wheres=parent.children;
-		if(wheres==null||wheres.isEmpty()) {
+	protected void appendWhereSql(SmartDataSource smartDataSource, 
+			StringBuilder sql,List<Object> valueList,Where parent) {
+		List<Condition> conditions=parent.conditionList;
+		if(conditions==null||conditions.isEmpty()) {
 			return;
 		}
 		int conditionCount=getConditionCount(parent);
@@ -183,11 +155,11 @@ public class QueryWhere {
 			return;
 		}
 		boolean and=parent.conditionType==ConditionType.AND?true:false;
-		sql.append(" ( ");
+		sql.append(" and ( ");
 		int index=0;
 		OperatorContext ctx=new OperatorContext(smartDataSource);
 		ctx.setParameters(valueList);
-		for (Where w : wheres) {
+		for (Condition c : conditions) {
 			if(index>0) {
 				if(and) {
 					sql.append(" and ");
@@ -195,23 +167,26 @@ public class QueryWhere {
 					sql.append(" or ");
 				}
 			}
-			if(w.conditionType!=null) {
-				appendWhereSql(smartDataSource, needAliasAll, sql, valueList, w);
-				continue;
-			}
-			if(w.key!=null){
-				w.alias=getAlias(w, needAliasAll);
-				ctx.setWhere(w);
+			if(c.key!=null){
+				ctx.setCondition(c);
 				Operator operator=OperatorBuilder.build(ctx);
 				sql.append(operator.build());
-			}else{
-				sql.append(" "+ w.sql+" ");
-				if(w.sqlValues!=null&&w.sqlValues.size()>0) {
-					valueList.addAll(w.sqlValues);
+			}else if(c.whereSql!=null){
+				sql.append(" "+ c.whereSql+" ");
+				Object[] values=(Object[])c.value;
+				if(values!=null&&values.length>0) {
+					valueList.addAll(Arrays.asList(values));
 				}
 			}
 			index++;
 		}//for
+		//
+		if(parent.children!=null&&parent.children.size()>0) {
+			for (Where w : parent.children) {
+				appendWhereSql(smartDataSource, sql, valueList, w);
+			}
+		}
+		//
 		sql.append(")");
 	}
 	//

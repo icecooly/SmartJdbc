@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.itit.smartjdbc.SmartDataSource;
-import io.itit.smartjdbc.provider.where.Where;
+import io.itit.smartjdbc.provider.where.Where.Condition;
 
 /**
  * 
@@ -14,7 +14,7 @@ import io.itit.smartjdbc.provider.where.Where;
 public class OperatorContext {
 	//
 	private SmartDataSource smartDataSource;
-	private Where where;
+	private Condition condition;
 	private List<Object> parameters;
 	//
 	//
@@ -61,16 +61,17 @@ public class OperatorContext {
 	}
 
 	/**
-	 * @return the where
+	 * @return the condition
 	 */
-	public Where getWhere() {
-		return where;
+	public Condition getCondition() {
+		return condition;
 	}
 
 	/**
-	 * @param where the where to set
+	 * @param condition the condition to set
 	 */
-	public void setWhere(Where where) {
-		this.where = where;
+	public void setCondition(Condition condition) {
+		this.condition = condition;
 	}
+
 }

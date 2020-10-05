@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.provider.SqlProvider;
 
 /**
  * 
@@ -15,15 +16,23 @@ import io.itit.smartjdbc.enums.SqlOperator;
 public class Where {
 	//
 	public ConditionType conditionType;
-	public String alias;
-	public String key;
-	public Object value;
-	public SqlOperator operator;
-	public String customOperator;
-	public String sql;
-	public LinkedList<Object> sqlValues;
 	public List<Where> children;
-	public JsonContain jsonContain;;
+	public List<Condition> conditionList;
+	//
+	public static class Condition{
+		public String alias;
+		public String key;
+		public Object value;
+		public SqlOperator operator;
+		public String customOperator;
+		public String whereSql;
+		public boolean isField;
+		public JsonContain jsonContain;
+		//
+		public Condition() {
+			this.isField=true;
+		}
+	}
 	//
 	public static class JsonContain{
 		public String objectField;
@@ -31,20 +40,20 @@ public class Where {
 
 	public Where() {
 		this.children = new LinkedList<>();
-		this.sqlValues = new LinkedList<Object>();
+		this.conditionList=new LinkedList<>();
 	}
 	
 	public Where(ConditionType conditionType) {
+		this();
 		this.conditionType=conditionType;
-		this.children = new LinkedList<>();
 	}
 	//
 	public Where where(String key, SqlOperator op) {
-		return where(null, key, op, null);
+		return where(key, op, null);
 	}
 	//
 	public Where where(String key, SqlOperator op, Object value) {
-		return where(null, key, op, value);
+		return where(SqlProvider.MAIN_TABLE_ALIAS, key, op, value);
 	}
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value) {
@@ -52,23 +61,21 @@ public class Where {
 	}
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value, JsonContain jsonContain) {
-		Where w = new Where();
+		Condition w = new Condition();
 		w.alias = alias;
 		w.key = key;
 		w.operator = op;
 		w.value = value;
 		w.jsonContain=jsonContain;
-		children.add(w);
+		conditionList.add(w);
 		return this;
 	}
 	//
-	public Where whereSql(String sql, Object... values) {
-		Where w = new Where();
-		w.sql=sql;
-		for(int i=0;i<values.length;i++){
-			w.sqlValues.add(values[i]);
-		}
-		children.add(w);
+	public Where whereSql(String whereSql, Object... values) {
+		Condition w = new Condition();
+		w.whereSql=whereSql;
+		w.value=values;
+		conditionList.add(w);
 		return this;
 	}
 	//

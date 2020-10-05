@@ -13,5 +13,4 @@ public class MysqlDeleteProvider extends DeleteProvider{
 	public MysqlDeleteProvider(SmartDataSource smartDataSource) {
 		super(smartDataSource);
 	}
-	//
 }

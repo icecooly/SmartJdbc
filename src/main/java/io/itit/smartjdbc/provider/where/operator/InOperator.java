@@ -1,5 +1,6 @@
 package io.itit.smartjdbc.provider.where.operator;
 
+import io.itit.smartjdbc.provider.where.Where.Condition;
 import io.itit.smartjdbc.util.ArrayUtils;
 
 /**
@@ -20,8 +21,9 @@ public class InOperator extends FieldOperator{
 
 	@Override
 	public String build() {
-		String column=where.key;
-		Object value=where.value;
+		Condition c=getCtx().getCondition();
+		String column=c.key;
+		Object value=c.value;
 		if(column==null||value==null) {
 			return "";
 		}
