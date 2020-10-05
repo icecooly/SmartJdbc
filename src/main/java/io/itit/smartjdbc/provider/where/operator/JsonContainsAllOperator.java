@@ -10,7 +10,7 @@ import io.itit.smartjdbc.util.ArrayUtils;
  * @author skydu
  *
  */
-public class JsonContainsAllOperator extends FieldOperator {
+public class JsonContainsAllOperator extends ColumnOperator {
 
 	public JsonContainsAllOperator(OperatorContext ctx) {
 		super(ctx);
@@ -40,9 +40,9 @@ public class JsonContainsAllOperator extends FieldOperator {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
 				if(jsonContain==null||jsonContain.objectField==null) {
-					sql.append(" json_contains(").append(getFieldSql()).append(",JSON_ARRAY(?)").append(") ");
+					sql.append(" json_contains(").append(getColumnSql()).append(",JSON_ARRAY(?)").append(") ");
 				}else {
-					sql.append(" json_contains(").append(getFieldSql()).append(",JSON_OBJECT('"+jsonContain.objectField+"',?)").append(") ");
+					sql.append(" json_contains(").append(getColumnSql()).append(",JSON_OBJECT('"+jsonContain.objectField+"',?)").append(") ");
 				}
 				ctx.addParameter(values[i]);
 				if (i != (values.length - 1)) {
@@ -57,12 +57,12 @@ public class JsonContainsAllOperator extends FieldOperator {
 				Object v=values[i];
 				if(jsonContain==null||jsonContain.objectField==null) {
 					if(v instanceof String) {
-						sql.append(getFieldSql()).append("::jsonb@>'\""+values[i]+"\"'");
+						sql.append(getColumnSql()).append("::jsonb@>'\""+values[i]+"\"'");
 					}else {
-						sql.append(getFieldSql()).append("::jsonb@>'"+values[i]+"'");
+						sql.append(getColumnSql()).append("::jsonb@>'"+values[i]+"'");
 					}
 				}else {
-					sql.append(getFieldSql()).append("::jsonb@>'[{\""+jsonContain.objectField+"\":\""+values[i]+"\"}]'");
+					sql.append(getColumnSql()).append("::jsonb@>'[{\""+jsonContain.objectField+"\":\""+values[i]+"\"}]'");
 				}
 				if (i != (values.length - 1)) {
 					sql.append(" and ");

@@ -8,7 +8,7 @@ import io.itit.smartjdbc.util.ArrayUtils;
  * @author skydu
  *
  */
-public class InOperator extends FieldOperator{
+public class InOperator extends ColumnOperator{
 
 	public InOperator(OperatorContext ctx) {
 		super(ctx);
@@ -32,7 +32,7 @@ public class InOperator extends FieldOperator{
 			return "";
 		}
 		StringBuilder sql=new StringBuilder();
-		sql.append(getFieldSql());
+		sql.append(getColumnSql());
 		sql.append(" ");
 		sql.append(getOperatorSql());
 		sql.append("( ");

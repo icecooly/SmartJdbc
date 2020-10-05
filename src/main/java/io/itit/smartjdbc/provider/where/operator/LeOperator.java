@@ -5,7 +5,7 @@ package io.itit.smartjdbc.provider.where.operator;
  * @author skydu
  *
  */
-public class LeOperator extends FieldOperator{
+public class LeOperator extends ColumnOperator{
 
 	public LeOperator(OperatorContext ctx) {
 		super(ctx);

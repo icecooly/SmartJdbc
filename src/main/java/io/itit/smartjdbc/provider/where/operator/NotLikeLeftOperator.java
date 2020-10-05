@@ -5,7 +5,7 @@ package io.itit.smartjdbc.provider.where.operator;
  * @author skydu
  *
  */
-public class NotLikeLeftOperator extends FieldOperator{
+public class NotLikeLeftOperator extends ColumnOperator{
 
 	public NotLikeLeftOperator(OperatorContext ctx) {
 		super(ctx);

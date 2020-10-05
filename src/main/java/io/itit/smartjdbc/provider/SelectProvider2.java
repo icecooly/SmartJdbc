@@ -196,7 +196,7 @@
 //	protected String getWhereSql() {
 //		StringBuilder sql=new StringBuilder();
 //		sql.append("\nwhere 1=1 ");
-//		sql.append(queryWhere.whereStatement(this,true).sql);
+//		sql.append(queryWhere.whereStatement(getSmartDataSource()).sql);
 //		sql.append("\n");
 //		return sql.toString();
 //	}
@@ -270,7 +270,7 @@
 //		bean.orderBySql=getOrderBySql();
 //		bean.limitSql=getLimitSql();
 //		bean.forUpdateSql=getForUpdateSql();
-//		return SqlBean.build(bean.toSql(), queryWhere.whereValues(this));
+//		return SqlBean.build(bean.toSql(), queryWhere.whereValues(getSmartDataSource()));
 //	}
 //	@Override
 //	public SqlBean build() {

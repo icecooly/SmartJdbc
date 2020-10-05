@@ -7,7 +7,7 @@ import io.itit.smartjdbc.provider.where.Where.Condition;
  * @author skydu
  *
  */
-public class IsNullOperator extends FieldOperator{
+public class IsNullOperator extends ColumnOperator{
 	//
 	public IsNullOperator(OperatorContext ctx) {
 		super(ctx);
@@ -26,7 +26,7 @@ public class IsNullOperator extends FieldOperator{
 			return "";
 		}
 		StringBuilder sql=new StringBuilder();
-		sql.append(getFieldSql());
+		sql.append(getColumnSql());
 		sql.append(" ");
 		sql.append(getOperatorSql());
 		sql.append(" ");

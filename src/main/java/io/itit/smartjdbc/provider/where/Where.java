@@ -26,11 +26,11 @@ public class Where {
 		public SqlOperator operator;
 		public String customOperator;
 		public String whereSql;
-		public boolean isField;
+		public boolean isColumn;
 		public JsonContain jsonContain;
 		//
 		public Condition() {
-			this.isField=true;
+			this.isColumn=true;
 		}
 	}
 	//
@@ -57,15 +57,22 @@ public class Where {
 	}
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value) {
-		return where(alias, key, op, value, null);
+		return where(alias, key, op, value, true, null);
 	}
 	//
-	public Where where(String alias, String key, SqlOperator op, Object value, JsonContain jsonContain) {
+	public Where where(Condition condition) {
+		conditionList.add(condition);
+		return this;
+	}
+	//
+	public Where where(String alias, String key, SqlOperator op, Object value, 
+			boolean isColumn, JsonContain jsonContain) {
 		Condition w = new Condition();
 		w.alias = alias;
 		w.key = key;
 		w.operator = op;
 		w.value = value;
+		w.isColumn=isColumn;
 		w.jsonContain=jsonContain;
 		conditionList.add(w);
 		return this;

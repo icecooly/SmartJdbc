@@ -8,9 +8,9 @@ import io.itit.smartjdbc.provider.where.Where.Condition;
  * @author skydu
  *
  */
-public abstract class FieldOperator extends Operator{
+public abstract class ColumnOperator extends Operator{
 	
-	public FieldOperator(OperatorContext ctx) {
+	public ColumnOperator(OperatorContext ctx) {
 		super(ctx);
 	}
 	//
@@ -29,7 +29,7 @@ public abstract class FieldOperator extends Operator{
 			return "";
 		}
 		StringBuilder sql=new StringBuilder();
-		sql.append(getFieldSql());
+		sql.append(getColumnSql());
 		sql.append(" ");
 		sql.append(getOperatorSql());
 		sql.append(" ");
@@ -46,15 +46,15 @@ public abstract class FieldOperator extends Operator{
 	 * @param ctx
 	 * @return
 	 */
-	protected String getFieldSql() {
+	protected String getColumnSql() {
 		StringBuilder sql=new StringBuilder();
 		SmartDataSource smartDataSource=ctx.getSmartDataSource();
 		String identifier=smartDataSource.identifier();
 		Condition c=getCtx().getCondition();
-		if(c.alias!=null) {
-			sql.append(c.alias).append(".");
-		}
-		if(c.isField) {
+		if(c.isColumn) {
+			if(c.alias!=null) {
+				sql.append(c.alias).append(".");
+			}
 			sql.append(identifier);
 			sql.append(c.key);
 			sql.append(identifier);
