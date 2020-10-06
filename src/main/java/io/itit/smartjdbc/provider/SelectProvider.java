@@ -36,6 +36,7 @@ import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.entity.SelectSql;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
+import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.provider.where.Where;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.StringUtil;
@@ -831,13 +832,15 @@ public class SelectProvider extends SqlProvider{
 		sql.append("\n");
 	}
 	//
-	protected String getWhereSql() {
-		StringBuilder sql=new StringBuilder();
+	protected WhereStatment getWhereSql() {
 		addWheres(query);
+		WhereStatment ws=qw.whereStatement(getSmartDataSource());
+		StringBuilder sql=new StringBuilder();
 		sql.append("where 1=1 ");
-		sql.append(qw.whereStatement(getSmartDataSource()).sql);
+		sql.append(ws.sql);
 		sql.append("\n");
-		return sql.toString();
+		ws.sql=sql.toString();
+		return ws;
 	}
 	//
 	protected String getGroupBySql() {
@@ -915,13 +918,14 @@ public class SelectProvider extends SqlProvider{
 		SelectSql bean=new SelectSql();
 		bean.selectSql=selectSql.toString();
 		bean.fromSql=getFromSql();
-		bean.whereSql=getWhereSql();
+		WhereStatment ws=getWhereSql();
+		bean.whereSql=ws.sql;
 		bean.groupBySql=getGroupBySql();
 		bean.orderBySql=getOrderBySql();
 		bean.limitSql=getLimitSql();
 		bean.forUpdateSql=getForUpdateSql();
 		bean.sql=bean.toSql();
-		bean.parameters=qw.whereValues(getSmartDataSource());
+		bean.parameters=ws.values;
 		return bean;
 	}
 		

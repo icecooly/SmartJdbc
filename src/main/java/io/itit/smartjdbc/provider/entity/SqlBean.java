@@ -112,7 +112,7 @@ public class SqlBean {
 						"\nall can choose paras is:"+paraMap.keySet()); 
 			}
 			if(value instanceof String) {
-				newSql=newSql.replaceAll(replaceGroup,"'"+value.toString()+"'");
+				newSql=newSql.replaceAll(replaceGroup,value.toString());
 			}else if(value instanceof Collection<?>){
 				StringBuilder in=new StringBuilder();
 				Collection<?> array=(Collection<?>)value;

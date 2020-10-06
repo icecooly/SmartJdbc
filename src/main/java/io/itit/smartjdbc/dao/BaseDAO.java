@@ -175,7 +175,8 @@ public abstract class BaseDAO{
 		boolean isException=false;
 		try {
 			Connection conn=getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			PreparedStatement ps = conn.prepareStatement(sql.toString(),
+					ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			if(parameters!=null){
 				for (Object[] parameter : parameters) {
 					set(ps, parameter);
@@ -235,7 +236,8 @@ public abstract class BaseDAO{
 		long useTime=0;
 		try {
 			Connection conn=getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			PreparedStatement ps = conn.prepareStatement(sql.toString(),
+					ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			set(ps, parameters);
 			beforeExcute(sql, parameters);
 			bean=query(conn, ps, handler);
@@ -274,7 +276,8 @@ public abstract class BaseDAO{
 		long useTime=0;
 		try {
 			Connection conn=getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			PreparedStatement ps = conn.prepareStatement(sql.toString(),
+					ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			set(ps, parameters);
 			beforeExcute(sql, parameters);
 			list=queryList(conn, ps, handler);

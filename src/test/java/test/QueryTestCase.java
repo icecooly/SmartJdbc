@@ -161,11 +161,11 @@ public class QueryTestCase extends BaseTestCase{
 	}
 	
 	public void testQueryWhereSql() {
-		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=?","张三"));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=?","test"));
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='张三'"));
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=#{name}",
 				new SqlParam("name", "张三")));
-		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=${name}",
+		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='${name}'",
 				new SqlParam("name", "张三")));
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=${status}",
 				new SqlParam("status", 1)));
@@ -396,6 +396,7 @@ public class QueryTestCase extends BaseTestCase{
 	
 	public void testOr() {
 		ArticleQuery query=new ArticleQuery();
+		query.setTitleOrContent("Java");
 		List<Article> list=dao.getList(query);
 		System.out.println(DumpUtil.dump(list));
 	}

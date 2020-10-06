@@ -27,7 +27,7 @@ public class ArticleQuery extends Query<Article>{
 	@QueryField
 	private Integer status;
 	
-	@QueryField(whereSql="and (title like concat('%',#{titleOrContent},'%') or content like concat('%',#{titleOrContent},'%'))")
+	@QueryField(whereSql=" (title like concat('%',#{titleOrContent},'%') or content like concat('%','${titleOrContent}','%'))")
 	private String titleOrContent;
 	
 	@InnerJoin(table2=User.class,table1Fields= {"createUserId"},table2Fields = {"id"})
