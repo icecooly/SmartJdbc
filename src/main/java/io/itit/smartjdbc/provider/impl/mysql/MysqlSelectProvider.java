@@ -10,8 +10,6 @@ import io.itit.smartjdbc.provider.SelectProvider;
  */
 public class MysqlSelectProvider extends SelectProvider{
 	//
-	
-	//
 	public MysqlSelectProvider(SmartDataSource smartDataSource) {
 		super(smartDataSource);
 	}

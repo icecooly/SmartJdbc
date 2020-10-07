@@ -91,28 +91,31 @@ public class QueryTestCase extends BaseTestCase{
 	}
 	
 	public void testQueryIn() {
-		dao.getEntity(User.class,QueryWhere.create().in("status",Arrays.asList(1,2,3)));
-		dao.getEntity(User.class,QueryWhere.create().in("status",new int[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().in("status",new byte[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().in("status",new long[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().in("name",Arrays.asList("张三","张三2")));
-		dao.getEntity(User.class,QueryWhere.create().in("name",new String[] {"张三","张三2"}));
+		dao.getList(User.class,QueryWhere.create().in("status",Arrays.asList(1,2,3)));
+		dao.getList(User.class,QueryWhere.create().in("status",new int[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().in("status",new byte[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().in("status",new long[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().in("name",Arrays.asList("张三","张三2")));
+		dao.getList(User.class,QueryWhere.create().in("name",new String[] {"张三","张三2"}));
+		UserQuery query=new UserQuery();
+		query.setStatusInList(Arrays.asList(1,2,3));
+		dao.getList(query);
 	}
 	
 	public void testQueryNotIn() {
-		dao.getEntity(User.class,QueryWhere.create().notin("status",Arrays.asList(1,2,3)));
-		dao.getEntity(User.class,QueryWhere.create().notin("status",new int[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().notin("status",new byte[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().notin("status",new long[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().notin("name",Arrays.asList("张三","张三2")));
-		dao.getEntity(User.class,QueryWhere.create().notin("name",new String[] {"张三","张三2"}));
+		dao.getList(User.class,QueryWhere.create().notin("status",Arrays.asList(1,2,3)));
+		dao.getList(User.class,QueryWhere.create().notin("status",new int[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().notin("status",new byte[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().notin("status",new long[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().notin("name",Arrays.asList("张三","张三2")));
+		dao.getList(User.class,QueryWhere.create().notin("name",new String[] {"张三","张三2"}));
 	}
 	
 	public void testJsonContains() {
-		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",Arrays.asList(1,2,3)));
-		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new int[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new byte[] {1,2}));
-		dao.getEntity(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new long[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().jsonContainsAny("role_id_list",Arrays.asList(1,2,3)));
+		dao.getList(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new int[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new byte[] {1,2}));
+		dao.getList(User.class,QueryWhere.create().jsonContainsAny("role_id_list",new long[] {1,2}));
 		//
 		UserQuery query=new UserQuery();
 		query.setRoleId(1);
@@ -431,5 +434,37 @@ public class QueryTestCase extends BaseTestCase{
 		c.value=true;
 		List<User> list=dao.getList(User.class, QueryWhere.create().where(c));
 		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testWhere() {
+		Where w=new Where();
+		Where and1=new Where();
+		Where and2=new Where();
+		and2.where("user_name", SqlOperator.LIKE,"test");
+		and1.and(and2);
+		w.and(and1);
+		dao.getList(User.class, QueryWhere.create().and(w));
+		//
+		w=new Where();
+		and1=new Where();
+		and2=new Where();
+		and1.and(and2);
+		w.and(and1);
+		dao.getList(User.class, QueryWhere.create().and(w));
+		//
+		w=new Where();
+		and1=new Where();
+		and2=new Where();
+		Where or1=new Where();
+		Where or2=new Where();
+		or2.where("user_name", SqlOperator.LIKE,"test");
+		or2.where("name", SqlOperator.LIKE,"123");
+		and1.and(and2);
+		and2.or(or1);
+		or1.or(or2);
+		w.and(and1);
+		w.and(new Where());
+		w.or(new Where());
+		dao.getList(User.class, QueryWhere.create().and(w));
 	}
 }

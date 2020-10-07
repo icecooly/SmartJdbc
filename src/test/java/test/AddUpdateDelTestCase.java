@@ -14,7 +14,7 @@ import test.domain.entity.User;
  * @author skydu
  *
  */
-public class AddUpdateTestCase extends BaseTestCase{
+public class AddUpdateDelTestCase extends BaseTestCase{
 	//
 	static {
 	    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
@@ -22,15 +22,15 @@ public class AddUpdateTestCase extends BaseTestCase{
 	//
 	BizDAO dao;
 	//
-	public AddUpdateTestCase() {
+	public AddUpdateDelTestCase() {
 		dao=new BizDAO();
 	}
 	//
 	/**新增用户*/
 	public void testAddUser() {
 		User user=new User();
-		user.setName("王五");
-		user.setUserName("wangwu");
+		user.setName("王五4");
+		user.setUserName("wangwu4");
 		user.setAge(20);
 		user.setDepartmentId(1);
 		user.setRoleIdList(Arrays.asList(1,2,3));
@@ -46,18 +46,8 @@ public class AddUpdateTestCase extends BaseTestCase{
 		User user=dao.getById(User.class, 2);
 		user.setGender(User.GENDER_男);
 		user.setDepartmentId(2);
-		user.setRoleIdList(Arrays.asList(1,2));
+		user.setHeight(null);
 		user.setAge(18);
-		dao.updateIncludeNull(user);
-	}
-	
-	/**
-	 * 更新字段
-	 */
-	public void testUpdate() {
-		User user=new User();
-		user.setId(2);
-		user.setAge(50);
 		dao.update(user);
 	}
 	
@@ -67,7 +57,16 @@ public class AddUpdateTestCase extends BaseTestCase{
 	public void testUpdateUserAge() {
 		User user=dao.getById(User.class, 2);
 		user.setAge(30);
-		dao.updateIncludeFields(user, "age");
+		dao.update(user, "age");
+	}
+	
+	/**
+	 * 只更新height字段
+	 */
+	public void testUpdateUserHeight() {
+		User user=dao.getById(User.class, 2);
+		user.setHeight(null);
+		dao.update(user, "height");
 	}
 	
 	/**

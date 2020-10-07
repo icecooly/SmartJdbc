@@ -61,7 +61,7 @@ public class UpdateProvider extends SqlProvider{
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
 		Class<?>entityClass=object.getClass();
-		String tableName=getTableNameWithIdentifier(entityClass);
+		String tableName=getTableName(entityClass);
 		sql.append("update ").append(tableName).append(" ").append(MAIN_TABLE_ALIAS).append(" ");
 		Set<String> excludesNames = new TreeSet<String>();
 		for (String e : excludeFields) {
@@ -96,6 +96,13 @@ public class UpdateProvider extends SqlProvider{
 				if(excludeNull&&fieldValue==null){
 					continue;
 				}
+				sql.append(" ").append(addIdentifier(column)).append("=");
+				if(fieldValue==null) {
+					sql.append("null,");
+					continue;
+				}else {
+					sql.append("?,");
+				}
 				if(fieldValue!=null&&!WRAP_TYPES.contains(fieldValue.getClass())){
 					fieldList.add(JSONUtil.toJson(fieldValue));
 				}else{
@@ -104,10 +111,8 @@ public class UpdateProvider extends SqlProvider{
 			} catch (Exception e) {
 				throw new SmartJdbcException(e);
 			}
-			sql.append(" ").append(getColumnWithIdentifier(column)).append("=?,");
 		}
 		sql.deleteCharAt(sql.length()-1);
-		sql.append(" where 1=1");
 		//
 		if(queryWhere==null) {//默认where主键
 			queryWhere=QueryWhere.create();

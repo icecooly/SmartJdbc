@@ -19,9 +19,8 @@ public class MysqlDeleteProvider extends DeleteProvider{
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
-		String tableName=getTableNameWithIdentifier(entityClass);
+		String tableName=getTableName(entityClass);
 		sql.append("delete "+MAIN_TABLE_ALIAS+" from ").append(tableName).append(" ").append(MAIN_TABLE_ALIAS).append(" ");
-		sql.append("where 1=1 ");
 		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
 		sql.append(ws.sql);
 		return SqlBean.build(sql.toString(),ws.values);

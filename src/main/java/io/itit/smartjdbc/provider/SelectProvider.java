@@ -749,7 +749,7 @@ public class SelectProvider extends SqlProvider{
 	 */
 	protected SqlBean queryCount() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("\nselect count(1) \n");
+		sql.append("\nselect count(1) ");
 		this.needPaging=false;
 		return build(sql);
 	}
@@ -777,13 +777,13 @@ public class SelectProvider extends SqlProvider{
 				sql.append(" distinct ");
 			}
 			if(StringUtil.isEmpty(field.statFunction)) {
-				sql.append(field.tableAlias).append("."+identifier());
-				sql.append(convertFieldName(field.field)).append(identifier());
+				sql.append(field.tableAlias).append(".");
+				sql.append(addIdentifier(convertFieldName(field.field)));
 			}else {
 				sql.append(field.statFunction);
 				sql.append("(");
-				sql.append(field.tableAlias).append("."+identifier());
-				sql.append(convertFieldName(field.field)).append(identifier());
+				sql.append(field.tableAlias).append(".");
+				sql.append(addIdentifier(convertFieldName(field.field)));
 				sql.append(")");
 			}
 			if(field.asField!=null) {
@@ -791,36 +791,35 @@ public class SelectProvider extends SqlProvider{
 				if(field.preAsField!=null) {
 					asField=field.preAsField+asField;
 				}
-				sql.append(" as "+identifier()).append(asField).append(identifier());
+				sql.append(" as ").append(addIdentifier(asField));
 			}
 			sql.append(",");
 		}
 		sql.deleteCharAt(sql.length()-1);
-		sql.append("\n");
+		sql.append(" ");
 	}
 	//
 	//
 	protected String getFromSql() {
 		StringBuilder sql=new StringBuilder();
-		sql.append("from ").append(identifier()).append(getTableName(entityClass)).
-				append(identifier()).append(" ").
-				append(MAIN_TABLE_ALIAS).append(" \n");
+		sql.append("\nfrom ").append(getTableName(entityClass)).append(" ").
+				append(MAIN_TABLE_ALIAS).append(" ");
 		//inner join
 		this.innerJoinMap=getInnerJoins(query);
 		for (Join join : innerJoins) {
-			sql.append("inner join  ");
+			sql.append("\ninner join  ");
 			addJoin(sql, join);
 		}
 		//left join
 		for (Join join : leftJoins) {
-			sql.append("left join  ");
+			sql.append("\nleft join  ");
 			addJoin(sql, join);
 		}
 		return sql.toString();
 	}
 	//
 	protected void addJoin(StringBuilder sql,Join join) {
-		sql.append(getTableNameWithIdentifier(join.table2)).append(" ").append(join.table2Alias);
+		sql.append(getTableName(join.table2)).append(" ").append(join.table2Alias);
 		sql.append(" on ");
 		for(int i=0;i<join.table1Fields.length;i++) {
 			sql.append(join.table1Alias).append("."+convertFieldName(join.table1Fields[i])+"=").
@@ -829,24 +828,18 @@ public class SelectProvider extends SqlProvider{
 				sql.append(" and ");
 			}
 		}
-		sql.append("\n");
+		sql.append(" ");
 	}
 	//
 	protected WhereStatment getWhereSql() {
 		addWheres(query);
-		WhereStatment ws=qw.whereStatement(getSmartDataSource());
-		StringBuilder sql=new StringBuilder();
-		sql.append("where 1=1 ");
-		sql.append(ws.sql);
-		sql.append("\n");
-		ws.sql=sql.toString();
-		return ws;
+		return qw.whereStatement(getSmartDataSource());
 	}
 	//
 	protected String getGroupBySql() {
 		StringBuilder sql=new StringBuilder();
 		if(groupBys.size()>0) {
-			sql.append("group by ");
+			sql.append("\ngroup by ");
 			for (GroupByField field : groupBys) {
 				if(!StringUtil.isEmpty(field.tableAlias)) {
 					sql.append(field.tableAlias).append(".");
@@ -854,7 +847,7 @@ public class SelectProvider extends SqlProvider{
 				sql.append(convertFieldName(field.field)).append(",");
 			}
 			sql.deleteCharAt(sql.length()-1);
-			sql.append("\n");
+			sql.append(" ");
 		}
 		return sql.toString();
 	}
@@ -869,12 +862,12 @@ public class SelectProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		addOrderBy(query);
 		if (qw.getOrderBys().size()>0) {
-			sql.append("order by ");
+			sql.append("\norder by ");
 			for (String orderBy : qw.getOrderBys()) {
 				sql.append(orderBy).append(",");
 			}
 			sql.deleteCharAt(sql.length()-1);
-			sql.append("\n");
+			sql.append(" ");
 		}
 		return sql.toString();
 	}
@@ -889,14 +882,14 @@ public class SelectProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		addPaging(query);	
 		if(qw.getLimitEnd()!=-1) {
-			sql.append("limit ").append(qw.getLimitStart()).append(",").append(qw.getLimitEnd()).append("\n");
+			sql.append("\nlimit ").append(qw.getLimitStart()).append(",").append(qw.getLimitEnd()).append(" ");
 		}
 		return sql.toString();
 	}
 	//
 	protected String getForUpdateSql() {
 		if(isForUpdate) {
-			return "for update \n";
+			return "\nfor update ";
 		}
 		return "";
 	}

@@ -1,7 +1,6 @@
 package io.itit.smartjdbc.dao;
 
 import java.sql.ResultSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -86,139 +85,47 @@ public class SmartDAO extends BaseEntityDAO{
 	}
 	
 	/**
-	 * 更新包括Null字段
-	 * @param bean
-	 * @return
-	 */
-	public int updateIncludeNull(Object bean){
-		return update(bean,false,null);
-	}
-	
-	/**
-	 * 更新指定的字段(如果字段值为NULL,则不会更新)
-	 * @param bean
-	 * @param includeFields
-	 * @return
-	 */
-	public int updateIncludeFields(Object bean,String ... includeFields) {
-		Set<String> includeFieldSet=null;
-		if(includeFields!=null&&includeFields.length>0) {
-			includeFieldSet=new LinkedHashSet<>();
-			for (String includeField : includeFields) {
-				includeFieldSet.add(includeField);
-			}
-		}
-		return update(bean,includeFieldSet);
-	}
-	
-	/**
-	 * 更新指定的字段(如果字段值为NULL,也会更新)
-	 * @param bean
-	 * @param includeFields
-	 * @return
-	 */
-	public int updateIncludeFieldsIncludeNull(Object bean,String ... includeFields) {
-		Set<String> includeFieldSet=null;
-		if(includeFields!=null&&includeFields.length>0) {
-			includeFieldSet=new LinkedHashSet<>();
-			for (String includeField : includeFields) {
-				includeFieldSet.add(includeField);
-			}
-		}
-		return update(bean,false,includeFieldSet);
-	}
-	
-	/**
-	 * 
-	 * @param bean
-	 * @param excludeFields
-	 * @return
-	 */
-	public int updateExcludeFields(Object bean,String ... excludeFields) {
-		return update(bean,true,null,excludeFields);
-	}
-	
-	/**
-	 * 更新（不包括Null字段）
+	 * 更新
 	 * @param bean
 	 * @param includeFields
 	 * @return
 	 */
 	public int update(Object bean,
 			String... includeFields){
-		return update(bean,true,ArrayUtils.toSet(includeFields));
+		return update(bean,false,ArrayUtils.toSet(includeFields),null);
 	}
 	
 	/**
 	 * 
 	 * @param bean
-	 * @param includeFields 只更新这些指定的字段
-	 * @param excludeFields 排除更新这些指定的字段
+	 * @param queryWhere
 	 * @return
 	 */
-	public int update(Object bean,
-			Set<String> includeFields,
-			String... excludeFields) {
-		return update(bean,true,includeFields,excludeFields);
+	public int update(Object bean, QueryWhere queryWhere){
+		return update(bean,false,null,queryWhere);
 	}
+
 	//
 	/**
 	 * 
 	 * @param bean
 	 * @param excludeNull 是否更新值为NULL的字段  true:不更新 false:更新
 	 * @param includeFields 只更新这些指定的字段
+	 * @param queryWhere where条件
 	 * @param excludeFields 排除更新这些指定的字段
 	 * @return
 	 */
 	public int update(Object bean,
 			boolean excludeNull,
 			Set<String> includeFields,
+			QueryWhere queryWhere,
 			String... excludeFields){
 		beforeUpdate(bean,excludeNull,excludeFields);
 		SqlBean sqlBean=updateProvider().
 				object(bean).
 				excludeNull(excludeNull).
 				includeFields(includeFields).
-				excludeFields(excludeFields)
-				.build();
-		int result=executeUpdate(sqlBean.sql,sqlBean.parameters);
-		afterUpdate(result,bean,excludeNull,excludeFields);
-		return result;
-	}
-	
-	
-	/**
-	 * 
-	 * @param bean
-	 * @param wq
-	 * @param excludeFields
-	 * @return
-	 */
-	public int update(Object bean,
-			QueryWhere wq,
-			String... excludeFields){
-		return update(bean, wq, true, null, excludeFields);
-	}
-	
-	/**
-	 * 
-	 * @param bean
-	 * @param wq
-	 * @param excludeNull	是否更新值为NULL的字段  true:不更新 false:更新
-	 * @param includeFields	只更新这些指定的字段
-	 * @param excludeFields 排除更新这些指定的字段
-	 * @return
-	 */
-	public int update(Object bean,
-			QueryWhere wq,
-			boolean excludeNull,
-			Set<String> includeFields,
-			String... excludeFields){
-		beforeUpdate(bean,excludeNull,excludeFields);
-		SqlBean sqlBean=updateProvider().
-				object(bean).
-				excludeNull(excludeNull).
-				includeFields(includeFields).
+				queryWhere(queryWhere).
 				excludeFields(excludeFields).
 				build();
 		int result=executeUpdate(sqlBean.sql,sqlBean.parameters);

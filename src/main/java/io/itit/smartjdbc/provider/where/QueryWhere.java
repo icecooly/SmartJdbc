@@ -16,7 +16,6 @@ import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.provider.where.operator.Operator;
 import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
 import io.itit.smartjdbc.provider.where.operator.OperatorContext;
-import io.itit.smartjdbc.util.JSONUtil;
 
 /**
  * 
@@ -138,7 +137,7 @@ public class QueryWhere {
 		WhereStatment statment=new WhereStatment();
 		List<Object>values=new LinkedList<Object>();
 		StringBuilder sql=new StringBuilder();
-		sql.append(" ");
+		sql.append("\nwhere 1=1 ");
 		appendWhereSql(smartDataSource, sql, values, where);
 		sql.append(" ");
 		if(forUpdate) {
@@ -149,12 +148,34 @@ public class QueryWhere {
 		return statment;
 	}
 	//
+	protected boolean haveCondition(Where w) {
+		if(w!=null&&w.conditionList!=null&&w.conditionList.size()>0) {
+			return true;
+		}
+		if(w!=null&&w.children!=null) {
+			for (Where child : w.children) {
+				boolean childHaveCondition=haveCondition(child);
+				if(childHaveCondition) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	//
 	protected void appendWhereSql(SmartDataSource smartDataSource, 
 			StringBuilder sql,List<Object> valueList,Where parent) {
+		boolean haveCondition=haveCondition(parent);
+		if(!haveCondition) {
+			return;
+		}
+		sql.append(" and(  ");
 		List<Condition> conditions=parent.conditionList;
+		if(conditions.size()==0) {
+			sql.append(" 1=1  ");
+		}
 		if(conditions.size()>0) {
 			boolean and=parent.conditionType==ConditionType.AND?true:false;
-			sql.append(" and( ");
 			int index=0;
 			OperatorContext ctx=new OperatorContext(smartDataSource);
 			ctx.setParameters(valueList);
@@ -179,7 +200,6 @@ public class QueryWhere {
 				}
 				index++;
 			}//for
-			sql.append(")");
 		}
 		//
 		if(parent.children!=null&&parent.children.size()>0) {
@@ -188,7 +208,7 @@ public class QueryWhere {
 			}
 		}
 		//
-		
+		sql.append("  )  ");
 	}
 	//
 	/**

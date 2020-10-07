@@ -26,7 +26,7 @@ public class PostgresqlSelectProvider extends SelectProvider{
 		StringBuilder sql=new StringBuilder();
 		addPaging(query);	
 		if(qw.getLimitEnd()!=-1) {
-			sql.append("limit ").append(qw.getLimitEnd()).append(" offset ").append(qw.getLimitStart()).append("\n");
+			sql.append("\nlimit ").append(qw.getLimitEnd()).append(" offset ").append(qw.getLimitStart()).append(" ");
 		}
 		return sql.toString();
 	}

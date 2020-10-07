@@ -40,7 +40,7 @@ public abstract class InsertProvider extends SqlProvider{
 		StringBuilder sql=new StringBuilder();
 		Class<?>type=bean.getClass();
 		String tableName=getTableName(type);
-		sql.append("insert into ").append(identifier()).append(tableName).append(identifier()).append("(");
+		sql.append("insert into ").append(tableName).append("(");
 		Set<String> excludesNames = new TreeSet<String>();
 		for (String e : excludeFields) {
 			excludesNames.add(e);
@@ -73,7 +73,7 @@ public abstract class InsertProvider extends SqlProvider{
 			} catch (Exception e) {
 				throw new SmartJdbcException(e);
 			}
-			sql.append(identifier()).append(fieldName).append(identifier()+",");
+			sql.append(addIdentifier(fieldName)+",");
 		}
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(")");
