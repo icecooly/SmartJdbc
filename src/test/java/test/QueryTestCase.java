@@ -155,6 +155,7 @@ public class QueryTestCase extends BaseTestCase{
 	public void testQueryIsNull() {
 		dao.getEntity(User.class,QueryWhere.create().isNull("name"));
 		dao.getEntity(User.class,QueryWhere.create().isNotNull("name"));
+		dao.getEntity(User.class,QueryWhere.create().where("name",null));
 	}
 	
 	public void testIsNull() {

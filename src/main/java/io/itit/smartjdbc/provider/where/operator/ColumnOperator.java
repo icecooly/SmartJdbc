@@ -35,9 +35,7 @@ public abstract class ColumnOperator extends Operator{
 		sql.append(" ");
 		sql.append(getValueSql());
 		sql.append(" ");
-		if(c.value!=null) {
-			ctx.addParameter(c.value);
-		}
+		ctx.addParameter(c.value);
 		return sql.toString();
 	}
 	

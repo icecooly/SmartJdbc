@@ -822,8 +822,8 @@ public class SelectProvider extends SqlProvider{
 		sql.append(getTableName(join.table2)).append(" ").append(join.table2Alias);
 		sql.append(" on ");
 		for(int i=0;i<join.table1Fields.length;i++) {
-			sql.append(join.table1Alias).append("."+convertFieldName(join.table1Fields[i])+"=").
-			append(join.table2Alias).append(".").append(convertFieldName(join.table2Fields[i]));
+			sql.append(join.table1Alias).append("."+addIdentifier(convertFieldName(join.table1Fields[i]))+"=").
+			append(join.table2Alias).append(".").append(addIdentifier(convertFieldName(join.table2Fields[i])));
 			if(i<join.table1Fields.length-1) {
 				sql.append(" and ");
 			}
