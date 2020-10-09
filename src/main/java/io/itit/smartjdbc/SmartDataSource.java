@@ -58,7 +58,8 @@ public class SmartDataSource {
 		try {
 			conn=dataSource.getConnection();
 			String driverClassName=DriverManager.getDriver(conn.getMetaData().getURL()).getClass().getName();
-			if(driverClassName.equals("com.mysql.cj.jdbc.Driver")) {
+			if(driverClassName.equals("com.mysql.cj.jdbc.Driver")||
+					driverClassName.equals("com.mysql.jdbc.Driver")) {
 				databaseType=DatabaseType.MYSQL;
 			}else if(driverClassName.equals("org.postgresql.Driver")) {
 				databaseType=DatabaseType.POSTGRESQL;
