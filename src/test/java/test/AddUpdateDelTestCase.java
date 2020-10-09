@@ -2,6 +2,7 @@ package test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 
 import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.provider.where.QueryWhere;
@@ -35,6 +36,11 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 		user.setDepartmentId(1);
 		user.setRoleIdList(Arrays.asList(1,2,3));
 		user.setMobileNo("13012345678");
+		user.setHeight(1.78);
+		user.setCreateTime(new Date());
+		user.setArticleNum(10000L);
+		user.setIsStudent(true);;
+		//
 		user.setId(dao.insert(user));
 		System.out.println(user.getId());
 	}
@@ -49,6 +55,12 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 		user.setHeight(null);
 		user.setAge(18);
 		dao.update(user);
+	}
+	
+	public void testUpdateId() {
+		User user=dao.getById(User.class, 2);
+		user.setId(100);
+		dao.update(user, "id");
 	}
 	
 	/**
@@ -67,6 +79,15 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 		User user=dao.getById(User.class, 2);
 		user.setHeight(null);
 		dao.update(user, "height");
+	}
+	
+	/**
+	 * 只更新roleIdList字段
+	 */
+	public void testUpdateRoleIdList() {
+		User user=dao.getById(User.class, 2);
+		user.setRoleIdList(Arrays.asList(3,4,5));
+		dao.update(user, "roleIdList");
 	}
 	
 	/**

@@ -6,6 +6,7 @@ import java.util.List;
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
+import io.itit.smartjdbc.enums.ColumnType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 /**
@@ -48,6 +49,7 @@ public class User extends BaseEntity{
 	private Integer departmentId;
 	
 	/**角色列表*/
+	@EntityField(columnType = ColumnType.JSONB)
 	private List<Integer> roleIdList;
 	
 	/**最后登录时间*/

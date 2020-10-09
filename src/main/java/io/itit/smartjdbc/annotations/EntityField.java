@@ -7,6 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import io.itit.smartjdbc.enums.ColumnType;
+
 /**
  * 
  * @author skydu
@@ -41,4 +43,7 @@ public @interface EntityField {
 	
 	/**是否持久化到数据库*/
 	boolean persistent() default true;
+	
+	/**字段类型*/
+	ColumnType columnType() default ColumnType.NONE;
 }

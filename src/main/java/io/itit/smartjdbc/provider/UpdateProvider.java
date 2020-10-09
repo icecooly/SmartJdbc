@@ -57,6 +57,10 @@ public class UpdateProvider extends SqlProvider{
 		return this;
 	}
 	//
+	public String getValueSql(EntityField entityField) {
+		return "?,";
+	}
+	//
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
@@ -100,9 +104,8 @@ public class UpdateProvider extends SqlProvider{
 				if(fieldValue==null) {
 					sql.append("null,");
 					continue;
-				}else {
-					sql.append("?,");
 				}
+				sql.append(getValueSql(entityField));
 				if(fieldValue!=null&&!WRAP_TYPES.contains(fieldValue.getClass())){
 					fieldList.add(JSONUtil.toJson(fieldValue));
 				}else{

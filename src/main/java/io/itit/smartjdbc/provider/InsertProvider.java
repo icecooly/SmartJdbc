@@ -35,6 +35,10 @@ public abstract class InsertProvider extends SqlProvider{
 		return this;
 	}
 	
+	public String getValueSql(EntityField entityField) {
+		return "?,";
+	}
+	
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
@@ -47,6 +51,7 @@ public abstract class InsertProvider extends SqlProvider{
 		}
 		List<Object>fieldList=new ArrayList<Object>();
 		List<Field> list=getPersistentFields(type);
+		StringBuilder values=new StringBuilder();
 		for (Field f : list) {
 			if (excludesNames.contains(f.getName())) {
 				continue;
@@ -70,18 +75,20 @@ public abstract class InsertProvider extends SqlProvider{
 				}else{
 					fieldList.add(fieldValue);
 				}
+				values.append(getValueSql(entityField));
 			} catch (Exception e) {
 				throw new SmartJdbcException(e);
 			}
 			sql.append(addIdentifier(fieldName)+",");
 		}
+		if(values.length()==0) {
+			throw new SmartJdbcException("no field found");
+		}
+		values.deleteCharAt(values.length()-1);
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(")");
 		sql.append("values(");
-		for(int i=0;i<fieldList.size();i++){
-			sql.append("?,");
-		}
-		sql.deleteCharAt(sql.length()-1);
+		sql.append(values.toString());
 		sql.append(")");
 		//
 		return SqlBean.build(sql.toString(),fieldList.toArray(new Object[fieldList.size()]));
