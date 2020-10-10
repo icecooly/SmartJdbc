@@ -10,21 +10,11 @@ import io.itit.smartjdbc.annotations.LeftJoin;
  * @author skydu
  *
  */
-public class EntityFieldInfo {
+public class ClassEntityFieldInfo extends EntityFieldInfo{
 
 	public Field field;
 	
 	public EntityField entityField;
 	
 	public LeftJoin leftJoin;
-	
-	public String tableAlias;
-	
-	public String name;
-	
-	public String asName;
-	
-	public boolean distinct;
-	
-	public String statFunction;
 }

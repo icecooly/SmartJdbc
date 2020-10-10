@@ -18,8 +18,6 @@ import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.PrimaryKey;
-import io.itit.smartjdbc.cache.Caches;
-import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.util.ClassUtils;
 
@@ -133,28 +131,6 @@ public abstract class SqlProvider {
 			}
 		}
 		return fields;
-	}
-	
-	/**
-	 * 
-	 * @param bean
-	 * @param fieldName
-	 * @return
-	 */
-	public static Object getEntityFieldValue(Object bean,String fieldName){
-		try {
-			EntityInfo info=Caches.getEntityInfo(bean.getClass());
-			Field field=info.fieldMap.get(fieldName);
-			if(field!=null) {
-				if(!field.isAccessible()) {
-					field.setAccessible(true);
-				}
-				return field.get(bean);
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage(),e);
-		}
-		return null;
 	}
 	
 	/**

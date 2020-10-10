@@ -1,12 +1,19 @@
 package test;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
+import io.itit.smartjdbc.provider.SelectProvider;
+import io.itit.smartjdbc.provider.entity.Aggregation;
+import io.itit.smartjdbc.provider.entity.SqlBean;
+import io.itit.smartjdbc.provider.factory.SelectProviderFactory;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.provider.where.Where;
 import io.itit.smartjdbc.provider.where.Where.Condition;
@@ -165,20 +172,24 @@ public class QueryTestCase extends BaseTestCase{
 	}
 	
 	public void testQueryWhereSql() {
-		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=?","test"));
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='张三'"));
-		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=#{name}",
-				new SqlParam("name", "张三")));
-		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='${name}'",
-				new SqlParam("name", "张三")));
-		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=${status}",
-				new SqlParam("status", 1)));
-		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=${status} or a.name like concat('%',#{name},'%')",
-				new SqlParam("status", 1),
-				new SqlParam("name", "zhang")));
+		Map<String,Object> sqlParam=new HashMap<>();
+		sqlParam.put("name", "张三");
+		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name=#{name}",sqlParam));
+		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='${name}'",sqlParam));
+		sqlParam=new HashMap<>();
+		sqlParam.put("status", 1);
+		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=${status}",sqlParam));
+		sqlParam=new HashMap<>();
+		sqlParam.put("status", 1);
+		sqlParam.put("name", "zhang");
+		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status=#{status} or a.name like concat('%',#{name},'%')",
+				sqlParam));
+		sqlParam=new HashMap<>();
+		sqlParam.put("status", Arrays.asList(1,2,3));
+		sqlParam.put("name", "zhang");
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.status in ${status} or a.name like concat('%',#{name},'%')",
-				new SqlParam("status", Arrays.asList(1,2,3)),
-				new SqlParam("name", "zhang")));
+				sqlParam));
 	}
 	
 	public void testQueryOrderByLimit() {
@@ -265,12 +276,18 @@ public class QueryTestCase extends BaseTestCase{
 		System.out.println(DumpUtil.dump(list));
 	}
 	
-	public void testGetUsersWithInnerJoins() {
+	public void testGetWithInnerJoins() {
 		UserQuery query=new UserQuery();
 		query.setCreateUserName("root");
 		query.setDepartmentName("技术");
 		List<User> list=dao.getList(query,"createTime","updateTime");
 		System.out.println(DumpUtil.dump(list));
+		//
+		ArticleQuery articleQuery=new ArticleQuery();
+		articleQuery.setCreateUserName("root");
+		articleQuery.setCreateUserMobileNo("13000000000");
+		List<Article> articles=dao.getList(articleQuery,"createTime","updateTime");
+		System.out.println(DumpUtil.dump(articles));
 	}
 	
 	public void testQueryInList() {
@@ -319,14 +336,6 @@ public class QueryTestCase extends BaseTestCase{
 		System.out.println(DumpUtil.dump(users));
 	}
 	
-	public void testQueryUsers2() {
-		List<User> users=dao.queryList(User.class, 
-				"select * from t_user where name like concat('%',#{name},'%') and id=#{id}", 
-				new SqlParam("name", "liu"),
-				new SqlParam("id", 1));
-		System.out.println(DumpUtil.dump(users));
-	}
-	
 	public void testQueryUsers3() {
 		List<UserSimple> users=dao.queryList(UserSimple.class, 
 				"select *,1 as test from t_user");
@@ -342,21 +351,9 @@ public class QueryTestCase extends BaseTestCase{
 	}
 	
 	public void testGetUserIds() {
-		List<Integer> userIds=dao.queryForIntegers("select id from t_user where id=#{id}",
-				new SqlParam("id", 1));
-		System.out.println(DumpUtil.dump(userIds));
-		//
-		userIds=dao.queryForIntegers("select id from t_user where id=?",
+		List<Integer> userIds=dao.queryForIntegers("select id from t_user where id=?",
 				1);
 		System.out.println(DumpUtil.dump(userIds));
-	}
-	
-	public void testQueryUsersCount2() {
-		int count=dao.queryCount(
-				"select count(1) from t_user where name like concat('%',#{name},'%') and id=#{id}", 
-				new SqlParam("name", "张"),
-				new SqlParam("id", 1));
-		System.out.println(count);
 	}
 	//
 	/**
@@ -365,6 +362,14 @@ public class QueryTestCase extends BaseTestCase{
 	public void testGetArticle() {
 		Article info=dao.getById(Article.class,1);
 		System.out.println(DumpUtil.dump(info));
+	}
+	
+	public void testGetArticleCreateUserId() {
+		ArticleQuery query=new ArticleQuery();
+		Set<String>includeFields=new HashSet<>();
+		includeFields.add("createUserName");
+		List<Article> list=dao.getList(query, includeFields);
+		System.out.println(DumpUtil.dump(list));
 	}
 	
 	/**
@@ -378,17 +383,6 @@ public class QueryTestCase extends BaseTestCase{
 		System.out.println(DumpUtil.dump(list));
 	}
 	//
-	public void testSum() {
-		Long sum=dao.sum(User.class,Long.class, "articleNum", QueryWhere.create());
-		System.out.println("sum:"+sum);
-	}
-	
-	public void testSumByQuery() {
-		UserQuery query=new UserQuery();
-		query.setUserName("liu");
-		Long sum=dao.sum(query,Long.class, "articleNum");
-		System.out.println("sum:"+sum);
-	}
 	//
 	public void testQueryUserList() {
 		UserQuery query=new UserQuery();
@@ -435,6 +429,50 @@ public class QueryTestCase extends BaseTestCase{
 		c.value=true;
 		List<User> list=dao.getList(User.class, QueryWhere.create().where(c));
 		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testQueryIsJsonKeyNull() {
+		UserQuery query=new UserQuery();
+		query.settingIsNull=true;
+		List<User> list=dao.getList(query);
+		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testSum() {
+		Aggregation aggregation=new Aggregation();
+		aggregation.func="sum";
+		aggregation.expr="article_num";
+		SqlBean sqlBean=SelectProviderFactory.create(dao.getSmartDataSource()).
+				entityClass(User.class).
+				aggregationList(Arrays.asList(aggregation)).
+				needOrderBy(false).
+				ingoreSelectFileds().build();
+		Long sum=dao.queryForLong(sqlBean.sql, sqlBean.parameters);
+		System.out.println("sum:"+sum);
+	}
+	
+	public void testGroupBy() {
+		UserQuery query=new UserQuery();
+		SelectProvider selectProvider=SelectProviderFactory.create(dao.getSmartDataSource());
+		selectProvider.entityClass(User.class);
+		selectProvider.query(query);
+		selectProvider.groupBy("a", "age");
+		List<User> list=dao.getList(selectProvider);
+		System.out.println(DumpUtil.dump(list));
+	}
+	
+	public void testSumAndGroupBy() {
+		Aggregation aggregation=new Aggregation();
+		aggregation.func="sum";
+		aggregation.expr="article_num";
+		SqlBean sqlBean=SelectProviderFactory.create(dao.getSmartDataSource()).
+				entityClass(User.class).
+				aggregationList(Arrays.asList(aggregation)).
+				groupBy("a", "age").
+				needOrderBy(false).
+				ingoreSelectFileds().build();
+		Long sum=dao.queryForLong(sqlBean.sql, sqlBean.parameters);
+		System.out.println("sum:"+sum);
 	}
 	
 	public void testWhere() {

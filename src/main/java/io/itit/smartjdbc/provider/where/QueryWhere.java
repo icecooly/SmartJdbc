@@ -1,10 +1,11 @@
 package io.itit.smartjdbc.provider.where;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import io.itit.smartjdbc.SmartDataSource;
@@ -16,6 +17,7 @@ import io.itit.smartjdbc.provider.where.Where.JsonContain;
 import io.itit.smartjdbc.provider.where.operator.Operator;
 import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
 import io.itit.smartjdbc.provider.where.operator.OperatorContext;
+import io.itit.smartjdbc.provider.where.operator.WhereSqlOperator;
 
 /**
  * 
@@ -83,7 +85,12 @@ public class QueryWhere {
 		return this;
 	}
 	//
-	public QueryWhere whereSql(String sql,Object ...values){
+	public QueryWhere whereSql(String sql){
+		where.whereSql(sql, new HashMap<>());
+		return this;
+	}
+	//
+	public QueryWhere whereSql(String sql,Map<String,Object> values){
 		where.whereSql(sql, values);
 		return this;
 	}
@@ -192,11 +199,8 @@ public class QueryWhere {
 					Operator operator=OperatorBuilder.build(ctx);
 					sql.append(operator.build());
 				}else if(c.whereSql!=null){
-					sql.append(" "+ c.whereSql+" ");
-					Object[] values=(Object[])c.value;
-					if(values!=null&&values.length>0) {
-						valueList.addAll(Arrays.asList(values));
-					}
+					WhereSqlOperator whereSqlOperator=new WhereSqlOperator(ctx, c);
+					sql.append(whereSqlOperator.build());
 				}
 				index++;
 			}//for

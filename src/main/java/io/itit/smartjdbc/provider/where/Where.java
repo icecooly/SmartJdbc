@@ -3,6 +3,7 @@ package io.itit.smartjdbc.provider.where;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
@@ -80,7 +81,7 @@ public class Where {
 		return this;
 	}
 	//
-	public Where whereSql(String whereSql, Object... values) {
+	public Where whereSql(String whereSql, Map<String,Object> values) {
 		Condition w = new Condition();
 		w.whereSql=whereSql;
 		w.value=values;

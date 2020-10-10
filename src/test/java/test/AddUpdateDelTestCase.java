@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 
-import io.itit.smartjdbc.SqlParam;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import test.dao.BizDAO;
 import test.domain.entity.Article;
@@ -55,6 +54,8 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 		user.setHeight(null);
 		user.setAge(18);
 		dao.update(user);
+		//
+		dao.executeUpdate("update t_user set name='王五' where id=?",1);
 	}
 	
 	public void testUpdateId() {
@@ -88,15 +89,6 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 		User user=dao.getById(User.class, 2);
 		user.setRoleIdList(Arrays.asList(3,4,5));
 		dao.update(user, "roleIdList");
-	}
-	
-	/**
-	 * 
-	 */
-	public void testUpdateUser2() {
-		dao.executeUpdate("update t_user set name='王五' where id=?",2);
-		dao.executeUpdate("update t_user set name='王五' where id=#{id}",
-				new SqlParam("id", 2));
 	}
 	
 	//

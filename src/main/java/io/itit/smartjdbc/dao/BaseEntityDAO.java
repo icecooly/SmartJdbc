@@ -120,7 +120,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	 * @param excludeFields
 	 * @throws Exception
 	 */
-	protected void convertBean(Object o,String preAliasField,ResultSet rs, String... excludeFields)
+	protected void convertBean(Object o,String preAliasField, ResultSet rs, String... excludeFields)
 			throws Exception {
 		Set<String> excludesNames = new TreeSet<String>();
 		for (String e : excludeFields) {
@@ -136,18 +136,12 @@ public abstract class BaseEntityDAO extends BaseDAO{
 		}
 		List<Field> fields=getEntityFields(type);
 		for (Field f : fields) {
-			String fieldName = convertFieldName(f.getName());
-			if(preAliasField!=null) {
-				fieldName=preAliasField+fieldName;
-			}
-		}
-		for (Field f : fields) {
 			if (excludesNames.contains(f.getName())) {
 				continue;
 			}
 			String fieldName = convertFieldName(f.getName());
 			if(preAliasField!=null) {
-				fieldName=preAliasField+fieldName;
+				fieldName=convertFieldName(preAliasField)+fieldName;
 			}
 			Class<?> fieldType = f.getType();
 			if(!columnNames.contains(fieldName)) {
@@ -231,7 +225,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 						if ( genericType instanceof Class) { //only support Class
 							Class<?> subClass=((Class<?>)f.getGenericType());
 							value=subClass.newInstance();
-							String subPreAliasField=f.getName()+"_";
+							String subPreAliasField=f.getName()+"$";
 							convertBean(value, subPreAliasField, rs, excludeFields);
 						}
 					}

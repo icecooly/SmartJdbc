@@ -75,4 +75,6 @@ public class User extends BaseEntity{
 	private Long no;
 	
 	private Boolean isStudent;
+	
+	private String setting;
 }

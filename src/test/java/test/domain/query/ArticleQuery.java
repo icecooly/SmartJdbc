@@ -34,6 +34,9 @@ public class ArticleQuery extends Query<Article>{
 	@QueryField(field="name")
 	private String createUserName;
 
+	@QueryField(field="mobileNo",foreignKeyFields = "createUserId")
+	private String createUserMobileNo;
+
 	@InnerJoin(table2=User.class,table1Fields= {"updateUserId"},table2Fields= {"id"})
 	@QueryField(field="name")
 	private String updateUserName;

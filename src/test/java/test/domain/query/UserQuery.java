@@ -80,4 +80,7 @@ public class UserQuery extends Query<User>{
 	
 	@QueryField
 	private Long no;
+	
+	@QueryField(whereSql = "a.setting is null")
+	public Boolean settingIsNull;
 }

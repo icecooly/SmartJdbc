@@ -41,6 +41,9 @@ public class Article extends BaseEntity{
 	@EntityField(foreignKeyFields="createUserId",field="name",persistent = false)
 	private String createUserName;
 	
+	@EntityField(foreignKeyFields="createUserId",field="mobileNo",persistent = false)
+	private String createUserMobileNo;
+	
 	/**创建人所在部门名称*/
 	@EntityField(foreignKeyFields="createUserId,departmentId",field="name",persistent = false)
 	private String createUserDepartmentName;

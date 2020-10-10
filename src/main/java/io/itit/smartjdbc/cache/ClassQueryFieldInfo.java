@@ -12,7 +12,7 @@ import io.itit.smartjdbc.annotations.QueryField;
  * @author skydu
  *
  */
-public class QueryFieldInfo {
+public class ClassQueryFieldInfo extends QueryFieldInfo{
 
 	public Field field;
 	
@@ -27,7 +27,5 @@ public class QueryFieldInfo {
 	public QueryField queryField;
 	
 	public List<InnerJoin> innerJoinsList;
-	
-	public String tableAlias;
 	
 }

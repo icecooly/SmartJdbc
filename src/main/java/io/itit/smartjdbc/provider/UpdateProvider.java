@@ -117,18 +117,23 @@ public class UpdateProvider extends SqlProvider{
 		}
 		sql.deleteCharAt(sql.length()-1);
 		//
-		if(queryWhere==null) {//默认where主键
-			queryWhere=QueryWhere.create();
-			List<Field> primaryKey=getPrimaryKey(object.getClass());
-			for (Field field : primaryKey) {
-				queryWhere.where(convertFieldName(field.getName()),getEntityFieldValue(object, field.getName()));
+		try {
+			if(queryWhere==null) {//默认where主键
+				queryWhere=QueryWhere.create();
+				List<Field> primaryKey=getPrimaryKey(object.getClass());
+				for (Field field : primaryKey) {
+					queryWhere.where(convertFieldName(field.getName()),field.get(object));
+				}
 			}
+			WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
+			sql.append(ws.sql);
+			for(Object o:ws.values){
+				fieldList.add(o);
+			}
+			return SqlBean.build(sql.toString(), fieldList.toArray(new Object[fieldList.size()]));
+		} catch (Exception e) {
+			throw new SmartJdbcException(e);
 		}
-		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
-		sql.append(ws.sql);
-		for(Object o:ws.values){
-			fieldList.add(o);
-		}
-		return SqlBean.build(sql.toString(), fieldList.toArray(new Object[fieldList.size()]));
+		
 	}
 }

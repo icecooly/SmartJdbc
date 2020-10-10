@@ -493,7 +493,11 @@ public class SmartDAO extends BaseEntityDAO{
 			String sql,
 			Object... parameters) {
 		SqlBean sqlBean=SqlBean.build(sql, parameters);
-		return queryForInteger(sqlBean.sql, sqlBean.parameters);
+		Integer count=queryForInteger(sqlBean.sql, sqlBean.parameters);
+		if(count==null) {
+			count=0;
+		}
+		return count;
 	}
 	/**
 	 * 
@@ -527,69 +531,5 @@ public class SmartDAO extends BaseEntityDAO{
 			Object... parameters) {
 		SqlBean sqlBean=SqlBean.build(sql, parameters);
 		return queryForObject(sqlBean.sql, rowHandler, sqlBean.parameters);
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public <S extends Number>S sum(Query<?> query,Class<S> clazz,String field){
-		Class<?> entityClass=getEntityClass(query);
-		SqlBean sqlBean=selectProvider().
-				entityClass(entityClass).
-				query(query).
-				sum(field).
-				ingoreSelectFileds().needOrderBy(false).build();
-		String sql=sqlBean.sql;
-		Object[] parameters=sqlBean.parameters;
-		if(clazz==long.class||clazz==Long.class){
-			return (S) queryForLong(sql,parameters);
-		}
-		if(clazz==int.class||clazz==Integer.class){
-			return (S) queryForInteger(sql,parameters);
-		}
-		if(clazz==short.class||clazz==Short.class){
-			return (S) queryForShort(sql,parameters);
-		}
-		if(clazz==double.class||clazz==Double.class){
-			return (S) queryForDouble(sql,parameters);
-		}
-		if(clazz==float.class||clazz==Float.class){
-			return (S) queryForFloat(sql,parameters);
-		}
-		throw new IllegalArgumentException(clazz.getSimpleName()+" not supported");
-	}
-	/**
-	 * 
-	 * @param entityClass
-	 * @param clazz
-	 * @param field
-	 * @param qt
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public <S extends Number>S sum(Class<?> entityClass,Class<S> clazz,String field,QueryWhere qt){
-		SqlBean sqlBean=selectProvider().
-				entityClass(entityClass).
-				sum(field).
-				query(qt).
-				needOrderBy(false).
-				ingoreSelectFileds().build();
-		String sql=sqlBean.sql;
-		Object[] parameters=sqlBean.parameters;
-		if(clazz==long.class||clazz==Long.class){
-			return (S) queryForLong(sql,parameters);
-		}
-		if(clazz==int.class||clazz==Integer.class){
-			return (S) queryForInteger(sql,parameters);
-		}
-		if(clazz==short.class||clazz==Short.class){
-			return (S) queryForShort(sql,parameters);
-		}
-		if(clazz==Double.class||clazz==Double.class){
-			return (S) queryForDouble(sql,parameters);
-		}
-		if(clazz==Float.class||clazz==Float.class){
-			return (S) queryForFloat(sql,parameters);
-		}
-		throw new IllegalArgumentException(clazz.getSimpleName()+" not supported");
 	}
 }
