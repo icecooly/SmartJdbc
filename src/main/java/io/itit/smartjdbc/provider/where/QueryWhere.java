@@ -36,6 +36,7 @@ public class QueryWhere {
 	protected int limitStart=0;
 	protected int limitEnd=-1;
 	protected boolean forUpdate;
+	protected String of;
 	//
 	protected QueryWhere(ConditionType conditionType) {
 		this.where=new Where(conditionType);
@@ -147,9 +148,6 @@ public class QueryWhere {
 		sql.append("\nwhere 1=1 ");
 		appendWhereSql(smartDataSource, sql, values, where);
 		sql.append(" ");
-		if(forUpdate) {
-			sql.append(" for update ");
-		}
 		statment.sql=sql.toString();
 		statment.values=values.toArray();
 		return statment;
@@ -261,6 +259,18 @@ public class QueryWhere {
 	 */
 	public void setForUpdate(boolean forUpdate) {
 		this.forUpdate = forUpdate;
+	}
+	/**
+	 * @return the of
+	 */
+	public String getOf() {
+		return of;
+	}
+	/**
+	 * @param of the of to set
+	 */
+	public void setOf(String of) {
+		this.of = of;
 	}
 	/**
 	 * @param orderBys the orderBys to set

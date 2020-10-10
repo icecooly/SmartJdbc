@@ -49,9 +49,7 @@ public class QueryTestCase extends BaseTestCase{
 	 * 
 	 */
 	public void testGetById() {
-		for(int i=0;i<1;i++) {
-			dao.getById(User.class, 1);
-		}
+		dao.getById(User.class, 1);
 	}
 	
 	public void testQuery() {
@@ -399,7 +397,7 @@ public class QueryTestCase extends BaseTestCase{
 		System.out.println(DumpUtil.dump(list));
 	}
 	//
-	public void testGetArticleWithJoins() {
+	public void testGetArticleWithInnerJoins() {
 		ArticleQuery query=new ArticleQuery();
 		query.setCreateUserDepartmentName("技术");
 		query.setCreateUserDepartmentName2("技术");
@@ -505,5 +503,9 @@ public class QueryTestCase extends BaseTestCase{
 		w.and(new Where());
 		w.or(new Where());
 		dao.getList(User.class, QueryWhere.create().and(w));
+	}
+	
+	public void testForUpdate() {
+		dao.getEntity(User.class,QueryWhere.create().where("id", 1).forUpdate());
 	}
 }

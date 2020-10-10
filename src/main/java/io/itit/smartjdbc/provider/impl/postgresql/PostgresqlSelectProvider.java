@@ -2,6 +2,7 @@ package io.itit.smartjdbc.provider.impl.postgresql;
 
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.provider.SelectProvider;
+import io.itit.smartjdbc.provider.SqlProvider;
 
 /**
  * 
@@ -29,5 +30,20 @@ public class PostgresqlSelectProvider extends SelectProvider{
 			sql.append("\nlimit ").append(qw.getLimitEnd()).append(" offset ").append(qw.getLimitStart()).append(" ");
 		}
 		return sql.toString();
+	}
+	
+	@Override
+	protected String getForUpdateSql() {
+		if(!qw.isForUpdate()) {
+			return "";
+		}
+		String sql=super.getForUpdateSql();
+		
+		if(qw.getOf()==null) {
+			sql+="\nof "+SqlProvider.MAIN_TABLE_ALIAS;
+		}else {
+			sql+="\nof "+qw.getOf();
+		}
+		return sql;
 	}
 }

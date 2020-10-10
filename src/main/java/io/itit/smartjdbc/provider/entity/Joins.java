@@ -45,7 +45,7 @@ public class Joins {
 
 	}
 	//
-	public synchronized Join addJoin(Class<?> table1, Class<?> table2, String table1Alias, String table2Alias, 
+	public Join addJoin(Class<?> table1, Class<?> table2, String table1Alias, String table2Alias, 
 			String[] table1Fields,
 			String[] table2Fields) {
 		Join join=getSameJoin(table1, table2, table1Alias, table1Fields, table2Fields);

@@ -229,7 +229,9 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @param excludeFields
 	 * @return
 	 */
-	public <T> T getEntity(Class<T> entityClass,QueryWhere qw,Set<String> includeFields,String ... excludeFields){
+	public <T> T getEntity(Class<T> entityClass,QueryWhere qw,
+			Set<String> includeFields,
+			String ... excludeFields){
 		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(qw).

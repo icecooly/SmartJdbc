@@ -58,7 +58,6 @@ public class SelectProvider extends SqlProvider{
 	protected boolean isSelectCount;
 	protected boolean needPaging;
 	protected boolean needOrderBy;
-	protected boolean isForUpdate;
 	protected List<EntityFieldInfo> selectFields;
 	protected boolean ingoreSelectFileds;
 	protected Set<String> includeFields;
@@ -225,7 +224,12 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	public SelectProvider forUpdate(){
-		this.isForUpdate=true;
+		qw.isForUpdate();
+		return this;
+	}
+	//
+	public SelectProvider of(String of){
+		qw.setOf(of);
 		return this;
 	}
 	//
@@ -332,19 +336,6 @@ public class SelectProvider extends SqlProvider{
 		return true;
 	}
 	//
-	protected String getInnerJoinKey(InnerJoin innerJoin) {
-		StringBuilder key=new StringBuilder();
-		for (String table1Field : innerJoin.table1Fields()) {
-			key.append(table1Field).append("-");
-		}
-		key.append(innerJoin.table2().getName()).append("-");
-		for (String table2Field : innerJoin.table2Fields()) {
-			key.append(table2Field).append("-");
-		}
-		key.deleteCharAt(key.length()-1);
-		return key.toString();
-	}
-	//
 	protected void getInnerJoins(Query<?> query) {
 		if(query==null) {
 			return;
@@ -379,8 +370,7 @@ public class SelectProvider extends SqlProvider{
 				Class<?> table1=entityClass;
 				String table1Alias=MAIN_TABLE_ALIAS;
 				for (InnerJoin j: innerJoinsList) {
-					String key=getInnerJoinKey(j);
-					join=createInnerJoin(key,table1Alias,j.table2Alias(),table1,j.table2(),
+					join=createInnerJoin(table1Alias,j.table2Alias(),table1,j.table2(),
 									j.table1Fields(),j.table2Fields());
 					table1=join.table2;
 					table1Alias=join.table2Alias;
@@ -406,7 +396,7 @@ public class SelectProvider extends SqlProvider{
 					}
 					Class<?> table2=foreignKey.entityClass();
 					String table2Field=foreignKey.field();
-					join=createInnerJoin(null,table1Alias,null,table1, table2,new String[] {id},new String[] {table2Field});
+					join=createInnerJoin(table1Alias,null,table1, table2,new String[] {id},new String[] {table2Field});
 					table1=table2;
 					table1Alias=join.table2Alias;
 				}
@@ -630,7 +620,7 @@ public class SelectProvider extends SqlProvider{
 			EntityField entityField = fieldInfo.entityField;
 			LeftJoin leftJoin=fieldInfo.leftJoin;
 			if(leftJoin!=null) {
-				Join join=createLeftJoin(field.getName(),MAIN_TABLE_ALIAS,
+				Join join=createLeftJoin(MAIN_TABLE_ALIAS,
 						entityClass,leftJoin.table2(),leftJoin.table1Fields(),leftJoin.table2Fields());
 				fieldInfo.tableAlias=join.table2Alias;
 			}else if(entityField!=null&&!StringUtil.isEmpty(entityField.foreignKeyFields())) {
@@ -653,8 +643,7 @@ public class SelectProvider extends SqlProvider{
 									entityClass.getSimpleName()+"."+foreignKeyField.getName());
 					}
 					Class<?> table2=foreignKey.entityClass();
-					String key=id;
-					join=createLeftJoin(key,table1Alias,table1, table2,
+					join=createLeftJoin(table1Alias,table1, table2,
 							new String[] {id},
 							new String[]{getSinglePrimaryKey(table2)});
 					table1=table2;
@@ -674,12 +663,12 @@ public class SelectProvider extends SqlProvider{
 		return list.get(0).getName();
 	}
 	//
-	protected Join createLeftJoin(String key,String table1Alias,Class<?> table1,Class<?> table2,
+	protected Join createLeftJoin(String table1Alias,Class<?> table1,Class<?> table2,
 			String[] table1Fields, String[] table2Fields) {
 		return leftJoins.addJoin(table1, table2, table1Alias, null, table1Fields, table2Fields);
 	}
 	//
-	protected Join createInnerJoin(String key,String table1Alias,String table2Alias,
+	protected Join createInnerJoin(String table1Alias,String table2Alias,
 			Class<?> table1,Class<?> table2,String[] table1Fields,String[] table2Fields) {
 		return innerJoins.addJoin(table1, table2, table1Alias, table2Alias, table1Fields, table2Fields);
 	}
@@ -827,12 +816,12 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected String getForUpdateSql() {
-		if(isForUpdate) {
+		if(qw.isForUpdate()) {
 			return "\nfor update ";
 		}
 		return "";
 	}
-	
+	//
 	public Class<?> getEntityClass() {
 		return entityClass;
 	}
