@@ -49,7 +49,9 @@ public class QueryTestCase extends BaseTestCase{
 	 * 
 	 */
 	public void testGetById() {
-		dao.getById(User.class, 1);
+		for(int i=0;i<100;i++) {
+			dao.getById(User.class, 1);
+		}
 	}
 	
 	public void testQuery() {
@@ -443,8 +445,7 @@ public class QueryTestCase extends BaseTestCase{
 		SqlBean sqlBean=SelectProviderFactory.create(dao.getSmartDataSource()).
 				entityClass(User.class).
 				aggregationList(Arrays.asList(aggregation)).
-				needOrderBy(false).
-				ingoreSelectFileds().build();
+				needOrderBy(false).build();
 		Long sum=dao.queryForLong(sqlBean.sql, sqlBean.parameters);
 		System.out.println("sum:"+sum);
 	}
@@ -467,8 +468,7 @@ public class QueryTestCase extends BaseTestCase{
 				entityClass(User.class).
 				aggregationList(Arrays.asList(aggregation)).
 				groupBy("a", "age").
-				needOrderBy(false).
-				ingoreSelectFileds().build();
+				needOrderBy(false).build();
 		Long sum=dao.queryForLong(sqlBean.sql, sqlBean.parameters);
 		System.out.println("sum:"+sum);
 	}

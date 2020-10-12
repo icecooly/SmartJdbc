@@ -59,7 +59,6 @@ public class SelectProvider extends SqlProvider{
 	protected boolean needPaging;
 	protected boolean needOrderBy;
 	protected List<EntityFieldInfo> selectFields;
-	protected boolean ingoreSelectFileds;
 	protected Set<String> includeFields;
 	protected Set<String> excludeFields;//userName not user_name
 	protected Joins innerJoins;//inner join tableName alias on 
@@ -88,11 +87,6 @@ public class SelectProvider extends SqlProvider{
 	//
 	public SelectProvider selectCount() {
 		this.isSelectCount=true;
-		return this;
-	}
-	//
-	public SelectProvider ingoreSelectFileds() {
-		this.ingoreSelectFileds=true;
 		return this;
 	}
 	//
@@ -690,9 +684,7 @@ public class SelectProvider extends SqlProvider{
 	 */
 	protected SqlBean query() {
 		StringBuilder sql = new StringBuilder();
-		if(!ingoreSelectFileds) {
-			buildSelectFields();
-		}
+		buildSelectFields();
 		sql.append("\nselect ");
 		if(aggregationList.size()==0&&groupBys.size()==0) {
 			addSelectFields(sql);
