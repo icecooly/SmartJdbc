@@ -1,14 +1,18 @@
 package io.itit.smartjdbc.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import io.itit.smartjdbc.SmartJdbcException;
+import io.itit.smartjdbc.annotations.EntityField;
+import io.itit.smartjdbc.annotations.PrimaryKey;
 
 /**
  * 
@@ -115,5 +119,72 @@ public class ClassUtils {
 			}
 		}
 		throw new SmartJdbcException("no such field "+fieldName+"/"+clazz.getSimpleName());
+	}
+	//
+	public static String getSinglePrimaryKey(Class<?> clazz) {
+		List<Field> list=getPrimaryKey(clazz);
+		if(list.size()>1||list.size()==0) {
+			throw new SmartJdbcException(clazz.getName()+" primaryKey column can only be one.");
+		}
+		return list.get(0).getName();
+	}
+	//
+	/**
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static List<Field> getPrimaryKey(Class<?> clazz){
+		List<Field> primaryKey=new ArrayList<>();
+		List<Field> fields=getPersistentFields(clazz);
+		Field idField=null;
+		for (Field field : fields) {
+			if(field.getAnnotation(PrimaryKey.class)!=null) {
+				primaryKey.add(field);
+			}
+			if(field.getName().equals("id")) {
+				idField=field;
+			}
+		}
+		if(primaryKey.size()==0&&idField==null) {
+			throw new SmartJdbcException("PrimaryKey not found in "+clazz.getName());
+		}
+		if(primaryKey.size()==0) {
+			return Arrays.asList(idField);
+		}
+		return primaryKey;
+	}
+	//
+	/**
+	 * 
+	 * @param entityClass
+	 * @return
+	 */
+	public static List<Field> getPersistentFields(Class<?> entityClass){
+		List<Field> fields=new ArrayList<>();
+		List<Field> fieldList=ClassUtils.getFieldList(entityClass);
+		for (Field field : fieldList) {
+			if(isPersistentField(field)) {
+				fields.add(field);
+			}
+		}
+		return fields;
+	}
+	
+
+	/**
+	 * 
+	 * @param field
+	 * @return
+	 */
+	public static boolean isPersistentField(Field field) {
+		if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
+			return false;
+		}
+		EntityField entityField=field.getAnnotation(EntityField.class);
+		if(entityField!=null) {
+			return entityField.persistent();
+		}
+		return true;
 	}
 }

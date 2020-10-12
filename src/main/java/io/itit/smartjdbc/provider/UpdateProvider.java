@@ -81,7 +81,7 @@ public class UpdateProvider extends SqlProvider{
 			if (excludesNames.contains(f.getName())) {
 				continue;
 			}
-			if(!isPersistentField(f)) {
+			if(!ClassUtils.isPersistentField(f)) {
 				continue;
 			}
 			EntityField entityField=f.getAnnotation(EntityField.class);
@@ -120,7 +120,7 @@ public class UpdateProvider extends SqlProvider{
 		try {
 			if(queryWhere==null) {//默认where主键
 				queryWhere=QueryWhere.create();
-				List<Field> primaryKey=getPrimaryKey(object.getClass());
+				List<Field> primaryKey=ClassUtils.getPrimaryKey(object.getClass());
 				for (Field field : primaryKey) {
 					queryWhere.where(convertFieldName(field.getName()),field.get(object));
 				}

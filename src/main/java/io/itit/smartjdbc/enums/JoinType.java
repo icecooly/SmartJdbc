@@ -7,7 +7,7 @@ package io.itit.smartjdbc.enums;
  *
  */
 public enum JoinType {
-	INNER,
-	LEFT,
-	RIGHT,
+	INNER_JOIN,
+	LEFT_JOIN,
+	RIGHT_JOIN,
 }

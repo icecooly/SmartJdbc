@@ -83,4 +83,10 @@ public class UserQuery extends Query<User>{
 	
 	@QueryField(whereSql = "a.setting is null")
 	public Boolean settingIsNull;
+	
+	@QueryField(operator = SqlOperator.ARRAY_ANY)
+	public List<Integer> intArray;
+	
+	@QueryField(operator = SqlOperator.ARRAY_ANY)
+	public List<String> stringArray;
 }

@@ -77,4 +77,8 @@ public class User extends BaseEntity{
 	private Boolean isStudent;
 	
 	private String setting;
+	
+	private String intArray;
+
+	private String stringArray;
 }

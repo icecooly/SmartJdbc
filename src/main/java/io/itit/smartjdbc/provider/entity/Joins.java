@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.itit.smartjdbc.enums.JoinType;
 import io.itit.smartjdbc.util.StringUtil;
 
 /**
@@ -45,14 +46,14 @@ public class Joins {
 
 	}
 	//
-	public Join addJoin(Class<?> table1, Class<?> table2, String table1Alias, String table2Alias, 
+	public Join addJoin(JoinType joinType,Class<?> table1, Class<?> table2, String table1Alias, String table2Alias, 
 			String[] table1Fields,
 			String[] table2Fields) {
 		Join join=getSameJoin(table1, table2, table1Alias, table1Fields, table2Fields);
 		if(join!=null) {
 			return join;
 		}
-		join = new Join();
+		join = new Join(joinType);
 		join.table1 = table1;
 		join.table2 = table2;
 		join.table1Fields = table1Fields;
@@ -65,5 +66,15 @@ public class Joins {
 		}
 		joinList.add(join);
 		return join;
+	}
+	//
+	public String info() {
+		StringBuilder info=new StringBuilder();
+		info.append("\nJoins[");
+		for (Join join : joinList) {
+			info.append(join.info());
+		}
+		info.append("]");
+		return info.toString();
 	}
 }

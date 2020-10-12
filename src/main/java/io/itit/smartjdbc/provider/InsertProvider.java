@@ -10,6 +10,7 @@ import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.provider.entity.SqlBean;
+import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.JSONUtil;
 
 /**
@@ -50,13 +51,13 @@ public abstract class InsertProvider extends SqlProvider{
 			excludesNames.add(e);
 		}
 		List<Object>fieldList=new ArrayList<Object>();
-		List<Field> list=getPersistentFields(type);
+		List<Field> list=ClassUtils.getPersistentFields(type);
 		StringBuilder values=new StringBuilder();
 		for (Field f : list) {
 			if (excludesNames.contains(f.getName())) {
 				continue;
 			}
-			if(!isPersistentField(f)) {
+			if(!ClassUtils.isPersistentField(f)) {
 				continue;
 			}
 			EntityField entityField=f.getAnnotation(EntityField.class);

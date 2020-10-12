@@ -22,7 +22,6 @@ import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
 import io.itit.smartjdbc.annotations.InnerJoins;
-import io.itit.smartjdbc.annotations.LeftJoin;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.cache.Caches;
 import io.itit.smartjdbc.cache.EntityFieldInfo;
@@ -31,6 +30,7 @@ import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.AggregationFunction;
 import io.itit.smartjdbc.enums.ConditionType;
+import io.itit.smartjdbc.enums.JoinType;
 import io.itit.smartjdbc.enums.OrderByType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.entity.Aggregation;
@@ -53,6 +53,7 @@ public class SelectProvider extends SqlProvider{
 	//
 	private static Logger logger=LoggerFactory.getLogger(SelectProvider.class);
 	//
+	protected EntityInfo entity;
 	protected Class<?> entityClass;
 	protected Query<?> query;
 	protected boolean isSelectCount;
@@ -62,7 +63,6 @@ public class SelectProvider extends SqlProvider{
 	protected Set<String> includeFields;
 	protected Set<String> excludeFields;//userName not user_name
 	protected Joins innerJoins;//inner join tableName alias on 
-	protected Joins leftJoins;//left join tableName alias on 
 	protected QueryWhere qw;
 	protected List<EntityFieldInfo> groupBys;
 	protected List<Aggregation> aggregationList;
@@ -75,7 +75,6 @@ public class SelectProvider extends SqlProvider{
 		this.qw=QueryWhere.create();
 		this.groupBys=new ArrayList<>();
 		this.aggregationList=new ArrayList<>();
-		this.leftJoins=new Joins("l");
 		this.innerJoins=new Joins("i");
 		this.needOrderBy=true;
 	}
@@ -559,9 +558,8 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected void buildSelectFields(){
-		EntityInfo info=Caches.getEntityInfo(entityClass);
-		addLeftJoins(info);
-		for (EntityFieldInfo fieldInfo : info.fieldList) {
+		entity=Caches.getEntityInfo(entityClass);
+		for (EntityFieldInfo fieldInfo : entity.fieldList) {
 			Field field=fieldInfo.field;
 			if (Modifier.isStatic(field.getModifiers())|| Modifier.isFinal(field.getModifiers())) {
 				continue;
@@ -579,24 +577,14 @@ public class SelectProvider extends SqlProvider{
 			if(fieldInfo.tableAlias==null) {
 				fieldInfo.tableAlias=SqlProvider.MAIN_TABLE_ALIAS;//默认主表
 			}
-			fieldInfo.name=field.getName();
 			if(entityField==null) {
 				selectFields.add(fieldInfo);
-				continue;
-			}
-			fieldInfo.distinct=entityField.distinct();
-			fieldInfo.statFunction=entityField.statFunc();
-			if(!StringUtil.isEmpty(entityField.field())&&!entityField.field().equals(field.getName())) {
-				fieldInfo.name=entityField.field();
-				fieldInfo.asName=field.getName();
-			}
-			//
-			if(WRAP_TYPES.contains(field.getType())){//基本字段类型
+			}else if(WRAP_TYPES.contains(field.getType())){//基本字段类型
 				selectFields.add(fieldInfo);
 			}else if(field.getGenericType() instanceof ParameterizedType){//List Set Map
 				selectFields.add(fieldInfo);
 			}else {//查询对象字段列表
-				List<Field> subClassFields=getPersistentFields((Class<?>)field.getGenericType());
+				List<Field> subClassFields=ClassUtils.getPersistentFields((Class<?>)field.getGenericType());
 				for (Field subClassField : subClassFields) {
 					selectFields.add(createSelectField(fieldInfo.tableAlias, subClassField.getName(), 
 							field.getName()+"$"+subClassField.getName(), false, null));
@@ -605,93 +593,10 @@ public class SelectProvider extends SqlProvider{
 		}
 	}
 	//
-	private void addLeftJoins(EntityInfo info) {
-		for (EntityFieldInfo fieldInfo : info.fieldList) {
-			Field field=fieldInfo.field;
-			if (Modifier.isStatic(field.getModifiers())|| Modifier.isFinal(field.getModifiers())) {
-				continue;
-			}
-			EntityField entityField = fieldInfo.entityField;
-			LeftJoin leftJoin=fieldInfo.leftJoin;
-			if(leftJoin!=null) {
-				Join join=createLeftJoin(MAIN_TABLE_ALIAS,
-						entityClass,leftJoin.table2(),leftJoin.table1Fields(),leftJoin.table2Fields());
-				fieldInfo.tableAlias=join.table2Alias;
-			}else if(entityField!=null&&!StringUtil.isEmpty(entityField.foreignKeyFields())) {
-				String foreignKeyId = entityField.foreignKeyFields();
-				String[] foreignKeyIds=foreignKeyId.split(",");
-				Class<?> table1=entityClass;
-				String table1Alias=MAIN_TABLE_ALIAS;
-				Join join=null;
-				for (String id : foreignKeyIds) {
-					Field foreignKeyField=null;
-					try {
-						foreignKeyField=ClassUtils.getExistedField(table1,id);
-					} catch (Exception e) {
-						logger.error(e.getMessage(),e);
-						throw new IllegalArgumentException(e.getMessage()+"/"+table1.getSimpleName());
-					}
-					ForeignKey foreignKey=foreignKeyField.getAnnotation(ForeignKey.class);
-					if(foreignKey==null) {
-						throw new IllegalArgumentException("@ForeignKey not found in "+
-									entityClass.getSimpleName()+"."+foreignKeyField.getName());
-					}
-					Class<?> table2=foreignKey.entityClass();
-					join=createLeftJoin(table1Alias,table1, table2,
-							new String[] {id},
-							new String[]{getSinglePrimaryKey(table2)});
-					table1=table2;
-					table1Alias=join.table2Alias;
-				}
-				fieldInfo.tableAlias=join.table2Alias;
-			}
-		}
-		
-	}
-	//
-	protected String getSinglePrimaryKey(Class<?> clazz) {
-		List<Field> list=getPrimaryKey(clazz);
-		if(list.size()>1||list.size()==0) {
-			throw new SmartJdbcException(clazz.getName()+" primaryKey column can only be one.");
-		}
-		return list.get(0).getName();
-	}
-	//
-	protected Join createLeftJoin(String table1Alias,Class<?> table1,Class<?> table2,
-			String[] table1Fields, String[] table2Fields) {
-		return leftJoins.addJoin(table1, table2, table1Alias, null, table1Fields, table2Fields);
-	}
-	//
 	protected Join createInnerJoin(String table1Alias,String table2Alias,
 			Class<?> table1,Class<?> table2,String[] table1Fields,String[] table2Fields) {
-		return innerJoins.addJoin(table1, table2, table1Alias, table2Alias, table1Fields, table2Fields);
-	}
-	//
-	/**
-	 * 
-	 * @return
-	 */
-	protected SqlBean queryCount() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("\nselect count(1) ");
-		this.needPaging=false;
-		return build(sql);
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	protected SqlBean query() {
-		StringBuilder sql = new StringBuilder();
-		buildSelectFields();
-		sql.append("\nselect ");
-		if(aggregationList.size()==0&&groupBys.size()==0) {
-			addSelectFields(sql);
-		}else {
-			addAggregation(sql);
-		}
-		return build(sql);
+		return innerJoins.addJoin(JoinType.INNER_JOIN, table1, table2,
+				table1Alias, table2Alias, table1Fields, table2Fields);
 	}
 	//
 	protected void addSelectFields(StringBuilder sql) {
@@ -731,9 +636,11 @@ public class SelectProvider extends SqlProvider{
 			addJoin(sql, join);
 		}
 		//left join
-		for (Join join : leftJoins.joinList) {
-			sql.append("\nleft join  ");
-			addJoin(sql, join);
+		if(entity!=null) {
+			for (Join join : entity.leftJoins.joinList) {
+				sql.append("\nleft join  ");
+				addJoin(sql, join);
+			}
 		}
 		return sql.toString();
 	}
@@ -841,12 +748,40 @@ public class SelectProvider extends SqlProvider{
 		bean.parameters=ws.values;
 		return bean;
 	}
+	//
+	/**
+	 * 
+	 * @return
+	 */
+	protected SqlBean queryCount() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("\nselect count(1) ");
+		this.needPaging=false;
+		return build(sql);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected SqlBean query() {
+		StringBuilder sql = new StringBuilder();
+		buildSelectFields();
+		sql.append("\nselect ");
+		if(aggregationList.size()==0&&groupBys.size()==0) {
+			addSelectFields(sql);
+		}else {
+			addAggregation(sql);
+		}
+		return build(sql);
+	}
 		
 	@Override
 	public SqlBean build() {
 		if(isSelectCount) {
 			return queryCount();
+		}else {
+			return query();
 		}
-		return query();
 	}
 }

@@ -1,25 +1,13 @@
 package io.itit.smartjdbc.provider;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.itit.smartjdbc.SmartDataSource;
-import io.itit.smartjdbc.SmartJdbcException;
-import io.itit.smartjdbc.annotations.EntityField;
-import io.itit.smartjdbc.annotations.PrimaryKey;
 import io.itit.smartjdbc.provider.entity.SqlBean;
-import io.itit.smartjdbc.util.ClassUtils;
 
 /**
  * 
@@ -27,8 +15,6 @@ import io.itit.smartjdbc.util.ClassUtils;
  *
  */
 public abstract class SqlProvider {
-	//
-	private static Logger logger=LoggerFactory.getLogger(SqlProvider.class);
 	//
 	public static final String MAIN_TABLE_ALIAS="a";
 	//
@@ -76,62 +62,6 @@ public abstract class SqlProvider {
 		return smartDataSource.convertFieldName(name);
 	}
 	
-	/**
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public List<Field> getPrimaryKey(Class<?> clazz){
-		List<Field> primaryKey=new ArrayList<>();
-		List<Field> fields=getPersistentFields(clazz);
-		Field idField=null;
-		for (Field field : fields) {
-			if(field.getAnnotation(PrimaryKey.class)!=null) {
-				primaryKey.add(field);
-			}
-			if(field.getName().equals("id")) {
-				idField=field;
-			}
-		}
-		if(primaryKey.size()==0&&idField==null) {
-			throw new SmartJdbcException("PrimaryKey not found in "+clazz.getName());
-		}
-		if(primaryKey.size()==0) {
-			return Arrays.asList(idField);
-		}
-		return primaryKey;
-	}
-	
-	/**
-	 * 
-	 * @param field
-	 * @return
-	 */
-	public boolean isPersistentField(Field field) {
-		if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
-			return false;
-		}
-		EntityField entityField=field.getAnnotation(EntityField.class);
-		if(entityField!=null) {
-			return entityField.persistent();
-		}
-		return true;
-	}
-	/**
-	 * 
-	 * @param entityClass
-	 * @return
-	 */
-	public List<Field> getPersistentFields(Class<?> entityClass){
-		List<Field> fields=new ArrayList<>();
-		List<Field> fieldList=ClassUtils.getFieldList(entityClass);
-		for (Field field : fieldList) {
-			if(isPersistentField(field)) {
-				fields.add(field);
-			}
-		}
-		return fields;
-	}
 	
 	/**
 	 * 

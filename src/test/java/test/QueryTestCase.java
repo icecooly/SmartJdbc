@@ -49,7 +49,7 @@ public class QueryTestCase extends BaseTestCase{
 	 * 
 	 */
 	public void testGetById() {
-		for(int i=0;i<100;i++) {
+		for(int i=0;i<1;i++) {
 			dao.getById(User.class, 1);
 		}
 	}
@@ -507,5 +507,17 @@ public class QueryTestCase extends BaseTestCase{
 	
 	public void testForUpdate() {
 		dao.getEntity(User.class,QueryWhere.create().where("id", 1).forUpdate());
+	}
+	
+	public void testIntArray() {
+		UserQuery query=new UserQuery();
+		query.setIntArray(Arrays.asList(1,2,3));
+		dao.getList(query);
+	}
+	
+	public void testStringArray() {
+		UserQuery query=new UserQuery();
+		query.setStringArray(Arrays.asList("s1","s2"));
+		dao.getList(query);
 	}
 }
