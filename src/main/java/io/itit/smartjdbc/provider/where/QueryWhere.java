@@ -18,6 +18,7 @@ import io.itit.smartjdbc.provider.where.operator.Operator;
 import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
 import io.itit.smartjdbc.provider.where.operator.OperatorContext;
 import io.itit.smartjdbc.provider.where.operator.WhereSqlOperator;
+import io.itit.smartjdbc.util.StringUtil;
 
 /**
  * 
@@ -134,83 +135,6 @@ public class QueryWhere {
 	public QueryWhere forUpdate() {
 		forUpdate=true;
 		return this;
-	}
-
-	/**
-	 * 
-	 * @param needAliasAll
-	 * @return
-	 */
-	public WhereStatment whereStatement(SmartDataSource smartDataSource){
-		WhereStatment statment=new WhereStatment();
-		List<Object>values=new LinkedList<Object>();
-		StringBuilder sql=new StringBuilder();
-		sql.append("\nwhere 1=1 ");
-		appendWhereSql(smartDataSource, sql, values, where);
-		sql.append(" ");
-		statment.sql=sql.toString();
-		statment.values=values.toArray();
-		return statment;
-	}
-	//
-	protected boolean haveCondition(Where w) {
-		if(w!=null&&w.conditionList!=null&&w.conditionList.size()>0) {
-			return true;
-		}
-		if(w!=null&&w.children!=null) {
-			for (Where child : w.children) {
-				boolean childHaveCondition=haveCondition(child);
-				if(childHaveCondition) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	//
-	protected void appendWhereSql(SmartDataSource smartDataSource, 
-			StringBuilder sql,List<Object> valueList,Where parent) {
-		boolean haveCondition=haveCondition(parent);
-		if(!haveCondition) {
-			return;
-		}
-		sql.append(" and(  ");
-		List<Condition> conditions=parent.conditionList;
-		if(conditions.size()==0) {
-			sql.append(" 1=1  ");
-		}
-		if(conditions.size()>0) {
-			boolean and=parent.conditionType==ConditionType.AND?true:false;
-			int index=0;
-			OperatorContext ctx=new OperatorContext(smartDataSource);
-			ctx.setParameters(valueList);
-			for (Condition c : conditions) {
-				if(index>0) {
-					if(and) {
-						sql.append(" and ");
-					}else {
-						sql.append(" or ");
-					}
-				}
-				if(c.key!=null){
-					ctx.setCondition(c);
-					Operator operator=OperatorBuilder.build(ctx);
-					sql.append(operator.build());
-				}else if(c.whereSql!=null){
-					WhereSqlOperator whereSqlOperator=new WhereSqlOperator(ctx, c);
-					sql.append(whereSqlOperator.build());
-				}
-				index++;
-			}//for
-		}
-		//
-		if(parent.children!=null&&parent.children.size()>0) {
-			for (Where w : parent.children) {
-				appendWhereSql(smartDataSource, sql, valueList, w);
-			}
-		}
-		//
-		sql.append("  )  ");
 	}
 	//
 	/**
@@ -951,4 +875,88 @@ public class QueryWhere {
 		return this.where(alias,key, SqlOperator.IS_NOT_NULL,null);
 	}
 	
+	
+	//
+	/**
+	 * 
+	 * @param needAliasAll
+	 * @return
+	 */
+	public WhereStatment whereStatement(SmartDataSource smartDataSource){
+		WhereStatment statment=new WhereStatment();
+		List<Object>values=new LinkedList<Object>();
+		StringBuilder sql=new StringBuilder();
+		sql.append("\nwhere 1=1 ");
+		appendWhereSql(smartDataSource, sql, values, where);
+		sql.append(" ");
+		statment.sql=sql.toString();
+		statment.values=values.toArray();
+		return statment;
+	}
+	//
+	protected boolean haveCondition(Where w) {
+		if(w!=null&&w.conditionList!=null&&w.conditionList.size()>0) {
+			return true;
+		}
+		if(w!=null&&w.children!=null) {
+			for (Where child : w.children) {
+				boolean childHaveCondition=haveCondition(child);
+				if(childHaveCondition) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	//
+	protected void appendWhereSql(SmartDataSource smartDataSource, 
+			StringBuilder sql,List<Object> valueList,Where parent) {
+		boolean haveCondition=haveCondition(parent);
+		if(!haveCondition) {
+			return;
+		}
+		sql.append(" and(  ");
+		List<Condition> conditions=parent.conditionList;
+		if(conditions.size()==0) {
+			sql.append(" 1=1  ");
+		}
+		if(conditions.size()>0) {
+			boolean and=parent.conditionType==ConditionType.AND?true:false;
+			int index=0;
+			OperatorContext ctx=new OperatorContext(smartDataSource);
+			ctx.setParameters(valueList);
+			for (Condition c : conditions) {
+				if(index>0) {
+					if(and) {
+						sql.append(" and ");
+					}else {
+						sql.append(" or ");
+					}
+				}
+				String operatorSql=null;
+				if(c.key!=null){
+					ctx.setCondition(c);
+					Operator operator=OperatorBuilder.build(ctx);
+					operatorSql=operator.build();
+					
+				}else if(c.whereSql!=null){
+					WhereSqlOperator whereSqlOperator=new WhereSqlOperator(ctx, c);
+					operatorSql=whereSqlOperator.build();
+				}
+				if(StringUtil.isEmpty(operatorSql)) {
+					operatorSql="1=1";
+				}
+				sql.append(operatorSql);
+				index++;
+			}//for
+		}
+		//
+		if(parent.children!=null&&parent.children.size()>0) {
+			for (Where w : parent.children) {
+				appendWhereSql(smartDataSource, sql, valueList, w);
+			}
+		}
+		//
+		sql.append("  )  ");
+	}
 }
