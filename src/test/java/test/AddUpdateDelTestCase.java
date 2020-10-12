@@ -38,7 +38,13 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 		user.setHeight(1.78);
 		user.setCreateTime(new Date());
 		user.setArticleNum(10000L);
-		user.setIsStudent(true);;
+		user.setIsStudent(true);
+		user.setShortArray(new Short[] {1,2});
+		user.setIntArray(new Integer[] {3,4,5});
+		user.setLongArray(new Long[] {300000L,400000L,500000L});
+//		user.setDoubleArray(new Double[] {1.234567,2.456789}); //not support
+		user.setFloatArray(new Float[] {1.234f,2.456f});
+		user.setStringArray(new String[] {"test","你好"});
 		//
 		user.setId(dao.insert(user));
 		System.out.println(user.getId());
@@ -89,6 +95,16 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 		User user=dao.getById(User.class, 2);
 		user.setRoleIdList(Arrays.asList(3,4,5));
 		dao.update(user, "roleIdList");
+	}
+	
+	/**
+	 * 只更新intArray,stringArray字段
+	 */
+	public void testUpdateStringArray() {
+		User user=dao.getById(User.class, 2);
+		user.setStringArray(new String[] {"s9","s8"});
+		user.setIntArray(null);
+		dao.update(user, "intArray", "stringArray");
 	}
 	
 	//

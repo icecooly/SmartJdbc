@@ -6,11 +6,10 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.sql.Array;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import io.itit.smartjdbc.SmartJdbc;
 import io.itit.smartjdbc.SmartJdbcException;
+import io.itit.smartjdbc.Types;
 import io.itit.smartjdbc.provider.DeleteProvider;
 import io.itit.smartjdbc.provider.InsertProvider;
 import io.itit.smartjdbc.provider.SelectProvider;
@@ -64,34 +64,6 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	protected void convertBean(Object o, ResultSet rs, String... excludeFields)
 			throws Exception {
 		convertBean(o, null, rs, excludeFields);
-	}
-	protected static final HashSet<Class<?>> WRAP_TYPES=new HashSet<>();
-	static{
-		WRAP_TYPES.add(Boolean.class);
-		WRAP_TYPES.add(Character.class);
-		WRAP_TYPES.add(Byte.class);
-		WRAP_TYPES.add(Short.class);
-		WRAP_TYPES.add(Integer.class);
-		WRAP_TYPES.add(Long.class);
-		WRAP_TYPES.add(BigDecimal.class);
-		WRAP_TYPES.add(BigInteger.class);
-		WRAP_TYPES.add(Double.class);
-		WRAP_TYPES.add(Float.class);
-		WRAP_TYPES.add(String.class);
-		WRAP_TYPES.add(Date.class);
-		WRAP_TYPES.add(Timestamp.class);
-		WRAP_TYPES.add(java.sql.Date.class);
-		WRAP_TYPES.add(Byte[].class);
-		WRAP_TYPES.add(byte[].class);
-		WRAP_TYPES.add(int.class);
-		WRAP_TYPES.add(boolean.class);
-		WRAP_TYPES.add(char.class);
-		WRAP_TYPES.add(byte.class);
-		WRAP_TYPES.add(short.class);
-		WRAP_TYPES.add(int.class);
-		WRAP_TYPES.add(long.class);
-		WRAP_TYPES.add(float.class);
-		WRAP_TYPES.add(double.class);
 	}
 	//
 	protected List<Field> getEntityFields(Class<?> clazz) {
@@ -145,7 +117,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 			}
 			Class<?> fieldType = f.getType();
 			if(!columnNames.contains(fieldName)) {
-				if(WRAP_TYPES.contains(fieldType)){
+				if(Types.WRAP_TYPES.contains(fieldType)){
 					continue;
 				}
 			}
@@ -181,12 +153,17 @@ public abstract class BaseEntityDAO extends BaseDAO{
 					value = rs.getObject(fieldName)==null?null:rs.getBoolean(fieldName);
 				} else if (fieldType.equals(BigDecimal.class)) {
 					value = rs.getBigDecimal(fieldName);
-				}  else if (fieldType.equals(byte[].class)) {
+				} else if (fieldType.equals(byte[].class)) {
 					Blob bb = rs.getBlob(fieldName);
 					if (bb != null) {
 						ByteArrayOutputStream bos = new ByteArrayOutputStream();
 						IOUtil.copy(bb.getBinaryStream(), bos);
 						value = bos.toByteArray();
+					}
+				} else if (Types.ARRAY_TYPES.contains(fieldType)) {
+					Array array=rs.getArray(fieldName);
+					if(array!=null) {
+						value = rs.getArray(fieldName).getArray();
 					}
 				} else {
 					if(columnNames.contains(fieldName)) {

@@ -18,6 +18,7 @@ import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.Query.OrderBy;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
+import io.itit.smartjdbc.Types;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.InnerJoin;
@@ -427,6 +428,9 @@ public class SelectProvider extends SqlProvider{
 			for (QueryFieldInfo info : fields) {
 				Field field=info.field;
 				try {
+					if(!field.isAccessible()) {
+						field.setAccessible(true);
+					}
 					Object value=field.get(obj);
 					paraMap.put(info.fieldName, value);
 				} catch (Exception e) {
@@ -435,6 +439,9 @@ public class SelectProvider extends SqlProvider{
 				}
 			}
 			for (QueryInfo child : queryInfo.children) {
+				if(!child.field.isAccessible()) {
+					child.field.setAccessible(true);
+				}
 				Object childObj=child.field.get(obj);
 				if(childObj==null) {
 					continue;
@@ -452,6 +459,9 @@ public class SelectProvider extends SqlProvider{
 		try {
 			for (QueryFieldInfo info : queryInfo.fieldList) {
 				Field field=info.field;
+				if(!field.isAccessible()) {
+					field.setAccessible(true);
+				}
 				Object value=field.get(obj);
 				if(value==null) {
 					continue;
@@ -483,6 +493,9 @@ public class SelectProvider extends SqlProvider{
 			}
 			//
 			for (QueryInfo child : queryInfo.children) {
+				if(!child.field.isAccessible()) {
+					child.field.setAccessible(true);
+				}
 				Object childObj=child.field.get(obj);
 				if(childObj==null) {
 					continue;
@@ -579,7 +592,7 @@ public class SelectProvider extends SqlProvider{
 			}
 			if(entityField==null) {
 				selectFields.add(fieldInfo);
-			}else if(WRAP_TYPES.contains(field.getType())){//基本字段类型
+			}else if(Types.WRAP_TYPES.contains(field.getType())){//基本字段类型
 				selectFields.add(fieldInfo);
 			}else if(field.getGenericType() instanceof ParameterizedType){//List Set Map
 				selectFields.add(fieldInfo);

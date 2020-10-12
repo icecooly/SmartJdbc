@@ -23,4 +23,5 @@ public enum ColumnType {
     MEDIUMTEXT,
     DATETIME,
     JSONB,
+    ARRAY,
 }

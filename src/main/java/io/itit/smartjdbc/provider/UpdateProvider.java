@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
+import io.itit.smartjdbc.Types;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
@@ -106,7 +107,7 @@ public class UpdateProvider extends SqlProvider{
 					continue;
 				}
 				sql.append(getValueSql(entityField));
-				if(fieldValue!=null&&!WRAP_TYPES.contains(fieldValue.getClass())){
+				if(fieldValue!=null&&!Types.WRAP_TYPES.contains(fieldValue.getClass())){
 					fieldList.add(JSONUtil.toJson(fieldValue));
 				}else{
 					fieldList.add(fieldValue);
@@ -122,6 +123,9 @@ public class UpdateProvider extends SqlProvider{
 				queryWhere=QueryWhere.create();
 				List<Field> primaryKey=ClassUtils.getPrimaryKey(object.getClass());
 				for (Field field : primaryKey) {
+					if(!field.isAccessible()) {
+						field.setAccessible(true);
+					}
 					queryWhere.where(convertFieldName(field.getName()),field.get(object));
 				}
 			}

@@ -78,7 +78,15 @@ public class User extends BaseEntity{
 	
 	private String setting;
 	
-	private String intArray;
+	private Short[] shortArray;
+	
+	private Integer[] intArray;
 
-	private String stringArray;
+	private Long[] longArray;
+	
+//	private Double[] doubleArray;
+
+	private Float[] floatArray;
+
+	private String[] stringArray;
 }

@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbcException;
+import io.itit.smartjdbc.Types;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.util.ClassUtils;
@@ -71,7 +72,7 @@ public abstract class InsertProvider extends SqlProvider{
 				if(fieldValue==null) {
 					continue;
 				}
-				if(!WRAP_TYPES.contains(fieldValue.getClass())){
+				if(!Types.WRAP_TYPES.contains(fieldValue.getClass())){
 					fieldList.add(JSONUtil.toJson(fieldValue));
 				}else{
 					fieldList.add(fieldValue);
