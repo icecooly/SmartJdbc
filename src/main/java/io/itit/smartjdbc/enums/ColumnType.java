@@ -23,5 +23,9 @@ public enum ColumnType {
     MEDIUMTEXT,
     DATETIME,
     JSONB,
-    ARRAY,
+    TEXT_ARRAY,
+    VARCHAR_ARRAY,
+    INT_ARRAY,
+    FLOAT_ARRAY,
+    BOOL
 }

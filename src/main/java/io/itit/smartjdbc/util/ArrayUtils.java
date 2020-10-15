@@ -30,16 +30,20 @@ public class ArrayUtils {
 			return ArrayUtils.convert((byte[])value);
 		}else if(fieldType.equals(long[].class)) {
 			return ArrayUtils.convert((long[])value);
-		}else if(fieldType.equals(String[].class)) {
-			return ArrayUtils.convert((String[])value);
+		}else if(fieldType.equals(float[].class)) {
+			return ArrayUtils.convert((float[])value);
+		}else if(fieldType.equals(double[].class)) {
+			return ArrayUtils.convert((double[])value);
 		}else if(fieldType.equals(Integer[].class)) {
 			return ArrayUtils.convert((Integer[])value);
 		}else if(fieldType.equals(Short[].class)) {
 			return ArrayUtils.convert((Short[])value);
 		}else if(fieldType.equals(Byte[].class)) {
-			return ArrayUtils.convert((Long[])value);
-		}else if(fieldType.equals(Long[].class)) {
 			return ArrayUtils.convert((Byte[])value);
+		}else if(fieldType.equals(Long[].class)) {
+			return ArrayUtils.convert((Long[])value);
+		}else if(fieldType.equals(String[].class)) {
+			return ArrayUtils.convert((String[])value);
 		}else if (value instanceof Collection) {
 			return ((Collection)value).toArray();
 		}

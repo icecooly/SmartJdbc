@@ -97,6 +97,12 @@ public class OperatorBuilder {
 		if(operator.equals(SqlOperator.ARRAY_ANY)) {
 			opt=new ArrayAnyOperator(ctx);
 		}
+		if(operator.equals(SqlOperator.ARRAY_CONTAINS)) {
+			opt=new ArrayContainsOperator(ctx);
+		}
+		if(operator.equals(SqlOperator.ARRAY_NOT_CONTAINS)) {
+			opt=new ArrayNotContainsOperator(ctx);
+		}
 		return opt;
 	}
 	//

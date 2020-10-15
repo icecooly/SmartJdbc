@@ -517,7 +517,27 @@ public class QueryTestCase extends BaseTestCase{
 	
 	public void testStringArray() {
 		UserQuery query=new UserQuery();
-		query.setStringArray(Arrays.asList("s1","s2"));
+		query.setStringArray(Arrays.asList("s1","你好"));
+		dao.getList(query);
+	}
+	
+	public void testArrayContains() {
+		UserQuery query=new UserQuery();
+		query.setStringContains(new String[] {"s1","s2"});
+		dao.getList(query);
+		//
+		query=new UserQuery();
+		query.setStringContains(new String[] {"s1","你好"});
+		dao.getList(query);
+	}
+	
+	public void testArrayNotContains() {
+		UserQuery query=new UserQuery();
+		query.setStringNotContains(new String[] {"s1","s2"});
+		dao.getList(query);
+		//
+		query=new UserQuery();
+		query.setStringNotContains(new String[] {"s1","你好"});
 		dao.getList(query);
 	}
 }

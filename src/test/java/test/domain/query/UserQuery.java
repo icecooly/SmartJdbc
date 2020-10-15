@@ -89,4 +89,10 @@ public class UserQuery extends Query<User>{
 	
 	@QueryField(operator = SqlOperator.ARRAY_ANY)
 	public List<String> stringArray;
+	
+	@QueryField(operator = SqlOperator.ARRAY_CONTAINS,field = "stringArray")
+	public String[] stringContains;
+	
+	@QueryField(operator = SqlOperator.ARRAY_NOT_CONTAINS,field = "stringArray")
+	public String[] stringNotContains;
 }

@@ -519,7 +519,7 @@ public abstract class BaseDAO{
 			}
 			if (Types.ARRAY_TYPES.contains(type)) {
 				if(type.equals(String[].class)) {
-					ps.setArray(i++, conn.createArrayOf("VARCHAR",(Object[]) o));
+					ps.setArray(i++, conn.createArrayOf("TEXT",(Object[]) o));
 				}
 				if(type.equals(Short[].class)) {
 					ps.setArray(i++, conn.createArrayOf("INTEGER",(Object[]) o));

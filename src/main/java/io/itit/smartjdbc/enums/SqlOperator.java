@@ -31,5 +31,6 @@ public enum SqlOperator {
     JSON_NOT_CONTAINS_ANY,
 	JSON_CONTAINS_ALL,//全部包含
 	ARRAY_ANY,
-	
+	ARRAY_CONTAINS,//数组包含
+	ARRAY_NOT_CONTAINS,//数组不包含
 }
