@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import io.itit.smartjdbc.SmartJdbc;
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.Types;
+import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.provider.DeleteProvider;
 import io.itit.smartjdbc.provider.InsertProvider;
 import io.itit.smartjdbc.provider.SelectProvider;
@@ -160,7 +161,8 @@ public abstract class BaseEntityDAO extends BaseDAO{
 						IOUtil.copy(bb.getBinaryStream(), bos);
 						value = bos.toByteArray();
 					}
-				} else if (Types.ARRAY_TYPES.contains(fieldType)) {
+				} else if (Types.ARRAY_TYPES.contains(fieldType)&&
+						getDatabaseType().equals(DatabaseType.POSTGRESQL)) {
 					Array array=rs.getArray(fieldName);
 					if(array!=null) {
 						value = rs.getArray(fieldName).getArray();
