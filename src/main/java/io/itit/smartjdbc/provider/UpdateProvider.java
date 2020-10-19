@@ -129,7 +129,7 @@ public class UpdateProvider extends SqlProvider{
 					queryWhere.where(convertFieldName(field.getName()),field.get(object));
 				}
 			}
-			WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
+			WhereStatment ws=queryWhere.whereStatement(getSmartDataSource().getDatabaseType());
 			sql.append(ws.sql);
 			for(Object o:ws.values){
 				fieldList.add(o);

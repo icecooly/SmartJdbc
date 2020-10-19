@@ -563,7 +563,7 @@ public class SelectProvider extends SqlProvider{
 		return orderByList;
 	}
 	//
-	protected void addPaging(Query<?> query) {
+	protected void addPaging() {
 		if(query==null) {
 			return;
 		}
@@ -673,7 +673,7 @@ public class SelectProvider extends SqlProvider{
 	//
 	protected WhereStatment getWhereSql() {
 		addWheres(query);
-		return qw.whereStatement(getSmartDataSource());
+		return qw.whereStatement(getSmartDataSource().getDatabaseType());
 	}
 	//
 	protected String getGroupBySql() {
@@ -720,7 +720,7 @@ public class SelectProvider extends SqlProvider{
 			return "";
 		}
 		StringBuilder sql=new StringBuilder();
-		addPaging(query);	
+		addPaging();	
 		if(qw.getLimitEnd()!=-1) {
 			sql.append("\nlimit ").append(qw.getLimitStart()).append(",").append(qw.getLimitEnd()).append(" ");
 		}

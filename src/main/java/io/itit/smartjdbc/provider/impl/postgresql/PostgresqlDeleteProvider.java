@@ -21,7 +21,7 @@ public class PostgresqlDeleteProvider extends DeleteProvider{
 		StringBuilder sql=new StringBuilder();
 		String tableName=getTableName(entityClass);
 		sql.append("delete from ").append(tableName).append(" ").append(MAIN_TABLE_ALIAS).append(" ");
-		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
+		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource().getDatabaseType());
 		sql.append(ws.sql);
 		return SqlBean.build(sql.toString(),ws.values);
 	}

@@ -3,8 +3,9 @@ package io.itit.smartjdbc.provider.where.operator;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.itit.smartjdbc.SmartDataSource;
+import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.provider.where.Where.Condition;
+import io.itit.smartjdbc.util.SqlUtil;
 
 /**
  * 
@@ -13,13 +14,13 @@ import io.itit.smartjdbc.provider.where.Where.Condition;
  */
 public class OperatorContext {
 	//
-	private SmartDataSource smartDataSource;
+	private DatabaseType databaseType;
 	private Condition condition;
 	private List<Object> parameters;
 	//
 	//
-	public OperatorContext(SmartDataSource smartDataSource) {
-		this.smartDataSource=smartDataSource;
+	public OperatorContext(DatabaseType databaseType) {
+		this.databaseType=databaseType;
 		parameters=new ArrayList<>();
 	}
 	//
@@ -47,17 +48,17 @@ public class OperatorContext {
 	}
 
 	/**
-	 * @return the smartDataSource
+	 * @return the databaseType
 	 */
-	public SmartDataSource getSmartDataSource() {
-		return smartDataSource;
+	public DatabaseType getDatabaseType() {
+		return databaseType;
 	}
 
 	/**
-	 * @param smartDataSource the smartDataSource to set
+	 * @param databaseType the databaseType to set
 	 */
-	public void setSmartDataSource(SmartDataSource smartDataSource) {
-		this.smartDataSource = smartDataSource;
+	public void setDatabaseType(DatabaseType databaseType) {
+		this.databaseType = databaseType;
 	}
 
 	/**
@@ -72,6 +73,14 @@ public class OperatorContext {
 	 */
 	public void setCondition(Condition condition) {
 		this.condition = condition;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String identifier() {
+		return SqlUtil.identifier(databaseType);
 	}
 
 }

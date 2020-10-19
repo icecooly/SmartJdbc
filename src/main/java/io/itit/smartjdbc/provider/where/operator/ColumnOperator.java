@@ -1,6 +1,5 @@
 package io.itit.smartjdbc.provider.where.operator;
 
-import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.provider.where.Where.Condition;
 
 /**
@@ -46,8 +45,7 @@ public abstract class ColumnOperator extends Operator{
 	 */
 	protected String getColumnSql() {
 		StringBuilder sql=new StringBuilder();
-		SmartDataSource smartDataSource=ctx.getSmartDataSource();
-		String identifier=smartDataSource.identifier();
+		String identifier=ctx.identifier();
 		Condition c=getCtx().getCondition();
 		if(c.isColumn) {
 			if(c.alias!=null) {

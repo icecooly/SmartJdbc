@@ -21,7 +21,7 @@ public class MysqlDeleteProvider extends DeleteProvider{
 		StringBuilder sql=new StringBuilder();
 		String tableName=getTableName(entityClass);
 		sql.append("delete "+MAIN_TABLE_ALIAS+" from ").append(tableName).append(" ").append(MAIN_TABLE_ALIAS).append(" ");
-		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource());
+		WhereStatment ws=queryWhere.whereStatement(getSmartDataSource().getDatabaseType());
 		sql.append(ws.sql);
 		return SqlBean.build(sql.toString(),ws.values);
 	}

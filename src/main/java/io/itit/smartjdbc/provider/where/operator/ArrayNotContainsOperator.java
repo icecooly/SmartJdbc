@@ -23,7 +23,7 @@ public class ArrayNotContainsOperator extends ColumnOperator {
 	@Override
 	public String build() {
 		Condition c=getCtx().getCondition();
-		DatabaseType type = ctx.getSmartDataSource().getDatabaseType();
+		DatabaseType type = ctx.getDatabaseType();
 		String column = c.key;
 		Object value = c.value;
 		if (column == null || value == null) {

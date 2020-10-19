@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.enums.ConditionType;
+import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.SqlProvider;
 import io.itit.smartjdbc.provider.where.Where.Condition;
@@ -882,12 +882,12 @@ public class QueryWhere {
 	 * @param needAliasAll
 	 * @return
 	 */
-	public WhereStatment whereStatement(SmartDataSource smartDataSource){
+	public WhereStatment whereStatement(DatabaseType databaseType){
 		WhereStatment statment=new WhereStatment();
 		List<Object>values=new LinkedList<Object>();
 		StringBuilder sql=new StringBuilder();
 		sql.append("\nwhere 1=1 ");
-		appendWhereSql(smartDataSource, sql, values, where);
+		appendWhereSql(databaseType, sql, values, where);
 		sql.append(" ");
 		statment.sql=sql.toString();
 		statment.values=values.toArray();
@@ -909,7 +909,7 @@ public class QueryWhere {
 		return false;
 	}
 	//
-	protected void appendWhereSql(SmartDataSource smartDataSource, 
+	protected void appendWhereSql(DatabaseType databaseType, 
 			StringBuilder sql,List<Object> valueList,Where parent) {
 		boolean haveCondition=haveCondition(parent);
 		if(!haveCondition) {
@@ -923,7 +923,7 @@ public class QueryWhere {
 		if(conditions.size()>0) {
 			boolean and=parent.conditionType==ConditionType.AND?true:false;
 			int index=0;
-			OperatorContext ctx=new OperatorContext(smartDataSource);
+			OperatorContext ctx=new OperatorContext(databaseType);
 			ctx.setParameters(valueList);
 			for (Condition c : conditions) {
 				if(index>0) {
@@ -953,7 +953,7 @@ public class QueryWhere {
 		//
 		if(parent.children!=null&&parent.children.size()>0) {
 			for (Where w : parent.children) {
-				appendWhereSql(smartDataSource, sql, valueList, w);
+				appendWhereSql(databaseType, sql, valueList, w);
 			}
 		}
 		//

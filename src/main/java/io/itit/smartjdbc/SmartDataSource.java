@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.connection.TransactionManager;
 import io.itit.smartjdbc.enums.DatabaseType;
+import io.itit.smartjdbc.util.SqlUtil;
 import io.itit.smartjdbc.util.StringUtil;
 
 /**
@@ -270,13 +271,7 @@ public class SmartDataSource {
 	}
 	
 	public String identifier() {
-		if(databaseType.equals(DatabaseType.MYSQL)) {
-			return "`";
-		}
-		if(databaseType.equals(DatabaseType.POSTGRESQL)) {
-			return "\"";
-		}
-		return "";
+		return SqlUtil.identifier(databaseType);
 	}
 	
 }

@@ -1,11 +1,5 @@
 package io.itit.smartjdbc.provider;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashSet;
-
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 
