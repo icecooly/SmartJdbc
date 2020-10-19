@@ -1,7 +1,9 @@
 package io.itit.smartjdbc.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -114,5 +116,12 @@ public class ArrayUtils {
 			set.add(field);
 		}
 		return set;
+	}
+	
+	//
+	public static void main(String[] args) {
+		List<String> list=Arrays.asList("sss","ss1");
+		Object[] a=convert(list);
+		System.out.println(DumpUtil.dump(a));
 	}
 }

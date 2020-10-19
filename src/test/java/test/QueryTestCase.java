@@ -540,4 +540,10 @@ public class QueryTestCase extends BaseTestCase{
 		query.setStringNotContains(new String[] {"s1","你好"});
 		dao.getList(query);
 	}
+	
+	public void testBool() {
+		UserQuery query=new UserQuery();
+		query.setIsStudent(true);
+		System.out.println(DumpUtil.dump(dao.getList(query)));
+	}
 }
