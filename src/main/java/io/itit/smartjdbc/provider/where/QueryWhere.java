@@ -938,7 +938,6 @@ public class QueryWhere {
 					ctx.setCondition(c);
 					Operator operator=OperatorBuilder.build(ctx);
 					operatorSql=operator.build();
-					
 				}else if(c.whereSql!=null){
 					WhereSqlOperator whereSqlOperator=new WhereSqlOperator(ctx, c);
 					operatorSql=whereSqlOperator.build();

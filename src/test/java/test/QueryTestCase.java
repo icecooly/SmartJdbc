@@ -424,7 +424,6 @@ public class QueryTestCase extends BaseTestCase{
 	public void testQueryBoolean() {
 		Condition c=new Condition();
 		c.key="is_student";
-		c.keyCast="::int::bool";
 		c.operator=SqlOperator.EQ;
 		c.value=true;
 		List<User> list=dao.getList(User.class, QueryWhere.create().where(c));

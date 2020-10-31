@@ -83,8 +83,6 @@ public class User extends BaseEntity{
 	private Integer[] intArray;
 
 	private Long[] longArray;
-	
-//	private Double[] doubleArray;
 
 	private Float[] floatArray;
 
