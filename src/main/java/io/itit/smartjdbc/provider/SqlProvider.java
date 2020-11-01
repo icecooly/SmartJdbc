@@ -91,20 +91,4 @@ public abstract class SqlProvider {
 		return smartDataSource.getDatabaseType();
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isPostgresql() {
-		return getDatabaseType().equals(DatabaseType.POSTGRESQL);
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isMysql() {
-		return getDatabaseType().equals(DatabaseType.MYSQL);
-	}
-	
 }
