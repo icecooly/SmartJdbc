@@ -1,6 +1,7 @@
 package io.itit.smartjdbc.provider;
 
 import io.itit.smartjdbc.SmartDataSource;
+import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 
 /**
@@ -80,6 +81,30 @@ public abstract class SqlProvider {
 	 */
 	public void setSmartDataSource(SmartDataSource smartDataSource) {
 		this.smartDataSource = smartDataSource;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public DatabaseType getDatabaseType() {
+		return smartDataSource.getDatabaseType();
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isPostgresql() {
+		return getDatabaseType().equals(DatabaseType.POSTGRESQL);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isMysql() {
+		return getDatabaseType().equals(DatabaseType.MYSQL);
 	}
 	
 }

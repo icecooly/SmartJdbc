@@ -55,13 +55,13 @@ public class AddUpdateDelTestCase extends BaseTestCase{
 	 */
 	public void testUpdateUser() {
 		User user=dao.getById(User.class, 2);
-		user.setGender(User.GENDER_男);
+		user.setGender(User.GENDER_女);
 		user.setDepartmentId(2);
 		user.setHeight(null);
 		user.setAge(18);
 		dao.update(user);
 		//
-		dao.executeUpdate("update t_user set name='王五' where id=?",1);
+		dao.executeUpdate("update t_user set name='王五2' where id=?",1);
 	}
 	
 	public void testUpdateId() {

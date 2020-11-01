@@ -4,10 +4,12 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Set;
 
-import io.itit.smartjdbc.DAOInterceptor;
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.ResultSetHandler;
 import io.itit.smartjdbc.provider.SelectProvider;
+import io.itit.smartjdbc.provider.entity.EntityDelete;
+import io.itit.smartjdbc.provider.entity.EntityInsert;
+import io.itit.smartjdbc.provider.entity.EntityUpdate;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.util.ArrayUtils;
@@ -28,60 +30,41 @@ public class SmartDAO extends BaseEntityDAO{
 	public int insert(Object o,String... excludeFields){
 		return insert(o, true, excludeFields);
 	}
+	
 	/**
 	 * 
-	 * @param o
+	 * @param bean
 	 * @param withGenerateKey
 	 * @param excludeFields
 	 * @return
 	 */
-	public int insert(Object o,boolean withGenerateKey,String... excludeFields){
-		beforeInsert(o, withGenerateKey, excludeFields);
-		SqlBean sqlBean=insertProvider().
-				object(o).
-				excludeFields(excludeFields).
-				build();
-		String sql=sqlBean.sql;
-		Object[] parameters=sqlBean.parameters;
-		int result=0;
-		if(withGenerateKey){
-			result=executeWithGenKey(sql,parameters);		
-		}else{
-			executeUpdate(sql,parameters);
-		}
-		afterInsert(result, o, withGenerateKey, excludeFields);
-		return result;
-	}
-
-	/**
-	 * 
-	 * @param o
-	 * @param withGenerateKey
-	 * @param excludeFields
-	 */
-	protected void beforeInsert(Object o, boolean withGenerateKey, String[] excludeFields) {
-		List<DAOInterceptor> interceptors=getDaoInterceptors();
-		if(interceptors!=null) {
-			for (DAOInterceptor interceptor : interceptors) {
-				interceptor.beforeInsert(o, withGenerateKey, excludeFields);
-			}
-		}
+	public int insert(Object bean,boolean withGenerateKey,String... excludeFields){
+		EntityInsert insert=EntityInsert.create(
+				getSmartDataSource(),
+				bean,
+				withGenerateKey,
+				excludeFields);
+		return insert(insert);
 	}
 	
 	/**
 	 * 
-	 * @param result
-	 * @param o
-	 * @param withGenerateKey
-	 * @param excludeFields
+	 * @param insert
+	 * @return
 	 */
-	protected void afterInsert(int result, Object o, boolean withGenerateKey, String[] excludeFields) {
-		List<DAOInterceptor> interceptors=getDaoInterceptors();
-		if(interceptors!=null) {
-			for (DAOInterceptor interceptor : interceptors) {
-				interceptor.afterInsert(result,o, withGenerateKey, excludeFields);
-			}
+	public int insert(EntityInsert insert){
+		SqlBean sqlBean=insertProvider().
+				insert(insert).
+				build();
+		String sql=sqlBean.sql;
+		Object[] parameters=sqlBean.parameters;
+		int result=0;
+		if(insert.withGenerateKey){
+			result=executeWithGenKey(sql,parameters);		
+		}else{
+			executeUpdate(sql,parameters);
 		}
+		return result;
 	}
 	
 	/**
@@ -120,48 +103,25 @@ public class SmartDAO extends BaseEntityDAO{
 			Set<String> includeFields,
 			QueryWhere queryWhere,
 			String... excludeFields){
-		beforeUpdate(bean,excludeNull,excludeFields);
+		return update(EntityUpdate.create(
+				getSmartDataSource(), 
+				bean, 
+				excludeNull, 
+				includeFields, 
+				queryWhere, excludeFields));
+	}
+	
+	/**
+	 * 
+	 * @param update
+	 * @return
+	 */
+	public int update(EntityUpdate update){
 		SqlBean sqlBean=updateProvider().
-				object(bean).
-				excludeNull(excludeNull).
-				includeFields(includeFields).
-				queryWhere(queryWhere).
-				excludeFields(excludeFields).
+				update(update).
 				build();
 		int result=executeUpdate(sqlBean.sql,sqlBean.parameters);
-		afterUpdate(result,bean,excludeNull,excludeFields);
 		return result;
-	}
-	
-	/**
-	 * 
-	 * @param bean
-	 * @param excludeNull
-	 * @param excludeFields
-	 */
-	protected void beforeUpdate(Object bean, boolean excludeNull, String[] excludeFields) {
-		List<DAOInterceptor> interceptors=getDaoInterceptors();
-		if(interceptors!=null) {
-			for (DAOInterceptor interceptor : interceptors) {
-				interceptor.beforeUpdate(bean, excludeNull, excludeFields);
-			}
-		}
-	}
-	
-	/**
-	 * 
-	 * @param result
-	 * @param bean
-	 * @param excludeNull
-	 * @param excludeFields
-	 */
-	protected void afterUpdate(int result, Object bean, boolean excludeNull, String[] excludeFields) {
-		List<DAOInterceptor> interceptors=getDaoInterceptors();
-		if(interceptors!=null) {
-			for (DAOInterceptor interceptor : interceptors) {
-				interceptor.afterUpdate(result,bean, excludeNull, excludeFields);
-			}
-		}
 	}
 	
 	/**
@@ -171,43 +131,24 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public int delete(Class<?> entityClass,QueryWhere qw){
-		beforeDelete(entityClass,qw);
-		SqlBean sqlBean=deleteProvider().
-				entityClass(entityClass).
-				queryWhere(qw).
-				build();
-		int result=executeUpdate(sqlBean.sql,sqlBean.parameters);
-		afterDelete(result,entityClass,qw);
-		return result;
+		return delete(new EntityDelete(
+						getDatabaseType(), 
+						getSmartDataSource().getTableName(entityClass)),qw);
 	}
 	
 	/**
 	 * 
-	 * @param entityClass
+	 * @param delete
 	 * @param qw
+	 * @return
 	 */
-	protected void beforeDelete(Class<?> entityClass, QueryWhere qw) {
-		List<DAOInterceptor> interceptors=getDaoInterceptors();
-		if(interceptors!=null) {
-			for (DAOInterceptor interceptor : interceptors) {
-				interceptor.beforeDelete(entityClass, qw);
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @param result
-	 * @param entityClass
-	 * @param qt
-	 */
-	protected void afterDelete(int result, Class<?> entityClass, QueryWhere qt) {
-		List<DAOInterceptor> interceptors=getDaoInterceptors();
-		if(interceptors!=null) {
-			for (DAOInterceptor interceptor : interceptors) {
-				interceptor.afterDelete(result,entityClass, qt);
-			}
-		}
+	public int delete(EntityDelete delete, QueryWhere qw){
+		SqlBean sqlBean=deleteProvider().
+				delete(delete).
+				queryWhere(qw).
+				build();
+		int result=executeUpdate(sqlBean.sql,sqlBean.parameters);
+		return result;
 	}
 	
 	/**
@@ -244,23 +185,10 @@ public class SmartDAO extends BaseEntityDAO{
 	/**
 	 * 
 	 * @param query
-	 */
-	protected void beforeQuery(Query<?> query) {
-		List<DAOInterceptor> interceptors=getDaoInterceptors();
-		if(interceptors!=null) {
-			for (DAOInterceptor interceptor : interceptors) {
-				interceptor.beforeQuery(query);
-			}
-		}
-	}
-	/**
-	 * 
-	 * @param query
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getEntity(Query<?> query,String ... excludeFields){
-		beforeQuery(query);
 		Class<T> entityClass=(Class<T>) getEntityClass(query);
 		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
@@ -328,7 +256,6 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public <T> List<T> getList(Query<T> query,Set<String> includeFields,String ... excludeFields){
-		beforeQuery(query);
 		Class<T> entityClass=getEntityClass(query);
 		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
@@ -420,7 +347,6 @@ public class SmartDAO extends BaseEntityDAO{
 	 * @return
 	 */
 	public int getListCount(Query<?> query){
-		beforeQuery(query);
 		Class<?> entityClass=getEntityClass(query);
 		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).

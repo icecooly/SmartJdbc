@@ -14,7 +14,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.itit.smartjdbc.DAOInterceptor;
 import io.itit.smartjdbc.ResultSetHandler;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.SmartJdbc;
@@ -447,10 +446,6 @@ public abstract class BaseDAO{
 	//
 	public Connection getConnection() {
 		return getSmartDataSource().getConnection();
-	}
-	//
-	public List<DAOInterceptor> getDaoInterceptors() {
-		return getSmartDataSource().getDaoInterceptors();
 	}
 	//
 	public List<SqlInterceptor> getSqlInterceptors() {

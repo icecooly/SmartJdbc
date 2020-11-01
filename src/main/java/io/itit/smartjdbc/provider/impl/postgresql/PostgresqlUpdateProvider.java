@@ -1,9 +1,9 @@
 package io.itit.smartjdbc.provider.impl.postgresql;
 
 import io.itit.smartjdbc.SmartDataSource;
-import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.enums.ColumnType;
 import io.itit.smartjdbc.provider.UpdateProvider;
+import io.itit.smartjdbc.provider.entity.EntityUpdate.EntityUpdateField;
 
 /**
  * 
@@ -17,11 +17,10 @@ public class PostgresqlUpdateProvider extends UpdateProvider{
 	}
 	
 	@Override
-	public String getValueSql(EntityField entityField) {
+	public String getValueSql(EntityUpdateField field) {
 		String sql="?";
-		if(entityField!=null&&entityField.columnType()!=null) {
-			ColumnType columnType=entityField.columnType();
-			if(columnType.equals(ColumnType.JSONB)) {
+		if(field!=null&&field.columnType!=null) {
+			if(field.columnType.equals(ColumnType.JSONB)) {
 				sql+="::jsonb"; 
 			}
 		}
