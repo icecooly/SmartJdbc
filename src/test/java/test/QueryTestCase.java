@@ -311,14 +311,6 @@ public class QueryTestCase extends BaseTestCase{
 		System.out.println(DumpUtil.dump(list));
 	}
 	
-	public void testQueryStatusOrRoleId() {
-		UserQuery query=new UserQuery();
-		query.param("orStatus",1);
-		query.param("orRoleId",1);
-		List<User> list=dao.getList(query);
-		System.out.println(DumpUtil.dump(list));
-	}
-	
 	/**查询用户列表总数*/
 	public void testGetUsersCounts() {
 		UserQuery query=new UserQuery();
