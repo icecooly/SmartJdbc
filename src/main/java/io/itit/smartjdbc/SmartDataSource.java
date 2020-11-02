@@ -33,8 +33,6 @@ public class SmartDataSource {
 	
 	private DatabaseType databaseType;
 	
-	private List<DAOInterceptor> daoInterceptors;
-	
 	private List<SqlInterceptor> sqlInterceptors;
 	
 	private TransactionManager transactionManager;
@@ -51,7 +49,6 @@ public class SmartDataSource {
 		this.dataSource=dataSource;
 		this.transactionManager=transactionManager;
 		this.sqlInterceptors=new ArrayList<>();
-		this.daoInterceptors=new ArrayList<>();
 	}
 	//
 	public void init() throws Exception {
@@ -111,28 +108,6 @@ public class SmartDataSource {
 		return convertFieldNameFunc.apply(name);
 	}
 
-	/**
-	 * @return the daoInterceptors
-	 */
-	public List<DAOInterceptor> getDaoInterceptors() {
-		return daoInterceptors;
-	}
-
-	/**
-	 * @param daoInterceptors the daoInterceptors to set
-	 */
-	public void setDaoInterceptors(List<DAOInterceptor> daoInterceptors) {
-		this.daoInterceptors = daoInterceptors;
-	}
-
-	/**
-	 * 
-	 * @param interceptor
-	 */
-	public void addDAOInterceptor(DAOInterceptor interceptor) {
-		daoInterceptors.add(interceptor);
-	}
-	
 	/**
 	 * 
 	 * @param name

@@ -26,19 +26,19 @@ public class Joins {
 			String[] table2Fields) {
 		for (Join j : joinList) {
 			if (!Arrays.equals(j.table1Fields, table1Fields)) {
-				return null;
+				continue;
 			}
 			if (!Arrays.equals(j.table2Fields, table2Fields)) {
-				return null;
+				continue;
 			}
 			if (!j.table1.equals(table1)) {
-				return null;
+				continue;
 			}
 			if (!j.table2.equals(table2)) {
-				return null;
+				continue;
 			}
 			if (!j.table1Alias.equals(table1Alias)) {
-				return null;
+				continue;
 			}
 			return j;
 		}

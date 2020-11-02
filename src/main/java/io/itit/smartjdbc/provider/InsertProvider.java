@@ -1,17 +1,13 @@
 package io.itit.smartjdbc.provider;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import io.itit.smartjdbc.SmartDataSource;
-import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.Types;
-import io.itit.smartjdbc.annotations.EntityField;
+import io.itit.smartjdbc.provider.entity.EntityInsert;
+import io.itit.smartjdbc.provider.entity.EntityInsert.EntityInsertField;
 import io.itit.smartjdbc.provider.entity.SqlBean;
-import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.JSONUtil;
 
 /**
@@ -21,79 +17,50 @@ import io.itit.smartjdbc.util.JSONUtil;
  */
 public abstract class InsertProvider extends SqlProvider{
 	//
-	protected Object bean;
-	protected String[] excludeFields;
+	protected EntityInsert insert;
 	//
 	public InsertProvider(SmartDataSource smartDataSource) {
 		super(smartDataSource);
 	}
 	//
-	public InsertProvider object(Object bean){
-		this.bean=bean;
+	public InsertProvider insert(EntityInsert insert){
+		this.insert=insert;
 		return this;
 	}
-	public InsertProvider excludeFields(String[] excludeFields) {
-		this.excludeFields=excludeFields;
-		return this;
-	}
-	
-	public String getValueSql(EntityField entityField) {
+	//
+	public String getValueSql(EntityInsertField field) {
 		return "?,";
 	}
 	
 	@Override
 	public SqlBean build() {
 		StringBuilder sql=new StringBuilder();
-		Class<?>type=bean.getClass();
-		String tableName=getTableName(type);
-		sql.append("insert into ").append(tableName).append("(");
-		Set<String> excludesNames = new TreeSet<String>();
-		for (String e : excludeFields) {
-			excludesNames.add(e);
-		}
+		sql.append("insert into ").append(addIdentifier(insert.tableName)).append("(");
 		List<Object>fieldList=new ArrayList<Object>();
-		List<Field> list=ClassUtils.getPersistentFields(type);
 		StringBuilder values=new StringBuilder();
-		for (Field f : list) {
-			if (excludesNames.contains(f.getName())) {
+		for (EntityInsertField field : insert.fieldList) {
+			if(field.value==null) {
 				continue;
 			}
-			if(!ClassUtils.isPersistentField(f)) {
-				continue;
+			values.append(getValueSql(field));
+			sql.append("").append(addIdentifier(field.column)).append(",");
+			if(!Types.WRAP_TYPES.contains(field.value.getClass())){
+				fieldList.add(JSONUtil.toJson(field.value));
+			}else{
+				fieldList.add(field.value);
 			}
-			EntityField entityField=f.getAnnotation(EntityField.class);
-			if(entityField!=null&&entityField.autoIncrement()) {
-				continue;
-			}
-			String fieldName = convertFieldName(f.getName());
-			try {
-				f.setAccessible(true);
-				Object fieldValue=f.get(bean);
-				if(fieldValue==null) {
-					continue;
-				}
-				if(!Types.WRAP_TYPES.contains(fieldValue.getClass())){
-					fieldList.add(JSONUtil.toJson(fieldValue));
-				}else{
-					fieldList.add(fieldValue);
-				}
-				values.append(getValueSql(entityField));
-			} catch (Exception e) {
-				throw new SmartJdbcException(e);
-			}
-			sql.append(addIdentifier(fieldName)+",");
 		}
-		if(values.length()==0) {
-			throw new SmartJdbcException("no field found");
-		}
-		values.deleteCharAt(values.length()-1);
+		//
 		sql.deleteCharAt(sql.length()-1);
 		sql.append(")");
 		sql.append("values(");
 		sql.append(values.toString());
+		sql.deleteCharAt(sql.length()-1);
 		sql.append(")");
-		//
-		return SqlBean.build(sql.toString(),fieldList.toArray(new Object[fieldList.size()]));
+		SqlBean insertSql=new SqlBean();
+		insertSql.sql=sql.toString();
+		insertSql.parameters=fieldList.toArray();
+		return insertSql;
 	}
 
 }

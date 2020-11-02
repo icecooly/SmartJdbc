@@ -1,6 +1,7 @@
 package io.itit.smartjdbc.provider;
 
 import io.itit.smartjdbc.SmartDataSource;
+import io.itit.smartjdbc.provider.entity.EntityDelete;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 
 /**
@@ -14,11 +15,11 @@ public abstract class DeleteProvider extends SqlProvider{
 		super(smartDataSource);
 	}
 	//
-	protected Class<?> entityClass;
+	protected EntityDelete delete;
 	protected QueryWhere queryWhere;
 	//
-	public DeleteProvider entityClass(Class<?> entityClass) {
-		this.entityClass=entityClass;
+	public DeleteProvider delete(EntityDelete delete) {
+		this.delete=delete;
 		return this;
 	}
 	

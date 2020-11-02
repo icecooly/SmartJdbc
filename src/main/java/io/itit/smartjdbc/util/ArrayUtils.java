@@ -1,10 +1,14 @@
 package io.itit.smartjdbc.util;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -12,6 +16,8 @@ import java.util.Set;
  *
  */
 public class ArrayUtils {
+	//
+	private static Logger logger=LoggerFactory.getLogger(ArrayUtils.class);
 
 	/**
 	 * 
@@ -117,6 +123,43 @@ public class ArrayUtils {
 		}
 		return set;
 	}
+	//
+	public static <T> boolean contains(List<T> array, String fieldName, Object target) {
+		if (array == null) {
+			return false;
+		}
+		for (Object bean : array) {
+			Object v = getFieldValue(bean, fieldName);
+			if(v==null) {
+				return false;
+			}
+			if (v.equals(target)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	//
+	public static Object getFieldValue(Object bean, String fieldName) {
+		try {
+			return getFieldValue(bean, bean.getClass().getField(fieldName));
+		} catch (Exception e) {
+			logger.error("bean:{} fieldName:{}",bean.getClass(),fieldName);
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	public static Object getFieldValue(Object bean, Field f) {
+		try {
+			return f.get(bean);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
 	
 	//
 	public static void main(String[] args) {
