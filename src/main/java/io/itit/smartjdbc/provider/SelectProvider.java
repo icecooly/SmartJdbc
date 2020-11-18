@@ -22,7 +22,6 @@ import io.itit.smartjdbc.Types;
 import io.itit.smartjdbc.annotations.EntityField;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.QueryField;
-import io.itit.smartjdbc.cache.Caches;
 import io.itit.smartjdbc.cache.EntityFieldInfo;
 import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.cache.QueryFieldInfo;
@@ -54,6 +53,7 @@ public class SelectProvider extends SqlProvider{
 	private static Logger logger=LoggerFactory.getLogger(SelectProvider.class);
 	//
 	protected EntityInfo entity;
+	protected QueryInfo queryInfo;
 	protected Class<?> entityClass;
 	protected Query<?> query;
 	protected boolean isSelectCount;
@@ -330,7 +330,7 @@ public class SelectProvider extends SqlProvider{
 	//
 	protected void createJoins() {
 		if(entity!=null) {
-			joins=JSONUtil.fromJson(JSONUtil.toJson(entity.joins),Joins.class);//clone
+			joins=entity.joins;
 		}
 		if(joins==null) {
 			joins=new Joins();
@@ -339,8 +339,7 @@ public class SelectProvider extends SqlProvider{
 			return;
 		}
 		List<QueryFieldInfo> fieldInfos=new ArrayList<>();
-		QueryInfo info=Caches.getQueryInfo(query.getClass());
-		getQueryFields(fieldInfos,query,info);
+		getQueryFields(fieldInfos,query,queryInfo);
 		for (QueryFieldInfo fieldInfo : fieldInfos) {
 			io.itit.smartjdbc.annotations.Join innerJoin=fieldInfo.join;
 			io.itit.smartjdbc.annotations.Joins innerJoins=fieldInfo.joins;
@@ -406,10 +405,6 @@ public class SelectProvider extends SqlProvider{
 		}
 	}
 	//
-	protected QueryInfo createQueryInfo(Query<?> query){
-		QueryInfo queryInfo = Caches.getQueryInfo(query.getClass());
-		return queryInfo;
-	}
 	/**
 	 * 
 	 * @param query
@@ -418,7 +413,6 @@ public class SelectProvider extends SqlProvider{
 		if(query==null) {
 			return;
 		}
-		QueryInfo queryInfo=createQueryInfo(query);
 		Map<String,Object> paraMap=new HashMap<>();
 		if(!query.getParams().isEmpty()) {
 			paraMap.putAll(query.getParams());
@@ -576,7 +570,7 @@ public class SelectProvider extends SqlProvider{
 	}
 	//
 	protected void buildSelectFields(){
-		entity=Caches.getEntityInfo(entityClass);
+		entity=EntityInfo.create(entityClass);
 		for (EntityFieldInfo fieldInfo : entity.fieldList) {
 			Field field=fieldInfo.field;
 			if (Modifier.isStatic(field.getModifiers())|| Modifier.isFinal(field.getModifiers())) {
@@ -757,6 +751,9 @@ public class SelectProvider extends SqlProvider{
 	
 	//
 	protected SqlBean build(StringBuilder selectSql) {
+		if(query!=null) {
+			queryInfo=QueryInfo.create(query.getClass());
+		}
 		SelectSql bean=new SelectSql();
 		bean.selectSql=selectSql.toString();
 		bean.fromSql=getFromSql();
