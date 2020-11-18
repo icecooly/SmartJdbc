@@ -28,10 +28,10 @@ public class EntityInfo {
 	
 	public List<EntityFieldInfo> fieldList;//=ClassUtils.getFieldList(entityClass);
 	
-	public Joins leftJoins;//left join tableName alias on 
+	public Joins joins;//left join tableName alias on 
 	//
 	public EntityInfo() {
-		this.leftJoins=new Joins("l");
+		this.joins=new Joins();
 	}
 	//
 	public static EntityInfo create(Class<?> entityClass) {
@@ -63,7 +63,7 @@ public class EntityInfo {
 			EntityField entityField = fieldInfo.entityField;
 			LeftJoin leftJoin=fieldInfo.leftJoin;
 			if(leftJoin!=null) {
-				Join join=createLeftJoin(SqlProvider.MAIN_TABLE_ALIAS,
+				Join join=addJoin(JoinType.LEFT_JOIN,SqlProvider.MAIN_TABLE_ALIAS,
 						entityClass,leftJoin.table2(),leftJoin.table1Fields(),leftJoin.table2Fields());
 				fieldInfo.tableAlias=join.table2Alias;
 			}else if(entityField!=null&&!StringUtil.isEmpty(entityField.foreignKeyFields())) {
@@ -85,7 +85,7 @@ public class EntityInfo {
 									entityClass.getSimpleName()+"."+foreignKeyField.getName());
 					}
 					Class<?> table2=foreignKey.entityClass();
-					join=createLeftJoin(table1Alias,table1, table2,
+					join=addJoin(JoinType.LEFT_JOIN,table1Alias,table1, table2,
 							new String[] {id},
 							new String[]{ClassUtils.getSinglePrimaryKey(table2)});
 					table1=table2;
@@ -97,9 +97,9 @@ public class EntityInfo {
 		
 	}
 	//
-	protected Join createLeftJoin(String table1Alias,Class<?> table1,Class<?> table2,
+	protected Join addJoin(JoinType type,String table1Alias,Class<?> table1,Class<?> table2,
 			String[] table1Fields, String[] table2Fields) {
-		return leftJoins.addJoin(JoinType.LEFT_JOIN, table1, table2, 
+		return joins.addJoin(type, table1, table2, 
 				table1Alias, null, table1Fields, table2Fields);
 	}
 	//
@@ -109,7 +109,7 @@ public class EntityInfo {
 		for (EntityFieldInfo field : fieldList) {
 			info.append(field.info());
 		}
-		info.append(leftJoins.info());
+		info.append(joins.info());
 		info.append("\n]");
 		return info.toString();
 	}

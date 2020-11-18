@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)  
 @Retention(RetentionPolicy.RUNTIME)  
 @Documented
-public @interface InnerJoins {
+public @interface Joins {
 	//
-	public InnerJoin[] joins() default {};
+	public Join[] joins() default {};
 }

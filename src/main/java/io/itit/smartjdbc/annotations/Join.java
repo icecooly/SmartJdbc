@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import io.itit.smartjdbc.enums.JoinType;
+
 /**
  * on 
  * 	table1Alias.table1Fields[0]=table2Alias.table2Fields[0] 
@@ -18,8 +20,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)  
 @Retention(RetentionPolicy.RUNTIME)  
 @Documented
-public @interface InnerJoin {
+public @interface Join {
 
+	/**类型*/
+	public JoinType type() default JoinType.LEFT_JOIN;
+	
 	/**表2*/
 	public Class<?> table2();
 	

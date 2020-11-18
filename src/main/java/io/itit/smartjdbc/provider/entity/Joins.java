@@ -13,18 +13,22 @@ import io.itit.smartjdbc.util.StringUtil;
  *
  */
 public class Joins {
+	private List<Join> joinList=new ArrayList<>();;
+	private String prefix="l";
 	//
-	public String prefix;
-	public List<Join> joinList;
+	public Joins() {
+	}
 	//
 	public Joins(String prefix) {
 		this.prefix = prefix;
-		joinList = new ArrayList<>();
 	}
 	//
-	private Join getSameJoin(Class<?> table1, Class<?> table2, String table1Alias, String[] table1Fields,
+	private Join getSameJoin(JoinType joinType, Class<?> table1, Class<?> table2, String table1Alias, String[] table1Fields,
 			String[] table2Fields) {
 		for (Join j : joinList) {
+			if(!j.joinType.equals(joinType)) {
+				continue;
+			}
 			if (!Arrays.equals(j.table1Fields, table1Fields)) {
 				continue;
 			}
@@ -46,10 +50,11 @@ public class Joins {
 
 	}
 	//
-	public Join addJoin(JoinType joinType,Class<?> table1, Class<?> table2, String table1Alias, String table2Alias, 
-			String[] table1Fields,
-			String[] table2Fields) {
-		Join join=getSameJoin(table1, table2, table1Alias, table1Fields, table2Fields);
+	public Join addJoin(JoinType joinType,
+			Class<?> table1, Class<?> table2, 
+			String table1Alias, String table2Alias, 
+			String[] table1Fields, String[] table2Fields) {
+		Join join=getSameJoin(joinType, table1, table2, table1Alias, table1Fields, table2Fields);
 		if(join!=null) {
 			return join;
 		}
@@ -66,6 +71,31 @@ public class Joins {
 		}
 		joinList.add(join);
 		return join;
+	}
+	//
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return prefix;
+	}
+	/**
+	 * @param prefix the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+	/**
+	 * @return the joinList
+	 */
+	public List<Join> getJoinList() {
+		return joinList;
+	}
+	/**
+	 * @param joinList the joinList to set
+	 */
+	public void setJoinList(List<Join> joinList) {
+		this.joinList = joinList;
 	}
 	//
 	public String info() {

@@ -3,8 +3,8 @@ package io.itit.smartjdbc.cache;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import io.itit.smartjdbc.annotations.InnerJoin;
-import io.itit.smartjdbc.annotations.InnerJoins;
+import io.itit.smartjdbc.annotations.Join;
+import io.itit.smartjdbc.annotations.Joins;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.util.StringUtil;
 
@@ -21,13 +21,13 @@ public class QueryFieldInfo {
 	
 	public String fieldName;//fullName.field.getName()
 	
-	public InnerJoin innerJoin;
+	public Join join;
 	
-	public InnerJoins innerJoins;
+	public Joins joins;
 	
 	public QueryField queryField;
 	
-	public List<InnerJoin> innerJoinsList;
+	public List<Join> joinsList;
 	
 	public String tableAlias;
 	//
@@ -41,8 +41,8 @@ public class QueryFieldInfo {
 			fieldInfo.fieldName=fullName+"."+field.getName();
 		}
 		fieldInfo.queryField=field.getAnnotation(QueryField.class);
-		fieldInfo.innerJoin=field.getAnnotation(InnerJoin.class);
-		fieldInfo.innerJoins=field.getAnnotation(InnerJoins.class);
+		fieldInfo.join=field.getAnnotation(Join.class);
+		fieldInfo.joins=field.getAnnotation(Joins.class);
 		return fieldInfo;
 	}
 	

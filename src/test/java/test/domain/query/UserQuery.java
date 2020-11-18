@@ -3,7 +3,7 @@ package test.domain.query;
 import java.util.List;
 
 import io.itit.smartjdbc.Query;
-import io.itit.smartjdbc.annotations.InnerJoin;
+import io.itit.smartjdbc.annotations.Join;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
@@ -59,7 +59,7 @@ public class UserQuery extends Query<User>{
 	@QueryField(operator = SqlOperator.JSON_NOT_CONTAINS_ANY,field = "roleIdList")
 	private Integer[] notRoleIdList; 
 	
-	@InnerJoin(table2 = User.class,table2Alias = "b1",table1Fields ={"createUserId"},table2Fields ={"id"})
+	@Join(table2 = User.class,table2Alias = "b1",table1Fields ={"createUserId"},table2Fields ={"id"})
 	@QueryField(field = "name")
 	private String createUserName;
 	

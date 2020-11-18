@@ -1,8 +1,8 @@
 package test.domain.query;
 
 import io.itit.smartjdbc.Query;
-import io.itit.smartjdbc.annotations.InnerJoin;
-import io.itit.smartjdbc.annotations.InnerJoins;
+import io.itit.smartjdbc.annotations.Join;
+import io.itit.smartjdbc.annotations.Joins;
 import io.itit.smartjdbc.annotations.QueryField;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
@@ -30,14 +30,14 @@ public class ArticleQuery extends Query<Article>{
 	@QueryField(whereSql=" (title like concat('%',#{titleOrContent},'%') or content like concat('%','${titleOrContent}','%'))")
 	private String titleOrContent;
 	
-	@InnerJoin(table2=User.class,table1Fields= {"createUserId"},table2Fields = {"id"})
+	@Join(table2=User.class,table1Fields= {"createUserId"},table2Fields = {"id"})
 	@QueryField(field="name")
 	private String createUserName;
 
 	@QueryField(field="mobileNo",foreignKeyFields = "createUserId")
 	private String createUserMobileNo;
 
-	@InnerJoin(table2=User.class,table1Fields= {"updateUserId"},table2Fields= {"id"})
+	@Join(table2=User.class,table1Fields= {"updateUserId"},table2Fields= {"id"})
 	@QueryField(field="name")
 	private String updateUserName;
 	
@@ -45,16 +45,16 @@ public class ArticleQuery extends Query<Article>{
 	private int[] statusList;
 	
 	/**likeUserId喜爱的文章*/
-	@InnerJoin(table2=ArticleUserLike.class,table1Fields = {"id"},table2Fields= {"articleId"})
+	@Join(table2=ArticleUserLike.class,table1Fields = {"id"},table2Fields= {"articleId"})
 	@QueryField(field="userId")
 	private Integer likeUserId;
 	
 	@QueryField(field="name",operator = SqlOperator.LIKE,foreignKeyFields="createUserId,departmentId")
 	private String createUserDepartmentName;
 	
-	@InnerJoins(joins = {
-			@InnerJoin(table2 = User.class,table1Fields = {"createUserId"},table2Fields = {"id"}),
-			@InnerJoin(table2 = Department.class,table1Fields = {"departmentId"},table2Fields = {"id"})
+	@Joins(joins = {
+			@Join(table2 = User.class,table1Fields = {"createUserId"},table2Fields = {"id"}),
+			@Join(table2 = Department.class,table1Fields = {"departmentId"},table2Fields = {"id"})
 			})
 	@QueryField(field="name",operator = SqlOperator.LIKE_RIGHT)
 	private String createUserDepartmentName2;

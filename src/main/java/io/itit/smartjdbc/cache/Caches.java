@@ -22,7 +22,7 @@ public class Caches {
 	//
 	private static Map<Class<?>,QueryInfo> queryInfoMap=new ConcurrentHashMap<>();
 	//
-	public static synchronized EntityInfo getEntityInfo(Class<?> entityClass) {
+	public static EntityInfo getEntityInfo(Class<?> entityClass) {
 		EntityInfo entity=entityInfoMap.get(entityClass);
 		if(entity==null) {
 			entity=EntityInfo.create(entityClass);
@@ -35,7 +35,7 @@ public class Caches {
 	}
 	//
 	//
-	public static synchronized QueryInfo getQueryInfo(Class<?> clazz) {
+	public static QueryInfo getQueryInfo(Class<?> clazz) {
 		QueryInfo info=queryInfoMap.get(clazz);
 		if(info==null) {
 			info=new QueryInfo(null,null,clazz,ConditionType.AND);

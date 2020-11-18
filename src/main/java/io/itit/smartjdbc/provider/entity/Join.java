@@ -16,6 +16,10 @@ public class Join {
 	public String[] table1Fields;
 	public String[] table2Fields;
 	//
+	public Join() {
+		
+	}
+	//
 	public Join(JoinType joinType) {
 		this.joinType=joinType;
 	}
