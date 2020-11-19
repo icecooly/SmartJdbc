@@ -13,7 +13,7 @@ public class NotLikeOperator extends ColumnOperator{
 
 	@Override
 	public String getOperatorSql() {
-		return "like";
+		return "not like";
 	}
 	
 	@Override

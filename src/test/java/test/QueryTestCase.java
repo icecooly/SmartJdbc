@@ -86,7 +86,9 @@ public class QueryTestCase extends BaseTestCase{
 		
 		/**查询姓名是以'张'结尾的用户*/
 		dao.getEntity(User.class,QueryWhere.create().likeRight("name","张"));
-		
+	}
+	//
+	public void testQueryNotLike() {	
 		/**查询姓名不包含'张'的用户*/
 		dao.getEntity(User.class,QueryWhere.create().notLike("name","张"));
 		
