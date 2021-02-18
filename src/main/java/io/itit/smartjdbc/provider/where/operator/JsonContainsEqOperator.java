@@ -38,16 +38,15 @@ public class JsonContainsEqOperator extends ColumnOperator {
 		StringBuilder sql = new StringBuilder();
 		if (type.equals(DatabaseType.MYSQL)) {
 			sql.append("( ");
+			sql.append("json_length(").append(getColumnSql()).append(")="+values.length);
 			for (int i = 0; i < values.length; i++) {
+				sql.append(" and ");
 				if(jsonContain==null||jsonContain.objectField==null) {
 					sql.append(" json_contains(").append(getColumnSql()).append(",JSON_ARRAY(?)").append(") ");
 				}else {
 					sql.append(" json_contains(").append(getColumnSql()).append(",JSON_OBJECT('"+jsonContain.objectField+"',?)").append(") ");
 				}
 				ctx.addParameter(values[i]);
-				if (i != (values.length - 1)) {
-					sql.append(" and ");
-				}
 			}
 			sql.append(") ");
 		}
