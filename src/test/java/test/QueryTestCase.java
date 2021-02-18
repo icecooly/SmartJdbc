@@ -136,6 +136,18 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getList(query);
 	}
 	
+	public void testJsonContainsAll() {
+		dao.getList(User.class,QueryWhere.create().jsonContainsAll("role_id_list",Arrays.asList(1,2,3)));
+	}
+	
+	public void testJsonContainsEq() {
+		dao.getList(User.class,QueryWhere.create().jsonContainsEq("role_id_list",Arrays.asList(1,2,3)));
+	}
+	
+	public void testJsonContainsNe() {
+		dao.getList(User.class,QueryWhere.create().jsonContainsNe("role_id_list",Arrays.asList(1,2,3)));
+	}
+	
 	public void testJsonContainsObjectArray() {
 		JsonContain jsonContain=new JsonContain();
 		jsonContain.objectField="id";

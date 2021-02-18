@@ -42,7 +42,7 @@ public abstract class BaseTestCase extends TestCase{
 		dataSource.setUrl(prop.getProperty("dbUrl"));
 		dataSource.setUsername(prop.getProperty("dbUser"));
 		dataSource.setPassword(prop.getProperty("dbPassword"));
-		dataSource.setDriverClassName(prop.getProperty("dbDriverClassName"));
+		dataSource.setDriverClassName(prop.getProperty("dbDriverClass"));
 		return dataSource;
 	}
 }

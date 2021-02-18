@@ -817,12 +817,22 @@ public class QueryWhere {
 	
 	/**
 	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContainsAll(String key,Object value) {
+		return this.where(key, SqlOperator.JSON_CONTAINS_ALL, value);
+	}
+	
+	/**
+	 * 
 	 * @param alias
 	 * @param key
 	 * @param value
 	 * @return
 	 */
-	public QueryWhere jsonContainsAnyAll(String alias,String key,Object value) {
+	public QueryWhere jsonContainsAll(String alias,String key,Object value) {
 		return this.where(alias,key, SqlOperator.JSON_CONTAINS_ALL, value);
 	}
 	
@@ -834,8 +844,74 @@ public class QueryWhere {
 	 * @param jsonContain
 	 * @return
 	 */
-	public QueryWhere jsonContainsAnyAll(String alias,String key,Collection<?> values,JsonContain jsonContain) {
+	public QueryWhere jsonContainsAll(String alias,String key,Collection<?> values,JsonContain jsonContain) {
 		return this.where(alias, key, SqlOperator.JSON_CONTAINS_ALL, values, jsonContain);
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContainsEq(String key,Object value) {
+		return this.where(key, SqlOperator.JSON_CONTAINS_EQ, value);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContainsEq(String alias,String key,Object value) {
+		return this.where(alias,key, SqlOperator.JSON_CONTAINS_EQ, value);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param values
+	 * @param jsonContain
+	 * @return
+	 */
+	public QueryWhere jsonContainsEq(String alias,String key,Collection<?> values,JsonContain jsonContain) {
+		return this.where(alias, key, SqlOperator.JSON_CONTAINS_EQ, values, jsonContain);
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContainsNe(String key,Object value) {
+		return this.where(key, SqlOperator.JSON_CONTAINS_NE, value);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public QueryWhere jsonContainsNe(String alias,String key,Object value) {
+		return this.where(alias,key, SqlOperator.JSON_CONTAINS_NE, value);
+	}
+	
+	/**
+	 * 
+	 * @param alias
+	 * @param key
+	 * @param values
+	 * @param jsonContain
+	 * @return
+	 */
+	public QueryWhere jsonContainsNe(String alias,String key,Collection<?> values,JsonContain jsonContain) {
+		return this.where(alias, key, SqlOperator.JSON_CONTAINS_NE, values, jsonContain);
 	}
 	/**
 	 * key IS NULL

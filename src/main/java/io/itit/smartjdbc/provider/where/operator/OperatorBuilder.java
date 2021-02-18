@@ -94,6 +94,12 @@ public class OperatorBuilder {
 		if(operator.equals(SqlOperator.JSON_CONTAINS_ALL)) {
 			opt=new JsonContainsAllOperator(ctx);
 		}
+		if(operator.equals(SqlOperator.JSON_CONTAINS_EQ)) {
+			opt=new JsonContainsEqOperator(ctx);
+		}
+		if(operator.equals(SqlOperator.JSON_CONTAINS_NE)) {
+			opt=new JsonContainsNeOperator(ctx);
+		}
 		if(operator.equals(SqlOperator.ARRAY_ANY)) {
 			opt=new ArrayAnyOperator(ctx);
 		}
