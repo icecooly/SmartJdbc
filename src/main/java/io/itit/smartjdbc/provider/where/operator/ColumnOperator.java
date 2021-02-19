@@ -64,7 +64,7 @@ public abstract class ColumnOperator extends Operator{
 			String columnSql=sql.toString();
 			sql=new StringBuilder();
 			sql.append(c.keyFunc);
-			sql.append(" (");
+			sql.append("(");
 			sql.append(columnSql);
 			sql.append(") ");
 		}
