@@ -52,18 +52,18 @@ public class JsonContainsEqOperator extends ColumnOperator {
 		}
 		if (type.equals(DatabaseType.POSTGRESQL)) {
 			sql.append("( ");
-			sql.append("jsonb_array_length(").append(getColumnSql()).append("::jsonb)="+values.length);
+			sql.append("jsonb_array_length(").append(getColumnSql()).append(")="+values.length);
 			for (int i = 0; i < values.length; i++) {
 				sql.append(" and ");
 				Object v=values[i];
 				if(jsonContain==null||jsonContain.objectField==null) {
 					if(v instanceof String) {
-						sql.append(getColumnSql()).append("::jsonb@>'\""+values[i]+"\"'");
+						sql.append(getColumnSql()).append("@>'\""+values[i]+"\"'");
 					}else {
-						sql.append(getColumnSql()).append("::jsonb@>'"+values[i]+"'");
+						sql.append(getColumnSql()).append("@>'"+values[i]+"'");
 					}
 				}else {
-					sql.append(getColumnSql()).append("::jsonb@>'[{\""+jsonContain.objectField+"\":\""+values[i]+"\"}]'");
+					sql.append(getColumnSql()).append("@>'[{\""+jsonContain.objectField+"\":\""+values[i]+"\"}]'");
 				}
 			}
 			sql.append(") ");
