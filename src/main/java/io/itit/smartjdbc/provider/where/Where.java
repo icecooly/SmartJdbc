@@ -24,6 +24,7 @@ public class Where {
 		public String alias;
 		public String key;
 		public String keyCast;
+		public String keyFunc;
 		public Object value;
 		public SqlOperator operator;
 		public String customOperator;
@@ -69,6 +70,11 @@ public class Where {
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value, 
 			boolean isColumn, JsonContain jsonContain, String keyCast) {
+		return where(alias, keyCast, op, value, isColumn, jsonContain, keyCast, null);
+	}
+	//
+	public Where where(String alias, String key, SqlOperator op, Object value, 
+			boolean isColumn, JsonContain jsonContain, String keyCast, String keyFunc) {
 		Condition w = new Condition();
 		w.alias = alias;
 		w.key = key;
@@ -77,6 +83,7 @@ public class Where {
 		w.isColumn=isColumn;
 		w.jsonContain=jsonContain;
 		w.keyCast=keyCast;
+		w.keyFunc=keyFunc;
 		conditionList.add(w);
 		return this;
 	}
