@@ -70,7 +70,7 @@ public class Where {
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value, 
 			boolean isColumn, JsonContain jsonContain, String keyCast) {
-		return where(alias, keyCast, op, value, isColumn, jsonContain, keyCast, null);
+		return where(alias, key, op, value, isColumn, jsonContain, keyCast, null);
 	}
 	//
 	public Where where(String alias, String key, SqlOperator op, Object value, 
