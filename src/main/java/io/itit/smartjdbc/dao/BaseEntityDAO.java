@@ -89,6 +89,7 @@ public abstract class BaseEntityDAO extends BaseDAO{
 	/**
 	 * 
 	 * @param o
+	 * @param preAliasField
 	 * @param rs
 	 * @param excludeFields
 	 * @throws Exception

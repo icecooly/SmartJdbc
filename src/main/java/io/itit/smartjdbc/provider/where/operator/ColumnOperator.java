@@ -40,7 +40,6 @@ public abstract class ColumnOperator extends Operator{
 	
 	/**
 	 * 
-	 * @param ctx
 	 * @return
 	 */
 	protected String getColumnSql() {
@@ -73,7 +72,6 @@ public abstract class ColumnOperator extends Operator{
 
 	/**
 	 * 
-	 * @param ctx
 	 * @return
 	 */
 	protected String getValueSql() {

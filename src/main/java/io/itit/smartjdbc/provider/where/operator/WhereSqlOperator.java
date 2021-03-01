@@ -50,7 +50,6 @@ public class WhereSqlOperator extends Operator{
 	//
 	/**
 	 * 
-	 * @param paraMap
 	 * @return
 	 */
 	public String parseSql() {

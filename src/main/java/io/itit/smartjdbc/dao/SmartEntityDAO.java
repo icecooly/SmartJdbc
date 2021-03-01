@@ -59,7 +59,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	}
 	/**
 	 * 
-	 * @param o
+	 * @param bean
 	 * @param withGenerateKey
 	 * @param excludeFields
 	 * @return

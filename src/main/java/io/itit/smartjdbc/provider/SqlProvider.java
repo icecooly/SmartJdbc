@@ -40,7 +40,7 @@ public abstract class SqlProvider {
 	
 	/**
 	 * 
-	 * @param column
+	 * @param name
 	 * @return
 	 */
 	public String addIdentifier(String name) {

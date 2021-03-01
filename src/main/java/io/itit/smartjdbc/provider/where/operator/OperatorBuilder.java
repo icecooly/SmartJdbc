@@ -24,7 +24,7 @@ public class OperatorBuilder {
 	
 	/**
 	 * 
-	 * @param w
+	 * @param ctx
 	 * @return
 	 */
 	public static Operator build(OperatorContext ctx) {
