@@ -61,6 +61,8 @@ public class SmartDataSource {
 				databaseType=DatabaseType.MYSQL;
 			}else if(driverClassName.equals("org.postgresql.Driver")) {
 				databaseType=DatabaseType.POSTGRESQL;
+			}else if(driverClassName.equals("com.kingbase8.Driver")) {
+				databaseType=DatabaseType.KINGBASE;
 			}else {
 				throw new SmartJdbcException("not support database "+driverClassName);
 			}

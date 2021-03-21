@@ -3,6 +3,7 @@ package io.itit.smartjdbc.provider.factory;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.provider.DeleteProvider;
+import io.itit.smartjdbc.provider.impl.kingbase.KingbaseDeleteProvider;
 import io.itit.smartjdbc.provider.impl.mysql.MysqlDeleteProvider;
 import io.itit.smartjdbc.provider.impl.postgresql.PostgresqlDeleteProvider;
 
@@ -20,6 +21,9 @@ public class DeleteProviderFactory {
 		}
 		if(type.equals(DatabaseType.POSTGRESQL)) {
 			return new PostgresqlDeleteProvider(smartDataSource);
+		}
+		if(type.equals(DatabaseType.KINGBASE)) {
+			return new KingbaseDeleteProvider(smartDataSource);
 		}
 		throw new RuntimeException("unspoort database type "+type);
 	}
