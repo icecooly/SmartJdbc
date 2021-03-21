@@ -51,7 +51,8 @@ public class JsonContainsAnyOperator extends ColumnOperator {
 			}
 			sql.append(") ");
 		}
-		if (type.equals(DatabaseType.POSTGRESQL)) {
+		if (type.equals(DatabaseType.POSTGRESQL)||
+				type.equals(DatabaseType.KINGBASE)) {
 			sql.append("( ");
 			for (int i = 0; i < values.length; i++) {
 				Object v=values[i];

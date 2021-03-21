@@ -163,7 +163,9 @@ public abstract class BaseEntityDAO extends BaseDAO{
 						value = bos.toByteArray();
 					}
 				} else if (Types.ARRAY_TYPES.contains(fieldType)&&
-						getDatabaseType().equals(DatabaseType.POSTGRESQL)) {
+						(getDatabaseType().equals(DatabaseType.POSTGRESQL)||
+						getDatabaseType().equals(DatabaseType.KINGBASE))
+						) {
 					Array array=rs.getArray(fieldName);
 					if(array!=null) {
 						value = rs.getArray(fieldName).getArray();
