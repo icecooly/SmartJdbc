@@ -955,7 +955,7 @@ public class QueryWhere {
 	//
 	/**
 	 * 
-	 * @param needAliasAll
+	 * @param databaseType
 	 * @return
 	 */
 	public WhereStatment whereStatement(DatabaseType databaseType){

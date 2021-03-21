@@ -208,7 +208,6 @@ public class SmartDataSource {
 
 	/**
 	 * 
-	 * @param datasourceIndex
 	 * @return
 	 */
 	public Connection getConnection() {
