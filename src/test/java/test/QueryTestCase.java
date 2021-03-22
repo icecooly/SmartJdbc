@@ -185,6 +185,13 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getEntity(query);
 	}
 	
+	public void testOrderBy() {
+		UserQuery query=new UserQuery();
+		query.orderBy("name", "asc");
+		List<User> list=dao.getList(query);
+		System.out.println(DumpUtil.dump(list));
+	}
+	
 	public void testQueryWhereSql() {
 		dao.getEntity(User.class,QueryWhere.create().whereSql("a.name='张三'"));
 		Map<String,Object> sqlParam=new HashMap<>();

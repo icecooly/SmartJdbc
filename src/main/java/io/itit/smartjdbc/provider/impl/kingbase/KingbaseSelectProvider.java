@@ -1,8 +1,12 @@
 package io.itit.smartjdbc.provider.impl.kingbase;
 
 import io.itit.smartjdbc.SmartDataSource;
+import io.itit.smartjdbc.cache.EntityFieldInfo;
+import io.itit.smartjdbc.enums.JoinType;
 import io.itit.smartjdbc.provider.SelectProvider;
 import io.itit.smartjdbc.provider.SqlProvider;
+import io.itit.smartjdbc.provider.entity.Join;
+import io.itit.smartjdbc.util.StringUtil;
 
 /**
  * 
@@ -45,5 +49,52 @@ public class KingbaseSelectProvider extends SelectProvider{
 			sql+="\nof "+qw.getOf();
 		}
 		return sql;
+	}
+	
+	@Override
+	protected void addSelectFields(StringBuilder sql) {
+		for (EntityFieldInfo field : selectFields) {
+			if(StringUtil.isEmpty(field.statFunction)) {
+				if(qw.isForUpdate()&&!field.tableAlias.equals(SqlProvider.MAIN_TABLE_ALIAS)){
+					continue;
+				}
+			}
+			sql.append(getSelectFieldSql(field));
+			sql.append(",");
+		}
+		sql.deleteCharAt(sql.length()-1);
+		sql.append(" ");
+	}
+	
+	@Override
+	protected String getFromSql() {
+		StringBuilder sql=new StringBuilder();
+		sql.append("\nfrom ").append(getTableName(entityClass)).append(" ").
+				append(MAIN_TABLE_ALIAS).append(" ");
+		//join
+		createJoins();
+		if(joins!=null) {
+			for (Join join : joins.getJoinList()) {
+				if(qw.isForUpdate()) {
+					if(join.joinType.equals(JoinType.LEFT_JOIN)||
+							join.joinType.equals(JoinType.RIGHT_JOIN)
+							) {
+						continue;
+					}
+				}
+				if(join.joinType.equals(JoinType.INNER_JOIN)) {
+					sql.append("\ninner join  ");
+				}
+				if(join.joinType.equals(JoinType.LEFT_JOIN)) {
+					sql.append("\nleft join  ");
+				}
+				if(join.joinType.equals(JoinType.RIGHT_JOIN)) {
+					sql.append("\nright join  ");
+				}
+				addJoinSql(sql, join);
+			}
+		}
+		return sql.toString();
+		
 	}
 }

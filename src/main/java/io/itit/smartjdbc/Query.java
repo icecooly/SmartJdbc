@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.itit.smartjdbc.provider.SqlProvider;
+
 /**
  * 
  * @author icecooly
@@ -27,6 +29,7 @@ public class Query<T> {
 	@SuppressWarnings("serial")
 	public static class OrderBy implements Serializable{
 		//
+		public String tableAlias;
 		public String field;//userName
 		public String type;//ASC DESC
 		/**
@@ -58,7 +61,8 @@ public class Query<T> {
 			
 		}
 		//
-		public OrderBy(String field,String type) {
+		public OrderBy(String tableAlias,String field,String type) {
+			this.tableAlias=tableAlias;
 			this.field=field;
 			this.type=type;
 		}
@@ -79,7 +83,11 @@ public class Query<T> {
 	}
 	//
 	public Query<?> orderBy(String field,String orderby) {
-		orderByList.add(new OrderBy(field, orderby));
+		return orderBy(SqlProvider.MAIN_TABLE_ALIAS, field, orderby);
+	}
+	//
+	public Query<?> orderBy(String tableAlias,String field,String orderby) {
+		orderByList.add(new OrderBy(tableAlias,field, orderby));
 		return this;
 	}
 	//

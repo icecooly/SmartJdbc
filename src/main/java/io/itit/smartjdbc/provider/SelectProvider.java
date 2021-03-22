@@ -40,7 +40,6 @@ import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.provider.where.Where;
 import io.itit.smartjdbc.util.ClassUtils;
-import io.itit.smartjdbc.util.JSONUtil;
 import io.itit.smartjdbc.util.StringUtil;
 
 /**
@@ -551,13 +550,19 @@ public class SelectProvider extends SqlProvider{
 			if(fieldName==null) {
 				continue;
 			}
+			StringBuilder orderby=new StringBuilder();
+			if(!StringUtil.isEmpty(order.tableAlias)) {
+				orderby.append(order.tableAlias).append(".");
+			}
 			String orderBy=order.type;
 			String dbField=convertFieldName(fieldName);
+			orderby.append(dbField);
 			if(orderBy.equalsIgnoreCase(OrderByType.ASC.name())) {
-				orderByList.add(dbField+" asc");
+				orderby.append(" asc ");
 			}else if(orderBy.equalsIgnoreCase(OrderByType.DESC.name())) {
-				orderByList.add(dbField+" desc");
+				orderby.append(" desc ");
 			}
+			orderByList.add(orderby.toString());
 		}
 		return orderByList;
 	}
@@ -621,7 +626,7 @@ public class SelectProvider extends SqlProvider{
 		sql.append(" ");
 	}
 	//
-	private String getSelectFieldSql(EntityFieldInfo field) {
+	protected String getSelectFieldSql(EntityFieldInfo field) {
 		StringBuilder sql=new StringBuilder();
 		if(field.distinct) {
 			sql.append(" distinct ");
