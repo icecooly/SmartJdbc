@@ -19,6 +19,9 @@ public class SqlUtil {
 		if(type.equals(DatabaseType.POSTGRESQL)) {
 			return "\"";
 		}
+		if(type.equals(DatabaseType.KINGBASE)) {
+			return "\"";
+		}
 		return "";
 	}
 }

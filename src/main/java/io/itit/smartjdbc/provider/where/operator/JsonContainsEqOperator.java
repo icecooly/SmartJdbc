@@ -50,7 +50,8 @@ public class JsonContainsEqOperator extends ColumnOperator {
 			}
 			sql.append(") ");
 		}
-		if (type.equals(DatabaseType.POSTGRESQL)) {
+		if (type.equals(DatabaseType.POSTGRESQL)||
+				type.equals(DatabaseType.KINGBASE)) {
 			sql.append("( ");
 			sql.append("jsonb_array_length(").append(getColumnSql()).append(")="+values.length);
 			for (int i = 0; i < values.length; i++) {

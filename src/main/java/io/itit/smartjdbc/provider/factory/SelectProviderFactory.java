@@ -3,6 +3,7 @@ package io.itit.smartjdbc.provider.factory;
 import io.itit.smartjdbc.SmartDataSource;
 import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.provider.SelectProvider;
+import io.itit.smartjdbc.provider.impl.kingbase.KingbaseSelectProvider;
 import io.itit.smartjdbc.provider.impl.mysql.MysqlSelectProvider;
 import io.itit.smartjdbc.provider.impl.postgresql.PostgresqlSelectProvider;
 
@@ -20,6 +21,9 @@ public class SelectProviderFactory {
 		}
 		if(type.equals(DatabaseType.POSTGRESQL)) {
 			return new PostgresqlSelectProvider(smartDataSource);
+		}
+		if(type.equals(DatabaseType.KINGBASE)) {
+			return new KingbaseSelectProvider(smartDataSource);
 		}
 		throw new RuntimeException("unspoort database type "+type);
 	}

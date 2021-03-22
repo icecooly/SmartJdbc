@@ -35,7 +35,8 @@ public class ArrayNotContainsOperator extends ColumnOperator {
 		}
 		StringBuilder sql = new StringBuilder();
 		//
-		if (type.equals(DatabaseType.POSTGRESQL)) {
+		if (type.equals(DatabaseType.POSTGRESQL)||
+				type.equals(DatabaseType.KINGBASE)) {
 			sql.append("( not ");
 			ctx.addParameter(value);
 			sql.append(getColumnSql()).append("@>").append("?");

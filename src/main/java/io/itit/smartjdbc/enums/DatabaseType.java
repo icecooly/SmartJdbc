@@ -11,5 +11,6 @@ package io.itit.smartjdbc.enums;
  */
 public enum DatabaseType {
     MYSQL,
-   POSTGRESQL
+   POSTGRESQL,
+   KINGBASE
 }
