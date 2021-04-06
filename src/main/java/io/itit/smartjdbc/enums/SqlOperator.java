@@ -32,8 +32,9 @@ public enum SqlOperator {
 	JSON_CONTAINS_ALL,//全部包含
 	JSON_CONTAINS_EQ,//等于
 	JSON_CONTAINS_NE,//不等于
-	ARRAY_ANY,//只有PG有
-	ARRAY_NOT_ANY,//只有PG有
-	ARRAY_CONTAINS,//数组包含 只有PG有
-	ARRAY_NOT_CONTAINS,//数组不包含 只有PG有
+	ARRAY_ANY,//数组中包含任意一个元素
+	ARRAY_NOT_ANY,//数组中不包含任意一个
+	ARRAY_CONTAINS,//数组包含 
+	ARRAY_NOT_CONTAINS,//数组不包含
+	
 }
