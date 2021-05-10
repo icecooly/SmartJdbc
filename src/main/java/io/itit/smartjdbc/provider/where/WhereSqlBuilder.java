@@ -21,12 +21,47 @@ import io.itit.smartjdbc.util.StringUtil;
 public class WhereSqlBuilder {
 	//
 	private QueryWhere queryWhere;
+	private DatabaseType databaseType;
+	private StringBuilder sql;
+	private List<Object> values;
 	//
-	public WhereSqlBuilder(QueryWhere queryWhere) {
+	public WhereSqlBuilder(DatabaseType databaseType, QueryWhere queryWhere) {
+		this.databaseType=databaseType;
 		this.queryWhere=queryWhere;
+		this.sql=new StringBuilder();
+		this.values=new LinkedList<Object>();
 	}
 	//
-	public boolean haveCondition(Where w) {
+
+	/**
+	 * 
+	 * @return
+	 */
+	public WhereStatment build(){
+		WhereStatment statment=new WhereStatment();
+		sql.append("\nwhere 1=1 ");
+		appendWhereSql(queryWhere.where, null);
+		sql.append(" ");
+		statment.sql=sql.toString();
+		statment.values=values.toArray();
+		return statment;
+	}
+	
+	/**
+	 * 
+	 * @param conditionType
+	 * @return
+	 */
+	private String getConditionTypeSql(ConditionType conditionType) {
+		return " "+conditionType.name().toLowerCase()+" ";
+	}
+	
+	/**
+	 * 
+	 * @param w
+	 * @return
+	 */
+	private boolean haveCondition(Where w) {
 		if (w != null && w.conditionList != null && w.conditionList.size() > 0) {
 			return true;
 		}
@@ -40,38 +75,13 @@ public class WhereSqlBuilder {
 		}
 		return false;
 	}
-
-	/**
-	 * 
-	 * @param databaseType
-	 * @param where
-	 * @return
-	 */
-	public WhereStatment whereStatement(DatabaseType databaseType){
-		WhereStatment statment=new WhereStatment();
-		List<Object>values=new LinkedList<Object>();
-		StringBuilder sql=new StringBuilder();
-		sql.append("\nwhere 1=1 ");
-		appendWhereSql(databaseType, sql, values, queryWhere.where, null);
-		sql.append(" ");
-		statment.sql=sql.toString();
-		statment.values=values.toArray();
-		return statment;
-	}
-	
-	private String getConditionTypeSql(ConditionType conditionType) {
-		return " "+conditionType.name().toLowerCase()+" ";
-	}
 	
 	/**
 	 * 
-	 * @param databaseType
-	 * @param sql
-	 * @param valueList
 	 * @param where
+	 * @param parentWhere
 	 */
-	public void appendWhereSql(DatabaseType databaseType, StringBuilder sql, 
-			List<Object> valueList, Where where, Where parentWhere) {
+	public void appendWhereSql(Where where, Where parentWhere) {
 		boolean haveCondition = haveCondition(where);
 		if (!haveCondition) {
 			return;
@@ -88,7 +98,7 @@ public class WhereSqlBuilder {
 		if (conditions.size() > 0) {
 			int index = 0;
 			OperatorContext ctx = new OperatorContext(databaseType);
-			ctx.setParameters(valueList);
+			ctx.setParameters(values);
 			for (Condition c : conditions) {
 				if (index > 0) {
 					sql.append(getConditionTypeSql(where.conditionType));
@@ -112,7 +122,7 @@ public class WhereSqlBuilder {
 		//
 		if (where.children != null && where.children.size() > 0) {
 			for (Where w : where.children) {
-				appendWhereSql(databaseType, sql, valueList, w, where);
+				appendWhereSql(w, where);
 			}
 		}
 		//

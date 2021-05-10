@@ -257,7 +257,10 @@ public class QueryTestCase extends BaseTestCase{
 				like("user_name", "root").
 				and(new Where().
 						like("l1","name","技术").
-						like("name","root")
+						like("name","root").
+							or(new Where().
+									like("l1","name","技术").
+									like("name","root"))
 				)
 		);
 	}
