@@ -9,6 +9,7 @@ import io.itit.smartjdbc.provider.entity.EntityUpdate;
 import io.itit.smartjdbc.provider.entity.EntityUpdate.EntityUpdateField;
 import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
+import io.itit.smartjdbc.provider.where.WhereSqlBuilder;
 import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.util.JSONUtil;
 
@@ -62,7 +63,7 @@ public class UpdateProvider extends SqlProvider{
 		//
 		QueryWhere queryWhere=update.queryWhere;
 		if(queryWhere!=null) {
-			WhereStatment ws=queryWhere.whereStatement(getSmartDataSource().getDatabaseType());
+			WhereStatment ws=new WhereSqlBuilder(queryWhere).whereStatement(getSmartDataSource().getDatabaseType());
 			sql.append(ws.sql);
 			for(Object o:ws.values){
 				fieldList.add(o);

@@ -3,22 +3,14 @@ package io.itit.smartjdbc.provider.where;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import io.itit.smartjdbc.enums.ConditionType;
-import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import io.itit.smartjdbc.provider.SqlProvider;
 import io.itit.smartjdbc.provider.where.Where.Condition;
 import io.itit.smartjdbc.provider.where.Where.JsonContain;
-import io.itit.smartjdbc.provider.where.operator.Operator;
-import io.itit.smartjdbc.provider.where.operator.OperatorBuilder;
-import io.itit.smartjdbc.provider.where.operator.OperatorContext;
-import io.itit.smartjdbc.provider.where.operator.WhereSqlOperator;
-import io.itit.smartjdbc.util.StringUtil;
 
 /**
  * 
@@ -949,89 +941,5 @@ public class QueryWhere {
 	 */
 	public QueryWhere isNotNull(String alias,String key){
 		return this.where(alias,key, SqlOperator.IS_NOT_NULL,null);
-	}
-	
-	
-	//
-	/**
-	 * 
-	 * @param databaseType
-	 * @return
-	 */
-	public WhereStatment whereStatement(DatabaseType databaseType){
-		WhereStatment statment=new WhereStatment();
-		List<Object>values=new LinkedList<Object>();
-		StringBuilder sql=new StringBuilder();
-		sql.append("\nwhere 1=1 ");
-		appendWhereSql(databaseType, sql, values, where);
-		sql.append(" ");
-		statment.sql=sql.toString();
-		statment.values=values.toArray();
-		return statment;
-	}
-	//
-	protected boolean haveCondition(Where w) {
-		if(w!=null&&w.conditionList!=null&&w.conditionList.size()>0) {
-			return true;
-		}
-		if(w!=null&&w.children!=null) {
-			for (Where child : w.children) {
-				boolean childHaveCondition=haveCondition(child);
-				if(childHaveCondition) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	//
-	protected void appendWhereSql(DatabaseType databaseType, 
-			StringBuilder sql,List<Object> valueList,Where parent) {
-		boolean haveCondition=haveCondition(parent);
-		if(!haveCondition) {
-			return;
-		}
-		sql.append(" and(  ");
-		List<Condition> conditions=parent.conditionList;
-		if(conditions.size()==0) {
-			sql.append(" 1=1  ");
-		}
-		if(conditions.size()>0) {
-			boolean and=parent.conditionType==ConditionType.AND?true:false;
-			int index=0;
-			OperatorContext ctx=new OperatorContext(databaseType);
-			ctx.setParameters(valueList);
-			for (Condition c : conditions) {
-				if(index>0) {
-					if(and) {
-						sql.append(" and ");
-					}else {
-						sql.append(" or ");
-					}
-				}
-				String operatorSql=null;
-				if(c.key!=null){
-					ctx.setCondition(c);
-					Operator operator=OperatorBuilder.build(ctx);
-					operatorSql=operator.build();
-				}else if(c.whereSql!=null){
-					WhereSqlOperator whereSqlOperator=new WhereSqlOperator(ctx, c);
-					operatorSql=whereSqlOperator.build();
-				}
-				if(StringUtil.isEmpty(operatorSql)) {
-					operatorSql="1=1";
-				}
-				sql.append(operatorSql);
-				index++;
-			}//for
-		}
-		//
-		if(parent.children!=null&&parent.children.size()>0) {
-			for (Where w : parent.children) {
-				appendWhereSql(databaseType, sql, valueList, w);
-			}
-		}
-		//
-		sql.append("  )  ");
 	}
 }

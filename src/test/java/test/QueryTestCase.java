@@ -251,6 +251,17 @@ public class QueryTestCase extends BaseTestCase{
 		);
 	}
 	
+	public void testQueryWhereOrAnd() {
+		dao.getEntity(User.class,QueryWhere.create(ConditionType.OR).
+				eq("status", 1).
+				like("user_name", "root").
+				and(new Where().
+						like("l1","name","技术").
+						like("name","root")
+				)
+		);
+	}
+	
 	/**查询用户列表*/
 	public void testUserQuery() {
 		UserQuery query=new UserQuery();

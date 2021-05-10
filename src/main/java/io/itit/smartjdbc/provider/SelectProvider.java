@@ -39,6 +39,7 @@ import io.itit.smartjdbc.provider.entity.SqlBean;
 import io.itit.smartjdbc.provider.where.QueryWhere;
 import io.itit.smartjdbc.provider.where.QueryWhere.WhereStatment;
 import io.itit.smartjdbc.provider.where.Where;
+import io.itit.smartjdbc.provider.where.WhereSqlBuilder;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.StringUtil;
 
@@ -681,7 +682,7 @@ public class SelectProvider extends SqlProvider{
 	//
 	protected WhereStatment getWhereSql() {
 		addWheres(query);
-		return qw.whereStatement(getSmartDataSource().getDatabaseType());
+		return new WhereSqlBuilder(qw).whereStatement(getSmartDataSource().getDatabaseType());
 	}
 	//
 	protected String getGroupBySql() {
