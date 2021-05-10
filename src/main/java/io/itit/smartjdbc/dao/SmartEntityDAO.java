@@ -180,35 +180,37 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 			Set<String> includeFields,
 			String... excludeFields){
 		return update(EntityUpdate.create(getSmartDataSource(), 
-				bean, excludeNull, 
-				includeFields, null,
+				bean, 
+				excludeNull, 
+				includeFields, 
+				null,
 				excludeFields));
 	}
 	
 	/**
 	 * 
 	 * @param bean
-	 * @param wq
+	 * @param qw
 	 * @param excludeFields
 	 * @return
 	 */
 	public int update(T bean,
-			QueryWhere wq,
+			QueryWhere qw,
 			String... excludeFields){
-		return update(bean, wq, true, null, excludeFields);
+		return update(bean, qw, true, null, excludeFields);
 	}
 	
 	/**
 	 * 
 	 * @param bean
-	 * @param wq
+	 * @param qw
 	 * @param excludeNull
 	 * @param includeFields
 	 * @param excludeFields
 	 * @return
 	 */
 	public int update(T bean,
-			QueryWhere wq,
+			QueryWhere qw,
 			boolean excludeNull,
 			Set<String> includeFields,
 			String... excludeFields){
@@ -216,7 +218,7 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 				bean, 
 				excludeNull, 
 				includeFields, 
-				null, 
+				qw, 
 				excludeFields));
 	}
 	

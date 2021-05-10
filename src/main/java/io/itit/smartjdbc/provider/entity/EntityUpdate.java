@@ -54,7 +54,8 @@ public class EntityUpdate extends Entity{
 	}
 	//
 	public static EntityUpdate create(SmartDataSource datasource, Object bean,
-			boolean excludeNull, Set<String> includeFields, QueryWhere queryWhere, String... excludeFields) {
+			boolean excludeNull, Set<String> includeFields, 
+			QueryWhere queryWhere, String... excludeFields) {
 		EntityUpdate update=new EntityUpdate(datasource.getDatabaseType(),datasource.getTableName(bean.getClass()));
 		update.queryWhere=queryWhere;
 		update.excludeNull=excludeNull;

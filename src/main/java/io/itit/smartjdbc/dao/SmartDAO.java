@@ -103,12 +103,14 @@ public class SmartDAO extends BaseEntityDAO{
 			Set<String> includeFields,
 			QueryWhere queryWhere,
 			String... excludeFields){
-		return update(EntityUpdate.create(
+		return update(
+				EntityUpdate.create(
 				getSmartDataSource(), 
 				bean, 
 				excludeNull, 
 				includeFields, 
-				queryWhere, excludeFields));
+				queryWhere, 
+				excludeFields));
 	}
 	
 	/**
