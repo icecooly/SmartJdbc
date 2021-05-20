@@ -1,9 +1,13 @@
 package test.domain.query;
 
+import java.util.List;
+
 import io.itit.smartjdbc.Query;
 import io.itit.smartjdbc.annotations.Join;
 import io.itit.smartjdbc.annotations.Joins;
+import io.itit.smartjdbc.annotations.QueryConditionType;
 import io.itit.smartjdbc.annotations.QueryField;
+import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.SqlOperator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +25,9 @@ import test.domain.entity.User;
 @EqualsAndHashCode(callSuper=true)
 public class ArticleQuery extends Query<Article>{
 
+	@QueryField(field = "id", operator = SqlOperator.IN)
+	private List<Integer> idInList;
+	
 	@QueryField
 	private String title;
 	
@@ -58,4 +65,19 @@ public class ArticleQuery extends Query<Article>{
 			})
 	@QueryField(field="name",operator = SqlOperator.LIKE_RIGHT)
 	private String createUserDepartmentName2;
+	
+	//
+	@QueryConditionType(ConditionType.OR)
+	private IdListOrTitle idListOrTitle;
+	//
+	@Data
+	public static class IdListOrTitle {
+		//
+		@QueryField(operator = SqlOperator.LIKE)
+		private String title;
+		
+		@QueryField(field = "id", operator = SqlOperator.IN)
+		private List<Integer> idInList;
+
+	};
 }

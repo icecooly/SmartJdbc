@@ -1,5 +1,6 @@
 package test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import test.dao.BizDAO;
 import test.domain.entity.Article;
 import test.domain.entity.User;
 import test.domain.query.ArticleQuery;
+import test.domain.query.ArticleQuery.IdListOrTitle;
 import test.domain.query.UserComplexQuery;
 import test.domain.query.UserComplexQuery.NameOrUserNameOrDeptName;
 import test.domain.query.UserComplexQuery.StatusAndMobile;
@@ -422,8 +424,17 @@ public class QueryTestCase extends BaseTestCase{
 	public void testOr() {
 		ArticleQuery query=new ArticleQuery();
 		query.setTitleOrContent("Java");
-		List<Article> list=dao.getList(query);
-		System.out.println(DumpUtil.dump(list));
+//		List<Article> list=dao.getList(query);
+//		System.out.println(DumpUtil.dump(list));
+		//
+		query=new ArticleQuery();
+		query.setTitle("123");
+		IdListOrTitle idListOrTitle=new IdListOrTitle();
+		idListOrTitle.setIdInList(new ArrayList<>());
+		idListOrTitle.setTitle("123");
+		query.setIdListOrTitle(idListOrTitle);
+		List<Article> list2=dao.getList(query);
+		System.out.println(DumpUtil.dump(list2));
 	}
 	//
 	public void testGetArticleWithInnerJoins() {

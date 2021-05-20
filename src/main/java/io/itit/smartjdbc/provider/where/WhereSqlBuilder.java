@@ -99,10 +99,8 @@ public class WhereSqlBuilder {
 			int index = 0;
 			OperatorContext ctx = new OperatorContext(databaseType);
 			ctx.setParameters(values);
+			String conditionType=getConditionTypeSql(where.conditionType);
 			for (Condition c : conditions) {
-				if (index > 0) {
-					sql.append(getConditionTypeSql(where.conditionType));
-				}
 				String operatorSql = null;
 				if (c.key != null) {
 					ctx.setCondition(c);
@@ -112,10 +110,12 @@ public class WhereSqlBuilder {
 					WhereSqlOperator whereSqlOperator = new WhereSqlOperator(ctx, c);
 					operatorSql = whereSqlOperator.build();
 				}
-				if (StringUtil.isEmpty(operatorSql)) {
-					operatorSql = "1=1";
+				if (!StringUtil.isEmpty(operatorSql)) {
+					if (index > 0) {
+						sql.append(conditionType);
+					}
+					sql.append(operatorSql);
 				}
-				sql.append(operatorSql);
 				index++;
 			} // for
 		}
