@@ -583,4 +583,10 @@ public class QueryTestCase extends BaseTestCase{
 		query.setIsStudent(true);
 		System.out.println(DumpUtil.dump(dao.getList(query)));
 	}
+	
+	public void testIn() {
+		UserQuery query=new UserQuery();
+		query.setStatusInList(new ArrayList<>());
+		dao.getAll(query);
+	}
 }

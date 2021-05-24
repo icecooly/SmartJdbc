@@ -92,9 +92,7 @@ public class WhereSqlBuilder {
 			sql.append(" and(  ");
 		}
 		List<Condition> conditions = where.conditionList;
-		if (conditions.size() == 0) {
-			sql.append(" 1=1  ");
-		}
+		int conditonCount=0;
 		if (conditions.size() > 0) {
 			int index = 0;
 			OperatorContext ctx = new OperatorContext(databaseType);
@@ -111,6 +109,7 @@ public class WhereSqlBuilder {
 					operatorSql = whereSqlOperator.build();
 				}
 				if (!StringUtil.isEmpty(operatorSql)) {
+					conditonCount++;
 					if (index > 0) {
 						sql.append(conditionType);
 					}
@@ -118,6 +117,9 @@ public class WhereSqlBuilder {
 				}
 				index++;
 			} // for
+		}
+		if (conditonCount==0) {
+			sql.append(" 1=1  ");
 		}
 		//
 		if (where.children != null && where.children.size() > 0) {
