@@ -86,11 +86,12 @@ public class WhereSqlBuilder {
 		if (!haveCondition) {
 			return;
 		}
+		ConditionType type=ConditionType.AND;
 		if(parentWhere!=null) {
-			sql.append(getConditionTypeSql(parentWhere.conditionType)).append("( ");
-		}else {
-			sql.append(" and(  ");
+			type=parentWhere.conditionType;	
 		}
+		sql.append(getConditionTypeSql(type)).append("( ");//and ( 或 or(
+		//
 		List<Condition> conditions = where.conditionList;
 		int conditonCount=0;
 		if (conditions.size() > 0) {
@@ -114,12 +115,16 @@ public class WhereSqlBuilder {
 						sql.append(conditionType);
 					}
 					sql.append(operatorSql);
+					index++;
 				}
-				index++;
 			} // for
 		}
 		if (conditonCount==0) {
-			sql.append(" 1=1  ");
+			if(type.equals(ConditionType.AND)) {
+				sql.append(" 1=1  ");
+			}else {
+				sql.append(" 1=2  ");
+			}
 		}
 		//
 		if (where.children != null && where.children.size() > 0) {

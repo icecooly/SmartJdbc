@@ -257,6 +257,9 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getEntity(User.class,QueryWhere.create(ConditionType.OR).
 				eq("status", 1).
 				like("user_name", "root").
+				or(new Where().
+						in("l1","name", new ArrayList<>()).
+						like("l1","name","技术")).
 				and(new Where().
 						like("l1","name","技术").
 						like("name","root").
@@ -264,6 +267,21 @@ public class QueryTestCase extends BaseTestCase{
 									like("l1","name","技术").
 									like("name","root"))
 				)
+		);
+		//
+		dao.getEntity(User.class,QueryWhere.create(ConditionType.OR).
+				eq("status", 1).
+				like("user_name", "root").
+				or(new Where().
+						in("l1","name", new ArrayList<>()).
+						and(new Where().
+						like("l1","name","技术").
+						like("name","root").
+							or(new Where().
+									like("l1","name","技术").
+									like("name","root"))
+						)//and
+				)//or
 		);
 	}
 	
@@ -424,8 +442,8 @@ public class QueryTestCase extends BaseTestCase{
 	public void testOr() {
 		ArticleQuery query=new ArticleQuery();
 		query.setTitleOrContent("Java");
-//		List<Article> list=dao.getList(query);
-//		System.out.println(DumpUtil.dump(list));
+		List<Article> list=dao.getList(query);
+		System.out.println(DumpUtil.dump(list));
 		//
 		query=new ArticleQuery();
 		query.setTitle("123");
