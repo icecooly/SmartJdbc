@@ -87,6 +87,9 @@ public class Query<T> {
 	}
 	//
 	public Query<?> orderBy(String tableAlias,String field,String orderby) {
+		if(orderByList==null) {
+			orderByList=new ArrayList<>();
+		}
 		orderByList.add(new OrderBy(tableAlias,field, orderby));
 		return this;
 	}
