@@ -25,6 +25,8 @@ public enum SqlOperator {
     GE,//大于等于
     LT,//小于
     LE,//小于等于
+    BETWEEN_AND,
+    NOT_BETWEEN_AND,
     IS_NULL,
     IS_NOT_NULL,
     JSON_CONTAINS_ANY,//包含任意一个

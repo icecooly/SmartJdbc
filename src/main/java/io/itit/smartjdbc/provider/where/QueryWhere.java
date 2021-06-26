@@ -942,4 +942,24 @@ public class QueryWhere {
 	public QueryWhere isNotNull(String alias,String key){
 		return this.where(alias,key, SqlOperator.IS_NOT_NULL,null);
 	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public QueryWhere betweenAnd(String key, Collection<?> values) {
+		return this.where(key, SqlOperator.BETWEEN_AND, values);
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public QueryWhere notBetweenAnd(String key, Collection<?> values) {
+		return this.where(key, SqlOperator.NOT_BETWEEN_AND, values);
+	}
 }

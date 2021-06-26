@@ -1,7 +1,10 @@
 package test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -606,5 +609,27 @@ public class QueryTestCase extends BaseTestCase{
 		UserQuery query=new UserQuery();
 		query.setStatusInList(new ArrayList<>());
 		dao.getAll(query);
+	}
+	
+	public void testBetweenAnd() throws ParseException {
+		dao.getList(User.class,
+				QueryWhere.create().betweenAnd("age",Arrays.asList(10,15)));
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		dao.getList(User.class,
+				QueryWhere.create().betweenAnd("create_time",
+						Arrays.asList(
+								sdf.parse("2020-10-09"),
+								sdf.parse("2020-11-09"))));
+	}
+	
+	public void testNotBetweenAnd() throws ParseException {
+		dao.getList(User.class,
+				QueryWhere.create().notBetweenAnd("age",Arrays.asList(10,15)));
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		dao.getList(User.class,
+				QueryWhere.create().notBetweenAnd("create_time",
+						Arrays.asList(
+								sdf.parse("2020-10-09"),
+								sdf.parse("2020-11-09"))));
 	}
 }

@@ -112,6 +112,12 @@ public class OperatorBuilder {
 		if(operator.equals(SqlOperator.ARRAY_NOT_CONTAINS)) {
 			opt=new ArrayNotContainsOperator(ctx);
 		}
+		if(operator.equals(SqlOperator.BETWEEN_AND)) {
+			opt=new BetweenAndOperator(ctx);
+		}
+		if(operator.equals(SqlOperator.NOT_BETWEEN_AND)) {
+			opt=new NotBetweenAndOperator(ctx);
+		}
 		return opt;
 	}
 	//
