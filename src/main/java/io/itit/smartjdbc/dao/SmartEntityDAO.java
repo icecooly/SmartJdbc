@@ -401,6 +401,24 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	/**
 	 * 
 	 * @param query
+	 * @param includeFields
+	 * @param excludeFields
+	 * @return
+	 */
+	public List<T> getAll(QueryWhere query,Set<String> includeFields,String ... excludeFields){
+		Class<T> entityClass=(Class<T>) getEntityClass();
+		SqlBean sqlBean=selectProvider().
+				entityClass(entityClass).
+				query(query).
+				includeFields(includeFields).
+				excludeFields(excludeFields).
+				build();
+		return queryList(sqlBean.sql,sqlBean.parameters);
+	}
+	
+	/**
+	 * 
+	 * @param query
 	 * @param excludeFields
 	 * @return
 	 */
@@ -410,6 +428,25 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 		SqlBean sqlBean=selectProvider().
 				entityClass(entityClass).
 				query(query).
+				excludeFields(excludeFields).
+				build();
+		return queryList(sqlBean.sql,sqlBean.parameters);
+	}
+	
+	/**
+	 * 
+	 * @param query
+	 * @param includeFields
+	 * @param excludeFields
+	 * @return
+	 */
+	public List<T> getAll(Query<T> query,Set<String> includeFields,String ... excludeFields){
+		Class<T> entityClass=(Class<T>) getEntityClass();
+		query.setPageSize(Integer.MAX_VALUE);
+		SqlBean sqlBean=selectProvider().
+				entityClass(entityClass).
+				query(query).
+				includeFields(includeFields).
 				excludeFields(excludeFields).
 				build();
 		return queryList(sqlBean.sql,sqlBean.parameters);
