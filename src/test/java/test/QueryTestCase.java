@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -560,6 +559,26 @@ public class QueryTestCase extends BaseTestCase{
 		w.and(and1);
 		w.and(new Where());
 		w.or(new Where());
+		dao.getList(User.class, QueryWhere.create().and(w));
+	}
+	
+	public void testOr2() {
+		Where w=new Where();
+		Where and1=new Where();
+		and1.where("id", SqlOperator.EQ,111);
+		Where and2=new Where(ConditionType.OR);
+		w.and(and1);
+		w.and(and2);
+		//
+		Where or1=new Where();
+		or1.where("user_name", SqlOperator.LIKE,"test");
+		or1.where("name", SqlOperator.LIKE,"123");
+		and2.or(or1);
+		//
+		Where or2=new Where();
+		or2.where("user_name", SqlOperator.LIKE,"or2");
+		and2.or(or2);
+		//
 		dao.getList(User.class, QueryWhere.create().and(w));
 	}
 	

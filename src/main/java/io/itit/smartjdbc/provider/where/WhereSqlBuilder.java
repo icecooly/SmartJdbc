@@ -120,7 +120,7 @@ public class WhereSqlBuilder {
 			} // for
 		}
 		if (conditonCount==0) {
-			if(type.equals(ConditionType.AND)) {
+			if(where.conditionType.equals(ConditionType.AND)) {
 				sql.append(" 1=1  ");
 			}else {
 				sql.append(" 1=2  ");
