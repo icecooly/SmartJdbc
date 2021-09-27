@@ -253,8 +253,7 @@ public abstract class BaseDAO{
 						isException,
 						useTime,
 						sql,
-						dumpParameters(parameters),
-						DumpUtil.dump(bean));
+						dumpParameters(parameters));
 			}
 			afterExcute(sql, parameters);
 			DBStat.stat(sql,useTime,isException);//stat
@@ -263,8 +262,7 @@ public abstract class BaseDAO{
 						isException,
 						useTime,
 						sql,
-						dumpParameters(parameters),
-						DumpUtil.dump(bean));
+						dumpParameters(parameters));
 			}
 		}
 	}
@@ -533,7 +531,7 @@ public abstract class BaseDAO{
 				}
 				continue;
 			}
-			throw new IllegalArgumentException("unsupport type:" + o.getClass()+","+DumpUtil.dump(o));
+			throw new IllegalArgumentException("unsupport type:" + o.getClass());
 		}
 	}
 }
