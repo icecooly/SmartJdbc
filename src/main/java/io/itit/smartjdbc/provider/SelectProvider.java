@@ -105,6 +105,9 @@ public class SelectProvider extends SqlProvider{
 	//
 	public SelectProvider query(QueryWhere qw) {
 		this.qw=qw;
+		if(qw.getLimitEnd()>0) {
+			needPaging(true);
+		}
 		return this;
 	}
 	//
