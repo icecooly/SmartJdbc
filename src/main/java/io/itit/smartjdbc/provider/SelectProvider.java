@@ -27,6 +27,7 @@ import io.itit.smartjdbc.cache.EntityInfo;
 import io.itit.smartjdbc.cache.QueryFieldInfo;
 import io.itit.smartjdbc.cache.QueryInfo;
 import io.itit.smartjdbc.enums.AggregationFunction;
+import io.itit.smartjdbc.enums.ColumnType;
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.JoinType;
 import io.itit.smartjdbc.enums.OrderByType;
@@ -638,6 +639,12 @@ public class SelectProvider extends SqlProvider{
 		if(StringUtil.isEmpty(field.statFunction)) {
 			sql.append(field.tableAlias).append(".");
 			sql.append(addIdentifier(convertFieldName(field.name))).append("");
+			if(smartDataSource.isJsonb2Text()&&
+					field.entityField!=null&&
+					field.entityField.columnType().equals(ColumnType.JSONB)
+					) {
+				sql.append("::text"); 
+			}
 		}else {
 			sql.append(field.statFunction);
 		}

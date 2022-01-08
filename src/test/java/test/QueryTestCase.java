@@ -186,6 +186,7 @@ public class QueryTestCase extends BaseTestCase{
 	public void testIsNull() {
 		UserQuery query=new UserQuery();
 		query.setUserNameIsNull(true);
+		query.setPageSize(1);
 		dao.getEntity(query);
 	}
 	
@@ -221,7 +222,7 @@ public class QueryTestCase extends BaseTestCase{
 		dao.getEntity(User.class,QueryWhere.create().
 				orderBy("id asc").
 				orderBy("name desc").
-				limit(0, 10));
+				limit(1));
 		
 	}
 	

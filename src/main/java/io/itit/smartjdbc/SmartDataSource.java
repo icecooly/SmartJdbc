@@ -38,6 +38,8 @@ public class SmartDataSource {
 	private TransactionManager transactionManager;
 	
 	private boolean fieldCamelCase;
+	
+	private boolean jsonb2Text;
 	/**
 	 * javaFieldName->dbName
 	 */
@@ -249,5 +251,20 @@ public class SmartDataSource {
 	public String identifier() {
 		return SqlUtil.identifier(databaseType);
 	}
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isJsonb2Text() {
+		return jsonb2Text;
+	}
+	/**
+	 * 
+	 * @param jsonb2Text
+	 */
+	public void setJsonb2Text(boolean jsonb2Text) {
+		this.jsonb2Text = jsonb2Text;
+	}
+	
 	
 }
