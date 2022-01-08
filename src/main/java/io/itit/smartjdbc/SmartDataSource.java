@@ -1,10 +1,17 @@
 package io.itit.smartjdbc;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.function.Function;
 
 import javax.sql.DataSource;
@@ -40,6 +47,8 @@ public class SmartDataSource {
 	private boolean fieldCamelCase;
 	
 	private boolean jsonb2Text;
+	
+	private Map<String,DatabaseType> driverClassMapping;
 	/**
 	 * javaFieldName->dbName
 	 */
@@ -51,21 +60,54 @@ public class SmartDataSource {
 		this.dataSource=dataSource;
 		this.transactionManager=transactionManager;
 		this.sqlInterceptors=new ArrayList<>();
+		this.driverClassMapping=new HashMap<>();
+	}
+	//
+	private void defaultDriverClassNameMapping() {
+		driverClassMapping.put("com.mysql.cj.jdbc.Driver", DatabaseType.MYSQL);
+		driverClassMapping.put("com.mysql.jdbc.Driver", DatabaseType.MYSQL);
+		driverClassMapping.put("org.postgresql.Driver", DatabaseType.POSTGRESQL);
+		driverClassMapping.put("com.kingbase8.Driver", DatabaseType.KINGBASE);
+	}
+	//
+	private void loadingDriverClassNameMapping() {
+		defaultDriverClassNameMapping();
+		String fileName=System.getProperty("smartjdbc.driverclassmapping.file");
+		if(fileName!=null){
+			try {
+				File bf=new File(fileName);
+				try (InputStream input = new FileInputStream(bf)) {
+		            Properties prop = new Properties();
+		            prop.load(input);
+		            Iterator<String> it=prop.stringPropertyNames().iterator();
+		            while(it.hasNext()){
+		                String driverClassName=it.next();
+		                String type=prop.getProperty(driverClassName);
+		                if(driverClassName==null||type==null) {
+		                	continue;
+		                }
+		                DatabaseType databaseType=DatabaseType.valueOf(type.trim());
+		                if(databaseType==null) {
+		                	logger.warn("type not support {}",type);
+		                	continue;
+		                }
+		                driverClassMapping.put(driverClassName.trim(), databaseType);
+		            }
+		        }
+			} catch (Exception e) {
+				logger.error(e.getMessage(),e);
+			}
+		}
 	}
 	//
 	public void init() throws Exception {
 		Connection conn=null;
 		try {
+			loadingDriverClassNameMapping();
 			conn=dataSource.getConnection();
 			String driverClassName=DriverManager.getDriver(conn.getMetaData().getURL()).getClass().getName();
-			if(driverClassName.equals("com.mysql.cj.jdbc.Driver")||
-					driverClassName.equals("com.mysql.jdbc.Driver")) {
-				databaseType=DatabaseType.MYSQL;
-			}else if(driverClassName.equals("org.postgresql.Driver")) {
-				databaseType=DatabaseType.POSTGRESQL;
-			}else if(driverClassName.equals("com.kingbase8.Driver")) {
-				databaseType=DatabaseType.KINGBASE;
-			}else {
+			databaseType=driverClassMapping.get(driverClassName);
+			if(databaseType==null) {
 				throw new SmartJdbcException("not support database "+driverClassName);
 			}
 			logger.info("init driverClassName:{} databaseType:{}",driverClassName,databaseType);
