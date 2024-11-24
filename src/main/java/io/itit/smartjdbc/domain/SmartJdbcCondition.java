@@ -2,17 +2,11 @@ package io.itit.smartjdbc.domain;
 
 import java.io.Serializable;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * 
  * @author skydu
  *
  */
-
-@Getter
-@Setter
 public class SmartJdbcCondition implements Serializable{
 
 	/**

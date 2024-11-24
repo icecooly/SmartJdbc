@@ -3,6 +3,9 @@ package io.itit.smartjdbc.provider.where;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.itit.smartjdbc.enums.ConditionType;
 import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.provider.entity.SqlBean;
@@ -16,15 +19,15 @@ import io.itit.smartjdbc.provider.where.operator.mysql.MysqlOperatorFactory;
 import io.itit.smartjdbc.provider.where.operator.pgsql.PgsqlOperatorFactory;
 import io.itit.smartjdbc.util.JSONUtil;
 import io.itit.smartjdbc.util.SmartJdbcUtils;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author skydu
  *
  */
-@Slf4j
 public class WhereSqlBuilder {
+	//
+	private static Logger log=LoggerFactory.getLogger(WhereSqlBuilder.class);
 	//
 	private QueryWhere queryWhere;
 	private DatabaseType databaseType;

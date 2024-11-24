@@ -203,8 +203,9 @@ public class JSONUtil {
 	
 	/**
 	 * 
+	 * @param <T>
 	 * @param json
-	 * @param t
+	 * @param clazz
 	 * @return
 	 */
 	public static <T> Set<T> fromJsonSet(String json, Class<T> clazz){

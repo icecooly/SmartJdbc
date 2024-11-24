@@ -104,7 +104,6 @@ public class SmartEntityDAO<T> extends BaseEntityDAO{
 	 * 
 	 * @param bean
 	 * @param includeFields
-	 * @param excludeFields
 	 * @return
 	 */
 	public int update(T bean, Set<String> includeFields) {

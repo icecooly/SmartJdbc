@@ -15,6 +15,9 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.itit.smartjdbc.annotations.Entity;
 import io.itit.smartjdbc.enums.DatabaseType;
 import io.itit.smartjdbc.service.DefaultConvertFieldNameService;
@@ -22,15 +25,16 @@ import io.itit.smartjdbc.service.IConvertFieldNameService;
 import io.itit.smartjdbc.session.SqlSession;
 import io.itit.smartjdbc.session.TransactionManager;
 import io.itit.smartjdbc.util.SmartJdbcUtils;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author skydu
  *
  */
-@Slf4j
 public class SmartDataSource {
+	//
+
+	private static Logger log=LoggerFactory.getLogger(SmartDataSource.class);
 	//
 	private DataSource dataSource;
 	
@@ -125,7 +129,7 @@ public class SmartDataSource {
 	
 	/**
 	 * 
-	 * @param entityInfo
+	 * @param entityClass
 	 * @param fieldName
 	 * @return
 	 */

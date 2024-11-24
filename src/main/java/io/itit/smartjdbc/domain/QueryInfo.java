@@ -7,6 +7,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.itit.smartjdbc.SmartJdbcException;
 import io.itit.smartjdbc.annotations.ForeignKey;
 import io.itit.smartjdbc.annotations.QueryConditionType;
@@ -20,15 +23,16 @@ import io.itit.smartjdbc.provider.entity.Joins;
 import io.itit.smartjdbc.util.ClassUtils;
 import io.itit.smartjdbc.util.JSONUtil;
 import io.itit.smartjdbc.util.SmartJdbcUtils;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author skydu
  *
  */
-@Slf4j
 public class QueryInfo {
+	
+
+	private static Logger log=LoggerFactory.getLogger(QueryInfo.class);
 	
 	private Class<?> queryClass;
 
