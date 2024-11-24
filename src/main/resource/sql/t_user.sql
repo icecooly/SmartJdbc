@@ -1,0 +1,28 @@
+CREATE TABLE "public"."t_user" (
+  "id" int4,
+  "user_name" varchar(32) COLLATE "pg_catalog"."default",
+  "name" varchar(32) COLLATE "pg_catalog"."default",
+  "mobile_no" varchar(32) COLLATE "pg_catalog"."default",
+  "gender" int2,
+  "status" int2,
+  "age" int4,
+  "department_id" int4,
+  "role_id_list" jsonb,
+  "last_login_time" timestamp(6),
+  "article_num" int8,
+  "create_user_id" int4,
+  "update_user_id" int4,
+  "department_name" varchar(64) COLLATE "pg_catalog"."default",
+  "height" float8,
+  "no" int8,
+  "is_student" bool,
+  "setting" text COLLATE "pg_catalog"."default",
+  "short_array" int2[],
+  "int_array" int4[],
+  "long_array" int8[],
+  "float_array" float4[],
+  "string_array" varchar[] COLLATE "pg_catalog"."default",
+  "create_time" timestamp(6),
+  "update_time" timestamp(6)
+)
+;
